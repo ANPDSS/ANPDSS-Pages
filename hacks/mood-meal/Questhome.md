@@ -1,6 +1,5 @@
 ---
-layout: post 
-tailwind: True
+layout: post
 title: AI Usage Quest
 description: >
   Learn to prompt AI to create your itinerary, data visualization, and learn about the core concepts and limitations of AI!
@@ -62,4 +61,3 @@ footer:
   home: /mood-meal/
   next: /mood-meal/submodule_1/
 ---
-{%- include tailwind/quests/mood-meal.html -%}
