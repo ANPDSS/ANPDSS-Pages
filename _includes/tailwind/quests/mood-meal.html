@@ -1,0 +1,47 @@
+<div class="container mx-auto px-4 py-8 bg-black/5 backdrop-blur-sm rounded-xl relative">
+  <!-- Pearly glow effect around container -->
+  <div class="absolute -inset-1 bg-gradient-to-r from-orange-200 via-red-200 to-pink-200 rounded-xl opacity-40 blur-xl"></div>
+  <div class="relative z-10">
+
+    <!-- Title and Description -->
+    <div class="text-center mb-12">
+      <h2 class="text-4xl md:text-5xl font-bold text-white mb-4">{{ page.lxdData.Title }}</h2>
+      <p class="text-xl text-gray-300 max-w-4xl mx-auto">{{ page.lxdData.Description }}</p>
+    </div>
+
+    <!-- Topics Cards Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+      {% for topic in page.lxdData.Topics %}
+        {% assign module_image = topic.Image %}
+
+        <div class="bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden group transform hover:-translate-y-2">
+
+          <!-- Image Section -->
+          <div class="relative h-40 overflow-hidden bg-gradient-to-br from-gray-700 to-gray-900">
+            <img src="{{ site.baseurl }}{{ module_image }}" alt="{{ topic.Alt }}" class="w-full h-full object-contain transition-all duration-300 group-hover:scale-110">
+          </div>
+
+          <div class="p-6">
+            <h3 class="text-xl font-bold text-white mb-1">{{ topic.Title }}</h3>
+            <p class="text-sm text-gray-400 mb-2">{{ topic.Genre }} | Level: {{ topic.Level }}</p>
+            <p class="text-gray-300 text-sm mb-4">{{ topic.Description }}</p>
+            <div class="mb-4">
+              <span class="text-sm font-semibold text-gray-200">Categories:</span>
+              <div class="flex flex-wrap gap-1 mt-1">
+                {% for cat in topic.Categories %}
+                  <span class="bg-orange-900 text-orange-200 text-xs px-2 py-1 rounded-full">{{ cat }}</span>
+                {% endfor %}
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <a href="{{ site.baseurl }}{{ topic.Lessons }}" class="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 flex-1 text-white text-center py-2 rounded-lg font-semibold transition">Start Module</a>
+              {% if topic.Video %}
+              <a href="{{ site.baseurl }}{{ topic.Video }}" class="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 flex-1 text-white text-center py-2 rounded-lg font-semibold transition">Watch Video</a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
