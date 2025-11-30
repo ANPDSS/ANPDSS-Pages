@@ -61,3 +61,22 @@ footer:
   home: /mood-meal/
   next: /mood-meal/submodule_1/
 ---
+
+# {{ page.lxdData.Title }}
+
+{{ page.lxdData.Description }}
+
+## Modules
+
+{% for topic in page.lxdData.Topics %}
+### {{ topic.Title }}
+**{{ topic.Genre }} | Level {{ topic.Level }}**
+
+{{ topic.Description }}
+
+**Categories:** {{ topic.Categories | join: ", " }}
+
+[Start Module]({{ topic.Lessons }}){: .btn}
+
+---
+{% endfor %}
