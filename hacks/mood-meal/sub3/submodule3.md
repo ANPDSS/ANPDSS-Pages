@@ -124,7 +124,7 @@ footer:
 
     <!-- Simple error text placeholder -->
     <div id="recommendations-error" style="color: red; margin-top: 0.5rem; display: none;">
-      Something went wrong. Please try again.
+      Something went wrong. Please try again. 
     </div>
   </section>
 
