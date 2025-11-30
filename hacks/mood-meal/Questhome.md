@@ -1,6 +1,6 @@
 ---
 layout: post
-title: AI Usage Quest
+title: Mood Meal Quest
 description: >
   Learn to prompt AI to create your itinerary, data visualization, and learn about the core concepts and limitations of AI!
 author: CSP 2025-26
