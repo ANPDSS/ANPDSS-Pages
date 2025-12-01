@@ -76,7 +76,7 @@ footer:
 
 **Categories:** {{ topic.Categories | join: ", " }}
 
-[Start Module]({{ topic.Lessons }}){: .btn}
+[Start Module]({{ site.baseurl }}{{ topic.Lessons }}){: .btn}
 
 ---
 {% endfor %}
