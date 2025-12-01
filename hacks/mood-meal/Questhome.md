@@ -106,9 +106,15 @@ footer:
     padding-bottom: 50px;
   }
   
+  .gantt-timeline-content {
+    position: relative;
+    margin-left: 10rem;
+  }
+  
   .gantt-red-line {
     position: absolute;
-    top: 0;
+    top: -24px;
+    bottom: 50px;
     width: 2px;
     background: #dc2626;
     z-index: 20;
@@ -116,7 +122,7 @@ footer:
   
   .gantt-red-line-label {
     position: absolute;
-    top: -24px;
+    top: 0;
     left: 50%;
     transform: translateX(-50%);
     color: #dc2626;
@@ -127,10 +133,10 @@ footer:
   
   .gantt-grid-lines {
     position: absolute;
-    left: 10rem;
+    left: 0;
     right: 0;
     top: 0;
-    display: flex;
+    bottom: 0;
   }
   
   .gantt-grid-line {
@@ -153,6 +159,7 @@ footer:
   
   .gantt-label {
     width: 10rem;
+    margin-left: -10rem;
     padding-right: 1rem;
     text-align: right;
     font-size: 0.875rem;
@@ -194,6 +201,7 @@ footer:
   
   .gantt-milestone-label {
     width: 10rem;
+    margin-left: -10rem;
     padding-right: 1rem;
     text-align: right;
     font-size: 0.875rem;
@@ -230,7 +238,7 @@ footer:
   .gantt-dates {
     position: absolute;
     bottom: 0;
-    left: 10rem;
+    left: 0;
     right: 0;
     height: 2.5rem;
     border-top: 1px solid #374151;
@@ -291,25 +299,27 @@ footer:
     <h2>Visual Timeline (Gantt)</h2>
     
     <div class="gantt-timeline">
-      <!-- Red TODAY line -->
-      <div class="gantt-red-line" id="todayLine">
-        <div class="gantt-red-line-label">TODAY</div>
+      <div class="gantt-timeline-content">
+        <!-- Red TODAY line -->
+        <div class="gantt-red-line" id="todayLine">
+          <div class="gantt-red-line-label">TODAY</div>
+        </div>
+
+        <!-- Grid lines -->
+        <div class="gantt-grid-lines" id="gridLines"></div>
+
+        <!-- Task rows -->
+        <div class="gantt-tasks" id="ganttTasks"></div>
+
+        <!-- Milestones -->
+        <div class="gantt-milestones">
+          <div class="gantt-milestone-label">Milestones</div>
+          <div class="gantt-milestone-bars" id="milestoneContainer"></div>
+        </div>
+
+        <!-- Date axis -->
+        <div class="gantt-dates" id="dateAxis"></div>
       </div>
-
-      <!-- Grid lines -->
-      <div class="gantt-grid-lines" id="gridLines"></div>
-
-      <!-- Task rows -->
-      <div class="gantt-tasks" id="ganttTasks"></div>
-
-      <!-- Milestones -->
-      <div class="gantt-milestones">
-        <div class="gantt-milestone-label">Milestones</div>
-        <div class="gantt-milestone-bars" id="milestoneContainer"></div>
-      </div>
-
-      <!-- Date axis -->
-      <div class="gantt-dates" id="dateAxis"></div>
     </div>
   </div>
 
@@ -507,11 +517,8 @@ footer:
     const currentDate = new Date();
     const currentPosition = getDatePosition(currentDate);
     const todayLine = document.getElementById('todayLine');
-    const tasksContainer = document.getElementById('ganttTasks');
-    const height = tasksContainer.offsetHeight + 80; // Include milestones
     
-    todayLine.style.left = 'calc(10rem + ' + currentPosition + '% * (100% - 10rem) / 100)';
-    todayLine.style.height = height + 'px';
+    todayLine.style.left = currentPosition + '%';
   }
   
   updateTodayLine();
