@@ -63,92 +63,461 @@ footer:
 ---
 
 <style>
-  .gantt-container {
-    max-width: 900px;
-    margin: 2rem auto;
-    background: rgba(0,0,0,0.45);
-    padding: 1.5rem;
-    border-radius: 15px;
-    border: 2px solid rgba(255,255,255,0.3);
-    backdrop-filter: blur(8px);
-    color: white;
+  .gantt-wrapper {
+    background: #000;
+    color: #fff;
+    padding: 2rem;
+    margin: 2rem 0;
   }
-
-  .gantt-title {
-    text-align: center;
-    font-size: 1.8rem;
-    margin-bottom: 1rem;
+  
+  .gantt-header {
+    max-width: 1400px;
+    margin: 0 auto 2rem;
+  }
+  
+  .gantt-header h1 {
+    font-size: 2rem;
     font-weight: bold;
+    margin-bottom: 0.5rem;
   }
-
-  .gantt-chart {
-    display: grid;
-    grid-template-columns: 150px repeat(6, 1fr);
-    gap: 8px;
+  
+  .gantt-header p {
+    color: #9ca3af;
+    font-size: 1rem;
+  }
+  
+  .gantt-card {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: #1f2937;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    border: 1px solid #374151;
+  }
+  
+  .gantt-card h2 {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+  }
+  
+  .gantt-timeline {
+    position: relative;
+    padding-bottom: 50px;
+  }
+  
+  .gantt-red-line {
+    position: absolute;
+    top: 0;
+    width: 2px;
+    background: #dc2626;
+    z-index: 20;
+  }
+  
+  .gantt-red-line-label {
+    position: absolute;
+    top: -24px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #dc2626;
+    font-size: 0.75rem;
+    font-weight: bold;
+    white-space: nowrap;
+  }
+  
+  .gantt-grid-lines {
+    position: absolute;
+    left: 10rem;
+    right: 0;
+    top: 0;
+    display: flex;
+  }
+  
+  .gantt-grid-line {
+    position: absolute;
+    border-left: 1px solid #1f2937;
+    height: 100%;
+  }
+  
+  .gantt-tasks {
+    position: relative;
+  }
+  
+  .gantt-row {
+    display: flex;
+    align-items: center;
+    height: 3rem;
+    position: relative;
+    margin-bottom: 0.5rem;
+  }
+  
+  .gantt-label {
+    width: 10rem;
+    padding-right: 1rem;
+    text-align: right;
+    font-size: 0.875rem;
+    flex-shrink: 0;
+  }
+  
+  .gantt-bars {
+    flex: 1;
+    position: relative;
+    height: 100%;
+  }
+  
+  .gantt-bar {
+    position: absolute;
+    height: 2.25rem;
+    background: #fff;
+    border: 2px solid #9ca3af;
+    border-radius: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #000;
+    transition: background 0.2s;
+  }
+  
+  .gantt-bar:hover {
+    background: #e5e7eb;
+  }
+  
+  .gantt-milestones {
+    position: relative;
+    margin-top: 1.5rem;
+    height: 3rem;
+    display: flex;
     align-items: center;
   }
-
-  .gantt-label {
-    font-weight: 600;
+  
+  .gantt-milestone-label {
+    width: 10rem;
+    padding-right: 1rem;
     text-align: right;
-    padding-right: 8px;
+    font-size: 0.875rem;
+    flex-shrink: 0;
   }
-
-  .gantt-bar {
-    height: 22px;
-    border-radius: 10px;
-    opacity: 0.85;
+  
+  .gantt-milestone-bars {
+    flex: 1;
+    position: relative;
+    height: 100%;
   }
-
-  .m1 { background: #ff00ff; }
-  .m2 { background: #00ffff; }
-  .m3 { background: #00ff88; }
-  .m4 { background: #ff8800; }
-  .m5 { background: #ff66cc; }
-  .m6 { background: #8866ff; }
+  
+  .gantt-milestone {
+    position: absolute;
+  }
+  
+  .gantt-milestone-diamond {
+    width: 12px;
+    height: 12px;
+    background: #fff;
+    transform: translateX(-50%) rotate(45deg);
+    border: 1px solid #9ca3af;
+  }
+  
+  .gantt-milestone-text {
+    position: absolute;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.75rem;
+    white-space: nowrap;
+  }
+  
+  .gantt-dates {
+    position: absolute;
+    bottom: 0;
+    left: 10rem;
+    right: 0;
+    height: 2.5rem;
+    border-top: 1px solid #374151;
+  }
+  
+  .gantt-date {
+    position: absolute;
+    top: 8px;
+    font-size: 0.75rem;
+    color: #9ca3af;
+    transform: translateX(-50%);
+  }
+  
+  .gantt-table {
+    max-width: 1400px;
+    margin: 2rem auto 0;
+    background: #1f2937;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    border: 1px solid #374151;
+  }
+  
+  .gantt-table h2 {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+  
+  .gantt-table table {
+    width: 100%;
+    font-size: 0.875rem;
+  }
+  
+  .gantt-table th {
+    text-align: left;
+    padding: 0.75rem;
+    border-bottom: 1px solid #374151;
+    font-weight: 600;
+  }
+  
+  .gantt-table td {
+    padding: 0.75rem;
+    border-bottom: 1px solid #1f2937;
+  }
+  
+  .gantt-table tr:hover {
+    background: #111827;
+  }
 </style>
 
-<div class="gantt-container">
-  <div class="gantt-title">📅 Mood Meal Module Timeline</div>
+<div class="gantt-wrapper">
+  <div class="gantt-header">
+    <h1>Meal Recommendation App Timeline</h1>
+    <p>CSP Sprint 4 Timeline</p>
+  </div>
 
-  <div class="gantt-chart">
-    <div></div>
-    <div>Week 1</div>
-    <div>Week 2</div>
-    <div>Week 3</div>
-    <div>Week 4</div>
-    <div>Week 5</div>
-    <div>Week 6</div>
+  <div class="gantt-card">
+    <h2>Visual Timeline (Gantt)</h2>
+    
+    <div class="gantt-timeline">
+      <!-- Red TODAY line -->
+      <div class="gantt-red-line" id="todayLine">
+        <div class="gantt-red-line-label">TODAY</div>
+      </div>
 
-    <div class="gantt-label">Module 1 — Intro</div>
-    <div class="gantt-bar m1"></div>
-    <div></div><div></div><div></div><div></div><div></div>
+      <!-- Grid lines -->
+      <div class="gantt-grid-lines" id="gridLines"></div>
 
-    <div class="gantt-label">Module 2 — Analysis</div>
-    <div></div>
-    <div class="gantt-bar m2"></div>
-    <div></div><div></div><div></div><div></div>
+      <!-- Task rows -->
+      <div class="gantt-tasks" id="ganttTasks"></div>
 
-    <div class="gantt-label">Module 3 — Recommendations</div>
-    <div></div><div></div>
-    <div class="gantt-bar m3"></div>
-    <div></div><div></div><div></div>
+      <!-- Milestones -->
+      <div class="gantt-milestones">
+        <div class="gantt-milestone-label">Milestones</div>
+        <div class="gantt-milestone-bars" id="milestoneContainer"></div>
+      </div>
 
-    <div class="gantt-label">Module 4 — Recipes</div>
-    <div></div><div></div><div></div>
-    <div class="gantt-bar m4"></div>
-    <div></div><div></div>
+      <!-- Date axis -->
+      <div class="gantt-dates" id="dateAxis"></div>
+    </div>
+  </div>
 
-    <div class="gantt-label">Module 5 — Pantry Tools</div>
-    <div></div><div></div><div></div><div></div>
-    <div class="gantt-bar m5"></div>
-    <div></div>
-
-    <div class="gantt-label">Module 6 — Settings</div>
-    <div></div><div></div><div></div><div></div><div></div>
-    <div class="gantt-bar m6"></div>
+  <div class="gantt-table">
+    <h2>Visual Timeline (Table)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Milestone</th>
+          <th>Date</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Checkpoint #1</td>
+          <td>Wed, Nov 27</td>
+          <td>FE checkpoint: All static pages, navigation flow working</td>
+        </tr>
+        <tr>
+          <td>Checkpoint #2</td>
+          <td>Fri, Dec 6</td>
+          <td>BE integration: All endpoints working, FE connected to BE</td>
+        </tr>
+        <tr>
+          <td>Checkpoint #3</td>
+          <td>Fri, Dec 13</td>
+          <td>Deployment: Backend on AWS, full system integration tested</td>
+        </tr>
+        <tr>
+          <td>Final Presentation</td>
+          <td>Sun, Dec 15</td>
+          <td>Complete project demo, documentation submitted, AP requirements met</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>
+
+<script>
+(function() {
+  const startDate = new Date('2024-11-20');
+  const endDate = new Date('2024-12-15');
+  
+  function getDatePosition(date) {
+    const d = new Date(date);
+    const total = endDate - startDate;
+    const current = d - startDate;
+    return Math.max(0, Math.min(100, (current / total) * 100));
+  }
+  
+  function getBlockPosition(start, end) {
+    const startPos = getDatePosition(start);
+    const endPos = getDatePosition(end);
+    return { left: startPos, width: endPos - startPos };
+  }
+  
+  const tasks = [
+    {
+      role: 'User Accounts (Darshan)',
+      blocks: [
+        { start: '2024-11-20', end: '2024-11-28', label: 'Auth Setup' },
+        { start: '2024-12-02', end: '2024-12-08', label: 'Profile API' },
+        { start: '2024-12-09', end: '2024-12-13', label: 'Deploy' }
+      ]
+    },
+    {
+      role: 'Mood Analyzer (Shayan)',
+      blocks: [
+        { start: '2024-11-22', end: '2024-11-29', label: 'Mood UI' },
+        { start: '2024-12-01', end: '2024-12-09', label: 'Scoring Logic' },
+        { start: '2024-12-10', end: '2024-12-14', label: 'Charts' }
+      ]
+    },
+    {
+      role: 'Recommendation (Aditya)',
+      blocks: [
+        { start: '2024-11-25', end: '2024-12-02', label: 'Meal Cards' },
+        { start: '2024-12-03', end: '2024-12-11', label: 'Mood→Meal Engine' },
+        { start: '2024-12-12', end: '2024-12-15', label: 'Polish' }
+      ]
+    },
+    {
+      role: 'Recipe Viewer (Neil)',
+      blocks: [
+        { start: '2024-11-21', end: '2024-11-27', label: 'Recipe UI' },
+        { start: '2024-11-28', end: '2024-12-06', label: 'Cooking Mode' },
+        { start: '2024-12-07', end: '2024-12-13', label: 'Timers & Deploy' }
+      ]
+    },
+    {
+      role: 'Pantry Manager (Sathwik)',
+      blocks: [
+        { start: '2024-11-23', end: '2024-11-30', label: 'Pantry UI' },
+        { start: '2024-12-01', end: '2024-12-10', label: 'CRUD & Expiration' },
+        { start: '2024-12-11', end: '2024-12-14', label: 'Sync' }
+      ]
+    },
+    {
+      role: 'Shopping List (Perry)',
+      blocks: [
+        { start: '2024-11-26', end: '2024-12-01', label: 'List UI' },
+        { start: '2024-12-02', end: '2024-12-12', label: 'Auto-Generate Logic' },
+        { start: '2024-12-13', end: '2024-12-15', label: 'Final' }
+      ]
+    }
+  ];
+  
+  const milestones = [
+    { name: 'Checkpoint #1', date: '2024-11-27' },
+    { name: 'Checkpoint #2', date: '2024-12-06' },
+    { name: 'Checkpoint #3', date: '2024-12-13' },
+    { name: 'Final Presentation', date: '2024-12-15' }
+  ];
+  
+  const dateMarkers = [
+    '2024-11-20', '2024-11-25', '2024-11-28', '2024-12-02',
+    '2024-12-05', '2024-12-09', '2024-12-12', '2024-12-15'
+  ];
+  
+  // Render grid lines
+  const gridLines = document.getElementById('gridLines');
+  dateMarkers.forEach(date => {
+    const pos = getDatePosition(date);
+    const line = document.createElement('div');
+    line.className = 'gantt-grid-line';
+    line.style.left = pos + '%';
+    gridLines.appendChild(line);
+  });
+  
+  // Render tasks
+  const tasksContainer = document.getElementById('ganttTasks');
+  tasks.forEach(task => {
+    const row = document.createElement('div');
+    row.className = 'gantt-row';
+    
+    const label = document.createElement('div');
+    label.className = 'gantt-label';
+    label.textContent = task.role;
+    row.appendChild(label);
+    
+    const bars = document.createElement('div');
+    bars.className = 'gantt-bars';
+    
+    task.blocks.forEach(block => {
+      const { left, width } = getBlockPosition(block.start, block.end);
+      const bar = document.createElement('div');
+      bar.className = 'gantt-bar';
+      bar.style.left = left + '%';
+      bar.style.width = width + '%';
+      bar.textContent = block.label;
+      bars.appendChild(bar);
+    });
+    
+    row.appendChild(bars);
+    tasksContainer.appendChild(row);
+  });
+  
+  // Render milestones
+  const milestoneContainer = document.getElementById('milestoneContainer');
+  milestones.forEach(milestone => {
+    const pos = getDatePosition(milestone.date);
+    const m = document.createElement('div');
+    m.className = 'gantt-milestone';
+    m.style.left = pos + '%';
+    
+    const diamond = document.createElement('div');
+    diamond.className = 'gantt-milestone-diamond';
+    
+    const text = document.createElement('div');
+    text.className = 'gantt-milestone-text';
+    text.textContent = milestone.name;
+    
+    m.appendChild(diamond);
+    m.appendChild(text);
+    milestoneContainer.appendChild(m);
+  });
+  
+  // Render date axis
+  const dateAxis = document.getElementById('dateAxis');
+  dateMarkers.forEach(date => {
+    const pos = getDatePosition(date);
+    const d = new Date(date);
+    const formatted = String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    
+    const dateLabel = document.createElement('div');
+    dateLabel.className = 'gantt-date';
+    dateLabel.style.left = pos + '%';
+    dateLabel.textContent = formatted;
+    dateAxis.appendChild(dateLabel);
+  });
+  
+  // Position TODAY line
+  function updateTodayLine() {
+    const currentDate = new Date();
+    const currentPosition = getDatePosition(currentDate);
+    const todayLine = document.getElementById('todayLine');
+    const tasksContainer = document.getElementById('ganttTasks');
+    const height = tasksContainer.offsetHeight + 80; // Include milestones
+    
+    todayLine.style.left = 'calc(10rem + ' + currentPosition + '% * (100% - 10rem) / 100)';
+    todayLine.style.height = height + 'px';
+  }
+  
+  updateTodayLine();
+  setInterval(updateTodayLine, 3600000); // Update every hour
+})();
+</script>
 
 <style>
   body, html, .page-content, .wrapper {
