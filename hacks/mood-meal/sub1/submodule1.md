@@ -616,6 +616,117 @@ footer:
           </div>
         </div>
       </section>
+
+      <hr>
+
+      <!-- Foods I Can Eat Section -->
+      <section style="margin-bottom: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+          <div>
+            <h2 style="margin: 0;">Foods I Can Eat</h2>
+            <p style="color: #999; margin: 0.5rem 0 0 0;">Select only the types of food you want to see in your recommendations</p>
+          </div>
+        </div>
+
+        <div class="profile-card" style="border-left-color: #4aff9e;">
+          <h3>✓ Acceptable Food Types</h3>
+          <p style="color: #999; margin-bottom: 1rem;">Check the boxes for food types you want to include in your meal recommendations:</p>
+
+          <div class="tag-container" style="margin-bottom: 1.5rem;">
+            <label class="tag-label">
+              <input type="checkbox" name="acceptable-foods" value="halal" id="food-halal">
+              Halal
+            </label>
+            <label class="tag-label">
+              <input type="checkbox" name="acceptable-foods" value="kosher" id="food-kosher">
+              Kosher
+            </label>
+            <label class="tag-label">
+              <input type="checkbox" name="acceptable-foods" value="organic" id="food-organic">
+              Organic
+            </label>
+            <label class="tag-label">
+              <input type="checkbox" name="acceptable-foods" value="non-gmo" id="food-non-gmo">
+              Non-GMO
+            </label>
+            <label class="tag-label">
+              <input type="checkbox" name="acceptable-foods" value="local" id="food-local">
+              Locally Sourced
+            </label>
+            <label class="tag-label">
+              <input type="checkbox" name="acceptable-foods" value="sustainable" id="food-sustainable">
+              Sustainable
+            </label>
+            <label class="tag-label">
+              <input type="checkbox" name="acceptable-foods" value="free-range" id="food-free-range">
+              Free-Range
+            </label>
+            <label class="tag-label">
+              <input type="checkbox" name="acceptable-foods" value="grass-fed" id="food-grass-fed">
+              Grass-Fed
+            </label>
+            <label class="tag-label">
+              <input type="checkbox" name="acceptable-foods" value="wild-caught" id="food-wild-caught">
+              Wild-Caught
+            </label>
+            <label class="tag-label">
+              <input type="checkbox" name="acceptable-foods" value="plant-based" id="food-plant-based">
+              Plant-Based Only
+            </label>
+            <label class="tag-label">
+              <input type="checkbox" name="acceptable-foods" value="whole-foods" id="food-whole-foods">
+              Whole Foods
+            </label>
+            <label class="tag-label">
+              <input type="checkbox" name="acceptable-foods" value="raw" id="food-raw">
+              Raw Foods
+            </label>
+            <label class="tag-label">
+              <input type="checkbox" name="acceptable-foods" value="fermented" id="food-fermented">
+              Fermented Foods
+            </label>
+            <label class="tag-label">
+              <input type="checkbox" name="acceptable-foods" value="preservative-free" id="food-preservative-free">
+              Preservative-Free
+            </label>
+            <label class="tag-label">
+              <input type="checkbox" name="acceptable-foods" value="low-sodium" id="food-low-sodium">
+              Low-Sodium
+            </label>
+            <label class="tag-label">
+              <input type="checkbox" name="acceptable-foods" value="low-sugar" id="food-low-sugar">
+              Low-Sugar
+            </label>
+            <label class="tag-label">
+              <input type="checkbox" name="acceptable-foods" value="high-protein" id="food-high-protein">
+              High-Protein
+            </label>
+            <label class="tag-label">
+              <input type="checkbox" name="acceptable-foods" value="low-carb" id="food-low-carb">
+              Low-Carb
+            </label>
+            <label class="tag-label">
+              <input type="checkbox" name="acceptable-foods" value="mediterranean" id="food-mediterranean">
+              Mediterranean Style
+            </label>
+            <label class="tag-label">
+              <input type="checkbox" name="acceptable-foods" value="clean-eating" id="food-clean-eating">
+              Clean Eating
+            </label>
+          </div>
+
+          <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+            <button id="clear-acceptable-foods-btn" class="btn btn-secondary">
+              Clear All
+            </button>
+            <button id="save-acceptable-foods-btn" class="btn btn-primary">
+              Save Food Preferences
+            </button>
+          </div>
+
+          <div id="acceptable-foods-message" class="hidden" style="margin-top: 1rem;"></div>
+        </div>
+      </section>
     </section>
   </div>
 
@@ -823,7 +934,8 @@ footer:
           cuisines: [],
           cookingSkill: 'intermediate',
           maxPrepTime: 45,
-          spicePreference: 'medium'
+          spicePreference: 'medium',
+          acceptableFoods: []
         },
         createdAt: new Date().toISOString()
       };
@@ -874,6 +986,15 @@ footer:
     });
   }
 
+  // Load acceptable foods when dashboard is shown
+  function loadAcceptableFoods() {
+    const acceptableFoodsCheckboxes = document.querySelectorAll('input[name="acceptable-foods"]');
+    if (!currentUser || !currentUser.profile.acceptableFoods) return;
+
+    setSelectedValues(acceptableFoodsCheckboxes, currentUser.profile.acceptableFoods);
+    updateTagLabels();
+  }
+
   // Dashboard: Update display
   function updateDashboard() {
     if (!currentUser) return;
@@ -912,16 +1033,19 @@ footer:
 
     // Display account info
     document.getElementById('display-email').textContent = currentUser.email;
-    document.getElementById('display-member-since').textContent = 
+    document.getElementById('display-member-since').textContent =
       new Date(currentUser.createdAt).toLocaleDateString();
-    document.getElementById('display-cooking-skill').textContent = 
-      currentUser.profile.cookingSkill.charAt(0).toUpperCase() + 
+    document.getElementById('display-cooking-skill').textContent =
+      currentUser.profile.cookingSkill.charAt(0).toUpperCase() +
       currentUser.profile.cookingSkill.slice(1);
-    document.getElementById('display-max-prep').textContent = 
+    document.getElementById('display-max-prep').textContent =
       currentUser.profile.maxPrepTime + ' minutes';
-    document.getElementById('display-spice').textContent = 
-      currentUser.profile.spicePreference.charAt(0).toUpperCase() + 
+    document.getElementById('display-spice').textContent =
+      currentUser.profile.spicePreference.charAt(0).toUpperCase() +
       currentUser.profile.spicePreference.slice(1);
+
+    // Load acceptable foods checkboxes
+    loadAcceptableFoods();
   }
 
   // Dashboard: Edit Profile
@@ -958,6 +1082,42 @@ footer:
       setTimeout(updateTagLabels, 10);
     });
   });
+
+  // Acceptable Foods: Save
+  const saveAcceptableFoodsBtn = document.getElementById('save-acceptable-foods-btn');
+  const clearAcceptableFoodsBtn = document.getElementById('clear-acceptable-foods-btn');
+  const acceptableFoodsMessage = document.getElementById('acceptable-foods-message');
+  const acceptableFoodsCheckboxes = document.querySelectorAll('input[name="acceptable-foods"]');
+
+  if (saveAcceptableFoodsBtn) {
+    saveAcceptableFoodsBtn.addEventListener('click', () => {
+      if (!currentUser) return;
+
+      const selectedFoods = getSelectedValues(acceptableFoodsCheckboxes);
+      currentUser.profile.acceptableFoods = selectedFoods;
+
+      showMessage(acceptableFoodsMessage, `Saved ${selectedFoods.length} food preference(s) successfully!`, false);
+      setTimeout(() => hideMessage(acceptableFoodsMessage), 3000);
+
+      // Update tag labels
+      updateTagLabels();
+    });
+  }
+
+  // Acceptable Foods: Clear All
+  if (clearAcceptableFoodsBtn) {
+    clearAcceptableFoodsBtn.addEventListener('click', () => {
+      acceptableFoodsCheckboxes.forEach(cb => cb.checked = false);
+      updateTagLabels();
+
+      if (currentUser) {
+        currentUser.profile.acceptableFoods = [];
+      }
+
+      showMessage(acceptableFoodsMessage, 'All food preferences cleared', false);
+      setTimeout(() => hideMessage(acceptableFoodsMessage), 3000);
+    });
+  }
 
   // Initialize
   showView('login');
