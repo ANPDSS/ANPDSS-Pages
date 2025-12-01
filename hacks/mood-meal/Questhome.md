@@ -162,7 +162,7 @@ footer:
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     cursor: pointer;
     overflow: hidden;
-    border: 3px solid transparent;
+    border: 2px solid rgba(255, 255, 255, 0.8);
   }
 
   .module-card::before {
@@ -188,7 +188,6 @@ footer:
 
   .module-card-1 {
     background: linear-gradient(135deg, #1a0a1f 0%, #2d1b3d 100%);
-    animation: glow-rotate-1 4s ease-in-out infinite;
   }
   .module-card-1::before {
     background: linear-gradient(135deg, #ff00ff 0%, #ff0088 100%);
@@ -196,7 +195,6 @@ footer:
 
   .module-card-2 {
     background: linear-gradient(135deg, #0a1a2e 0%, #1b2d3d 100%);
-    animation: glow-rotate-2 4s ease-in-out infinite;
   }
   .module-card-2::before {
     background: linear-gradient(135deg, #00ffff 0%, #0088ff 100%);
@@ -204,7 +202,6 @@ footer:
 
   .module-card-3 {
     background: linear-gradient(135deg, #1a0a2e 0%, #1b1d3d 100%);
-    animation: glow-rotate-3 4s ease-in-out infinite;
   }
   .module-card-3::before {
     background: linear-gradient(135deg, #ff00ff 0%, #00ffff 90%, #00ff88 100%);
@@ -212,7 +209,6 @@ footer:
 
   .module-card-4 {
     background: linear-gradient(135deg, #2e1a0a 0%, #3d2d1b 100%);
-    animation: glow-rotate-4 4s ease-in-out infinite;
   }
   .module-card-4::before {
     background: linear-gradient(135deg, #ffaa00 0%, #ff6600 100%);
@@ -220,7 +216,6 @@ footer:
 
   .module-card-5 {
     background: linear-gradient(135deg, #1a2e2e 0%, #1b3d3d 100%);
-    animation: glow-rotate-5 4s ease-in-out infinite;
   }
   .module-card-5::before {
     background: linear-gradient(135deg, #ff66cc 0%, #66ffdd 100%);
@@ -228,7 +223,6 @@ footer:
 
   .module-card-6 {
     background: linear-gradient(135deg, #1a0a2e 0%, #2d1b3d 100%);
-    animation: glow-rotate-6 4s ease-in-out infinite;
   }
   .module-card-6::before {
     background: linear-gradient(135deg, #8866ff 0%, #aa66ff 100%);
