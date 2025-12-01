@@ -3,6 +3,7 @@ layout: post
 title: "Submodule 4"
 description: "Recipe Viewer & Cooking Mode"
 permalink: /mood-meal/submodule_4/
+markdown: false
 parent: "cool"
 team: "ANDPDSS"
 microblog: True
