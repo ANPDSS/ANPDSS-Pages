@@ -29,7 +29,7 @@ footer:
       padding: 20px;
       line-height: 1.6;
     }
-
+ 
     main {
       max-width: 900px;
       margin: 0 auto;
@@ -962,4 +962,4 @@ footer:
             <input type="checkbox" name="allergy" value="wheat">
             Wheat
           </label>
-          <label class="tag-label">
+          <label class="tag-label"> 
