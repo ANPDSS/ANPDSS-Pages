@@ -63,6 +63,94 @@ footer:
 ---
 
 <style>
+  .gantt-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    background: rgba(0,0,0,0.45);
+    padding: 1.5rem;
+    border-radius: 15px;
+    border: 2px solid rgba(255,255,255,0.3);
+    backdrop-filter: blur(8px);
+    color: white;
+  }
+
+  .gantt-title {
+    text-align: center;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    font-weight: bold;
+  }
+
+  .gantt-chart {
+    display: grid;
+    grid-template-columns: 150px repeat(6, 1fr);
+    gap: 8px;
+    align-items: center;
+  }
+
+  .gantt-label {
+    font-weight: 600;
+    text-align: right;
+    padding-right: 8px;
+  }
+
+  .gantt-bar {
+    height: 22px;
+    border-radius: 10px;
+    opacity: 0.85;
+  }
+
+  .m1 { background: #ff00ff; }
+  .m2 { background: #00ffff; }
+  .m3 { background: #00ff88; }
+  .m4 { background: #ff8800; }
+  .m5 { background: #ff66cc; }
+  .m6 { background: #8866ff; }
+</style>
+
+<div class="gantt-container">
+  <div class="gantt-title">📅 Mood Meal Module Timeline</div>
+
+  <div class="gantt-chart">
+    <div></div>
+    <div>Week 1</div>
+    <div>Week 2</div>
+    <div>Week 3</div>
+    <div>Week 4</div>
+    <div>Week 5</div>
+    <div>Week 6</div>
+
+    <div class="gantt-label">Module 1 — Intro</div>
+    <div class="gantt-bar m1"></div>
+    <div></div><div></div><div></div><div></div><div></div>
+
+    <div class="gantt-label">Module 2 — Analysis</div>
+    <div></div>
+    <div class="gantt-bar m2"></div>
+    <div></div><div></div><div></div><div></div>
+
+    <div class="gantt-label">Module 3 — Recommendations</div>
+    <div></div><div></div>
+    <div class="gantt-bar m3"></div>
+    <div></div><div></div><div></div>
+
+    <div class="gantt-label">Module 4 — Recipes</div>
+    <div></div><div></div><div></div>
+    <div class="gantt-bar m4"></div>
+    <div></div><div></div>
+
+    <div class="gantt-label">Module 5 — Pantry Tools</div>
+    <div></div><div></div><div></div><div></div>
+    <div class="gantt-bar m5"></div>
+    <div></div>
+
+    <div class="gantt-label">Module 6 — Settings</div>
+    <div></div><div></div><div></div><div></div><div></div>
+    <div class="gantt-bar m6"></div>
+  </div>
+</div>
+
+<style>
   body, html, .page-content, .wrapper {
     background-image: url('{{ site.baseurl }}/images/12435.png') !important;
     background-size: cover !important;
