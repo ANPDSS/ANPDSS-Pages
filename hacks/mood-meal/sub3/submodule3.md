@@ -171,3 +171,108 @@ footer:
   </section>
 
 </main>
+
+<style>
+/* Filters dropdown styling - make the select text white to match dark theme */
+#filters-section select {
+  color: #ffffff;
+  background-color: #111; /* darker background to match page */
+  border: 1px solid #444;
+  padding: 0.25rem 0.4rem;
+}
+
+/* Try to style the option text and dropdown appearance where supported. */
+#filters-section select option {
+  color: #ffffff;
+  background-color: #111;
+}
+
+/* Invert the native dropdown arrow in some browsers so it remains visible on dark bg */
+#filters-section select::-ms-expand {
+  filter: invert(1);
+}
+</style>
+
+<style>
+
+:root {
+  --mm-accent: #4A9EFF;
+  --mm-accent-dark: #2F7FDB;
+  --mm-accent-soft: rgba(74,158,255,0.08);
+  --mm-foreground: #ffffff;
+}
+
+/* Headings */
+#recommendation-page h2,
+#recommendation-page h3 {
+  color: var(--mm-accent);
+}
+
+/* Primary buttons */
+#submit-section #get-recommendations-btn,
+.view-recipe-btn,
+#filters-section button {
+  background: var(--mm-accent);
+  color: var(--mm-foreground);
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 0.9rem;
+  transition: transform 0.14s ease, box-shadow 0.14s ease, background 0.14s ease;
+}
+#submit-section #get-recommendations-btn:hover,
+.view-recipe-btn:hover,
+#filters-section button:hover {
+  background: var(--mm-accent-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px var(--mm-accent-soft);
+}
+
+/* Recipe / result cards: accent border */
+.meal-card {
+  border-left: 6px solid rgba(74,158,255,0.12);
+  transition: border-color 0.14s ease, box-shadow 0.14s ease;
+}
+.meal-card:hover {
+  border-left-color: var(--mm-accent);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.28);
+}
+
+/* Selects and focus states (keeps your white text rule) */
+#filters-section select {
+  color: #fff;
+  background-color: #111;
+  border: 1px solid #444;
+  padding: 0.25rem 0.4rem;
+  border-radius: 6px;
+}
+#filters-section select:focus,
+#filters-section select:focus-visible {
+  outline: 3px solid rgba(74,158,255,0.18);
+  border-color: var(--mm-accent);
+  box-shadow: 0 6px 12px rgba(74,158,255,0.08);
+}
+
+/* Links */
+#recommendation-page a {
+  color: var(--mm-accent);
+  text-decoration: none;
+}
+#recommendation-page a:hover {
+  text-decoration: underline;
+}
+
+/* Accessible focus for interactive elements */
+button:focus,
+select:focus,
+input:focus,
+textarea:focus {
+  outline: 3px solid rgba(74,158,255,0.12);
+  outline-offset: 2px;
+}
+
+/* Responsive tweak */
+@media (max-width: 600px) {
+  .meal-card { padding: 0.85rem; }
+  #submit-section #get-recommendations-btn { width: 100%; }
+}
+</style>

@@ -398,7 +398,9 @@ footer:
 
         // Redirect to recommendations page after 1.5 seconds
         setTimeout(() => {
-          window.location.href = '/mood-meal/submodule_3/';
+          // Use Jekyll's relative_url filter so the generated HTML includes the site's baseurl
+          // This ensures the redirect works both locally and on GitHub Pages when a baseurl is set.
+          window.location.href = "{{ '/mood-meal/submodule_3/' | relative_url }}";
         }, 1500);
 
       } catch (error) {
