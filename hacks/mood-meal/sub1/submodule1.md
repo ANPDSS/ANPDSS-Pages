@@ -17,6 +17,9 @@ footer:
   next: /mood-meal/submodule_2/
 ---
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MoodMeal - User Accounts & Preferences</title>
@@ -345,6 +348,85 @@ footer:
         <p>Select any dietary restrictions you follow:</p>
 
         <div class="tag-container">
+          <label class="tag-label">
+            <input type="checkbox" name="dietary" value="vegetarian">
+            Vegetarian
+          </label>
+          <label class="tag-label">
+            <input type="checkbox" name="dietary" value="vegan">
+            Vegan
+          </label>
+          <label class="tag-label">
+            <input type="checkbox" name="dietary" value="pescatarian">
+            Pescatarian
+          </label>
+          <label class="tag-label">
+            <input type="checkbox" name="dietary" value="gluten-free">
+            Gluten-Free
+          </label>
+          <label class="tag-label">
+            <input type="checkbox" name="dietary" value="dairy-free">
+            Dairy-Free
+          </label>
+          <label class="tag-label">
+            <input type="checkbox" name="dietary" value="keto">
+            Keto
+          </label>
+          <label class="tag-label">
+            <input type="checkbox" name="dietary" value="paleo">
+            Paleo
+          </label>
+          <label class="tag-label">
+            <input type="checkbox" name="dietary" value="halal">
+            Halal
+          </label>
+          <label class="tag-label">
+            <input type="checkbox" name="dietary" value="kosher">
+            Kosher
+          </label>
+        </div>
+      </section>
+
+      <hr>
+
+      <!-- 3. Allergies & Intolerances -->
+      <section style="margin-bottom: 2rem;">
+        <h2>3. Allergies & Intolerances</h2>
+        <p>Let us know about any food allergies or intolerances:</p>
+
+        <div class="tag-container">
+          <label class="tag-label">
+            <input type="checkbox" name="allergy" value="nuts">
+            Nuts
+          </label>
+          <label class="tag-label">
+            <input type="checkbox" name="allergy" value="peanuts">
+            Peanuts
+          </label>
+          <label class="tag-label">
+            <input type="checkbox" name="allergy" value="shellfish">
+            Shellfish
+          </label>
+          <label class="tag-label">
+            <input type="checkbox" name="allergy" value="fish">
+            Fish
+          </label>
+          <label class="tag-label">
+            <input type="checkbox" name="allergy" value="eggs">
+            Eggs
+          </label>
+          <label class="tag-label">
+            <input type="checkbox" name="allergy" value="dairy">
+            Dairy
+          </label>
+          <label class="tag-label">
+            <input type="checkbox" name="allergy" value="soy">
+            Soy
+          </label>
+          <label class="tag-label">
+            <input type="checkbox" name="allergy" value="wheat">
+            Wheat
+          </label>
           <label class="tag-label">
             <input type="checkbox" name="allergy" value="gluten">
             Gluten
@@ -884,82 +966,4 @@ footer:
 </script>
 
 </body>
-</html><input type="checkbox" name="dietary" value="vegetarian">
-            Vegetarian
-          </label>
-          <label class="tag-label">
-            <input type="checkbox" name="dietary" value="vegan">
-            Vegan
-          </label>
-          <label class="tag-label">
-            <input type="checkbox" name="dietary" value="pescatarian">
-            Pescatarian
-          </label>
-          <label class="tag-label">
-            <input type="checkbox" name="dietary" value="gluten-free">
-            Gluten-Free
-          </label>
-          <label class="tag-label">
-            <input type="checkbox" name="dietary" value="dairy-free">
-            Dairy-Free
-          </label>
-          <label class="tag-label">
-            <input type="checkbox" name="dietary" value="keto">
-            Keto
-          </label>
-          <label class="tag-label">
-            <input type="checkbox" name="dietary" value="paleo">
-            Paleo
-          </label>
-          <label class="tag-label">
-            <input type="checkbox" name="dietary" value="halal">
-            Halal
-          </label>
-          <label class="tag-label">
-            <input type="checkbox" name="dietary" value="kosher">
-            Kosher
-          </label>
-        </div>
-      </section>
-
-      <hr>
-
-      <!-- 3. Allergies & Intolerances -->
-      <section style="margin-bottom: 2rem;">
-        <h2>3. Allergies & Intolerances</h2>
-        <p>Let us know about any food allergies or intolerances:</p>
-
-        <div class="tag-container">
-          <label class="tag-label">
-            <input type="checkbox" name="allergy" value="nuts">
-            Nuts
-          </label>
-          <label class="tag-label">
-            <input type="checkbox" name="allergy" value="peanuts">
-            Peanuts
-          </label>
-          <label class="tag-label">
-            <input type="checkbox" name="allergy" value="shellfish">
-            Shellfish
-          </label>
-          <label class="tag-label">
-            <input type="checkbox" name="allergy" value="fish">
-            Fish
-          </label>
-          <label class="tag-label">
-            <input type="checkbox" name="allergy" value="eggs">
-            Eggs
-          </label>
-          <label class="tag-label">
-            <input type="checkbox" name="allergy" value="dairy">
-            Dairy
-          </label>
-          <label class="tag-label">
-            <input type="checkbox" name="allergy" value="soy">
-            Soy
-          </label>
-          <label class="tag-label">
-            <input type="checkbox" name="allergy" value="wheat">
-            Wheat
-          </label>
-          <label class="tag-label"> 
+</html> 
