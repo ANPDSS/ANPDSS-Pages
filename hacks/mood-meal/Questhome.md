@@ -63,6 +63,23 @@ footer:
 ---
 
 <style>
+  body, html, .page-content, .wrapper {
+    background-image: url('{{ site.baseurl }}/images/12435.png') !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-attachment: fixed !important;
+    background-repeat: no-repeat !important;
+  }
+
+  .page-content {
+    background-image: url('{{ site.baseurl }}/images/12435.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+  }
+
   @keyframes glow-rotate-1 {
     0% { box-shadow: 0 0 20px #ff00ff, 0 0 40px #ff00ff, 0 0 60px #ff00ff; }
     33% { box-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff, 0 0 60px #00ffff; }
