@@ -513,16 +513,21 @@ footer:
   });
   
   // Position TODAY line
+  // By default this will use a forced demo date so the line appears at 2024-12-01
+  // Change FORCE_TODAY to null to use the real current date instead.
+  const FORCE_TODAY = new Date('2024-12-01'); // set to null to use actual today
+
   function updateTodayLine() {
-    const currentDate = new Date();
+    const currentDate = FORCE_TODAY || new Date();
     const currentPosition = getDatePosition(currentDate);
     const todayLine = document.getElementById('todayLine');
-    
+
     todayLine.style.left = currentPosition + '%';
   }
-  
+
   updateTodayLine();
-  setInterval(updateTodayLine, 3600000); // Update every hour
+  // Update once per day (24 hours). This keeps the line fresh on page without heavy timers.
+  setInterval(updateTodayLine, 24 * 60 * 60 * 1000);
 })();
 </script>
 
