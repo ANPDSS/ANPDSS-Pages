@@ -136,36 +136,48 @@ footer:
 
     <!-- This container will be filled/updated by JS. Static examples below. -->
     <div id="recommendations-container">
+      <!-- Static recipe cards (mirror of Submodule 4 sample RECIPES) -->
 
-      <!-- Static example card 1 -->
-      <article class="meal-card" data-meal-id="example-1"
+      <article class="meal-card" data-meal-id="oatmeal-bowl"
         style="border: 1px solid #444; border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
-        <h3>Creamy Veggie Stir Fry</h3>
-        <p>Warm, quick, veggie-based comfort food.</p>
-        <p><strong>Prep time:</strong> 20 min</p>
-        <p><strong>Tags:</strong> comfort, warm, quick</p>
-        <p><strong>Uses pantry items:</strong> rice, broccoli</p>
+        <h3>Comfort Oatmeal Bowl</h3>
+        <p>Warm, easy, and mood-friendly.</p>
+        <p><strong>Prep time:</strong> 10 min</p>
+        <p><strong>Tags:</strong> calm, warm, easy</p>
+        <p><strong>Uses pantry items:</strong> rolled oats, honey</p>
         <p><strong>Mood match:</strong> 87%</p>
-        <button type="button" class="view-recipe-btn" style="margin-top: 0.5rem;">
+        <a class="view-recipe-btn" href="{{ '/mood-meal/submodule_4/' | relative_url }}?recipe=oatmeal-bowl" style="display:inline-block; margin-top:0.5rem; text-decoration:none;">
           View Recipe
-        </button>
+        </a>
       </article>
 
-      <!-- Static example card 2 -->
-      <article class="meal-card" data-meal-id="example-2"
+      <article class="meal-card" data-meal-id="chicken-rice-bowl"
         style="border: 1px solid #444; border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
-        <h3>Spicy Lentil Bowl</h3>
-        <p>High-protein spicy bowl to boost your energy.</p>
+        <h3>Chicken & Rice Bowl</h3>
+        <p>Simple protein + carbs (great post-gym).</p>
         <p><strong>Prep time:</strong> 25 min</p>
-        <p><strong>Tags:</strong> energizing, spicy</p>
-        <p><strong>Uses pantry items:</strong> none</p>
+        <p><strong>Tags:</strong> energetic, hearty</p>
+        <p><strong>Uses pantry items:</strong> cooked rice, soy sauce</p>
         <p><strong>Mood match:</strong> 81%</p>
-        <button type="button" class="view-recipe-btn" style="margin-top: 0.5rem;">
+        <a class="view-recipe-btn" href="{{ '/mood-meal/submodule_4/' | relative_url }}?recipe=chicken-rice-bowl" style="display:inline-block; margin-top:0.5rem; text-decoration:none;">
           View Recipe
-        </button>
+        </a>
       </article>
 
-      <!-- Your JS will remove/replace these examples with real data from the backend. -->
+      <article class="meal-card" data-meal-id="pasta-primavera"
+        style="border: 1px solid #444; border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+        <h3>15-Min Pasta Primavera</h3>
+        <p>Fast comfort meal with veggies.</p>
+        <p><strong>Prep time:</strong> 15 min</p>
+        <p><strong>Tags:</strong> happy, quick, veggie</p>
+        <p><strong>Uses pantry items:</strong> pasta, olive oil</p>
+        <p><strong>Mood match:</strong> 78%</p>
+        <a class="view-recipe-btn" href="{{ '/mood-meal/submodule_4/' | relative_url }}?recipe=pasta-primavera" style="display:inline-block; margin-top:0.5rem; text-decoration:none;">
+          View Recipe
+        </a>
+      </article>
+
+      <!-- Your JS may still remove/replace these examples with real data from the backend. -->
 
     </div>
   </section>
@@ -253,11 +265,25 @@ footer:
 }
 
 /* Links */
+
 #recommendation-page a {
-  color: var(--mm-accent);
+  color: #fff;
   text-decoration: none;
+  background: none;
 }
-#recommendation-page a:hover {
+#recommendation-page a.view-recipe-btn {
+  color: #fff;
+  background: var(--mm-accent);
+  border-radius: 6px;
+  padding: 0.5rem 0.9rem;
+  font-weight: 500;
+  box-shadow: none;
+  border: none;
+  transition: background 0.14s, color 0.14s;
+}
+#recommendation-page a.view-recipe-btn:hover {
+  background: var(--mm-accent-dark);
+  color: #fff;
   text-decoration: underline;
 }
 
