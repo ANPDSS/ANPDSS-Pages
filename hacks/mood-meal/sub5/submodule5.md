@@ -2,19 +2,19 @@
 layout: post
 title: "Submodule 5"
 description: "Music Recommender"
-permalink: /mood-assistant/submodule_5/
+permalink: /mood-meal/submodule_5/
 parent: "cool"
 team: "ANDPDSS"
 microblog: True
 submodule: 5
-categories: [CSP, Submodule, mood-assistant]
-tags: [mood-assistant, submodule, cool]
+categories: [CSP, Submodule, mood-meal]
+tags: [mood-meal, submodule, cool]
 author: "ANPDSS"
 date: 2025-11-20
 footer:
-  previous: /mood-assistant/submodule_4/
-  home: /mood-assistant/
-  next: /mood-assistant/submodule_6/
+  previous: /mood-meal/submodule_4/
+  home: /mood-meal/
+  next: /mood-meal/submodule_6/
 ---
 
 # Mood Assistant – Music Recommender
@@ -549,12 +549,31 @@ footer:
   }
 
   // Delete a saved playlist
-  function deletePlaylist(playlistId) {
+  async function deletePlaylist(playlistId) {
     if (!confirm('Are you sure you want to delete this playlist?')) return;
 
-    savedPlaylists = savedPlaylists.filter(p => (p.playlist_id || p.created_at) !== playlistId);
-    saveToLocalStorage();
-    renderSavedPlaylists();
+    try {
+      const userId = getCurrentUserId();
+      
+      // Try to delete from backend
+      await apiRequest(`/music/playlist/${playlistId}`, {
+        method: 'DELETE'
+      });
+
+      // Remove from local state
+      savedPlaylists = savedPlaylists.filter(p => (p.playlist_id || p.created_at) !== playlistId);
+      saveToLocalStorage();
+      renderSavedPlaylists();
+      
+      console.log('Playlist deleted successfully');
+    } catch (error) {
+      console.error('Failed to delete playlist from backend, deleting locally:', error);
+      
+      // Fallback: delete from localStorage only
+      savedPlaylists = savedPlaylists.filter(p => (p.playlist_id || p.created_at) !== playlistId);
+      saveToLocalStorage();
+      renderSavedPlaylists();
+    }
   }
 
   // Event Listeners
