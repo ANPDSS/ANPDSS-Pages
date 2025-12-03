@@ -187,67 +187,6 @@ footer:
     </div>
   </section>
 
-  <hr />
-
-  <!-- 5. Mood History Visualization -->
-  <section id="mood-history-section" aria-label="Mood history" style="margin: 1.5rem 0;">
-    <h2>5. Your Mood History</h2>
-    <p>Track how your moods change over time:</p>
-
-    <!-- Time range selector -->
-    <div style="margin: 1rem 0;">
-      <label for="history-range-select"><strong>Show:</strong></label>
-      <select id="history-range-select" name="historyRange" style="margin-left: 0.5rem; padding: 0.3rem;">
-        <option value="7">Last 7 days</option>
-        <option value="14">Last 14 days</option>
-        <option value="30" selected>Last 30 days</option>
-      </select>
-    </div>
-
-    <!-- Mood history chart placeholder -->
-    <div id="mood-history-chart"
-      style="width: 100%; max-width: 800px; height: 250px; background: #1a1a1a; border-radius: 8px; padding: 1rem; margin-top: 1rem;">
-      <p style="text-align: center; color: #666; line-height: 250px; margin: 0;">
-        [Chart will be rendered here with your mood data over time]
-      </p>
-    </div>
-
-    <!-- Sample mood entries table -->
-    <div style="margin-top: 1.5rem;">
-      <h3>Recent Entries</h3>
-      <table style="width: 100%; max-width: 800px; border-collapse: collapse; margin-top: 1rem;">
-        <thead>
-          <tr style="border-bottom: 2px solid #444;">
-            <th style="text-align: left; padding: 0.5rem;">Date</th>
-            <th style="text-align: left; padding: 0.5rem;">Mood Score</th>
-            <th style="text-align: left; padding: 0.5rem;">Tags</th>
-            <th style="text-align: left; padding: 0.5rem;">Category</th>
-          </tr>
-        </thead>
-        <tbody id="mood-history-table-body">
-          <!-- Static examples - will be replaced by JS -->
-          <tr style="border-bottom: 1px solid #333;">
-            <td style="padding: 0.5rem;">2025-11-28</td>
-            <td style="padding: 0.5rem;">72</td>
-            <td style="padding: 0.5rem;">happy, calm</td>
-            <td style="padding: 0.5rem;">Happy</td>
-          </tr>
-          <tr style="border-bottom: 1px solid #333;">
-            <td style="padding: 0.5rem;">2025-11-27</td>
-            <td style="padding: 0.5rem;">45</td>
-            <td style="padding: 0.5rem;">tired, stressed</td>
-            <td style="padding: 0.5rem;">Tired</td>
-          </tr>
-          <tr style="border-bottom: 1px solid #333;">
-            <td style="padding: 0.5rem;">2025-11-26</td>
-            <td style="padding: 0.5rem;">85</td>
-            <td style="padding: 0.5rem;">energetic, motivated</td>
-            <td style="padding: 0.5rem;">Energetic</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
 
 </main>
 
