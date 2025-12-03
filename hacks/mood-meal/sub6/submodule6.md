@@ -17,350 +17,272 @@ footer:
 ---
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Smart Shopping List</title>
+<meta charset="UTF-8" />
+<title>Mood Plan Dashboard</title>
 <style>
+
     .container {
-        max-width: 900px;
+        max-width: 800px;
         margin: auto;
+    }
+    h1, h2, h3 {
+        color: #333;
     }
     .card {
         background: white;
         padding: 20px;
-        margin-bottom: 20px;
         border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    .meal {
-        border: 2px solid #ccc;
-        border-radius: 10px;
-        padding: 12px;
-        cursor: pointer;
-        display: flex;
-        justify-content: space-between;
-    }
-    .meal.selected {
-        border-color: #4f46e5;
-        background: #eef2ff;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
     button {
-        padding: 10px 15px;
+        padding: 12px 20px;
         border-radius: 8px;
         border: none;
         cursor: pointer;
-        font-weight: 600;
+        font-weight: bold;
     }
     .btn-main {
-        background: #4f46e5;
+        background: color #3b82f6;
         color: white;
         width: 100%;
-        margin-top: 15px;
+        margin-bottom: 15px;
     }
-    .btn-action {
-        background: #e0e0ff;
+    .section-title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 8px;
     }
-    .category {
-        margin-top: 10px;
-        background: #f7f7f7;
-        padding: 10px;
-        border-radius: 8px;
+    .hidden { display: none; }
+    .favorite { color: red; }
+
+    .moodSelect {
+        background: white;
     }
-    .item {
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        margin-top: 5px;
-        display: flex;
-        justify-content: space-between;
-    }
-    .checked {
-        background: #eaffea;
-        border-color: #98d898;
-        text-decoration: line-through;
-    }
-.card, 
+
+    .card, 
 .card * {
     color: #333 !important; /* forces dark, readable text */
 }
 
-   
 </style>
 </head>
 <body>
-
 <div class="container">
-    <div class="card" id="headerCard">
-        <h1>🛒 Smart Shopping List</h1>
-        <p>Plan meals • Auto-generate list • Sync pantry</p>
-        <div><b>Pantry Items:</b> <span id="pantryCount">0</span></div>
+
+    <h1>Mood Plan Dashboard</h1>
+    <p>Generate personalized plans based on your mood</p>
+
+    <!-- User Preferences -->
+    <div class="card">
+        <h2>Your Preferences</h2>
+
+        <label>Mood:</label>
+        <select id="moodSelect">
+            <option value="happy">Happy </option>
+            <option value="energetic">Energetic ⚡</option>
+            <option value="calm">Calm </option>
+            <option value="focused">Focused </option>
+        </select>
+
+        <br><br>
+
+        <label>Allergens:</label><br>
+        <label><input type="checkbox" value="gluten" class="allergenBox"> Gluten</label>
+        <label><input type="checkbox" value="dairy" class="allergenBox"> Dairy</label>
     </div>
 
-    <!-- Step 1: Select Meals -->
-    <div class="card" id="step1">
-        <h2>Select Meals</h2>
-        <div id="mealContainer"></div>
-        <button id="generateBtn" class="btn-main" disabled>Generate Shopping List</button>
+    <!-- Generate button -->
+    <button class="btn-main" onclick="generatePlan()"> Generate Mood Plan</button>
+
+    <!-- Current Plan -->
+    <div id="currentPlan" class="card hidden"></div>
+
+    <!-- Buttons -->
+    <div style="display: flex; gap: 10px;">
+        <button onclick="toggleHistory()" class="card" style="flex:1;"> Saved Plans</button>
+        <button onclick="toggleTrends()" class="card" style="flex:1;"> Trends</button>
     </div>
 
-    <!-- Step 3: Shopping List -->
-    <div id="step3" style="display:none;">
-        <div class="card">
-            <button onclick="goBack()">⬅ Back to Meals</button>
-            <button onclick="exportList()" class="btn-action">📥 Export</button>
-            <button onclick="shareList()" class="btn-action">📤 Share</button>
-            <button onclick="syncPantry()" class="btn-main" style="width:auto;">🔄 Sync</button>
-        </div>
+    <!-- Saved Plans -->
+    <div id="historySection" class="card hidden"></div>
 
-        <div class="card">
-            <h3>Add Custom Item</h3>
-            <input id="customName" placeholder="Name">
-            <input id="customQty" placeholder="Qty" type="number" style="width:70px;">
-            <input id="customUnit" placeholder="Unit" style="width:70px;">
-            <select id="customCat">
-                <option>Produce</option>
-                <option>Meat</option>
-                <option>Dairy</option>
-                <option>Grains</option>
-                <option>Condiments</option>
-                <option>Spices</option>
-                <option>Other</option>
-            </select>
-            <button onclick="addCustom()">➕ Add</button>
-        </div>
+    <!-- Trends -->
+    <div id="trendsSection" class="card hidden"></div>
 
-        <div class="card">
-            <h2>Shopping List</h2>
-            <div id="listContainer"></div>
-        </div>
-    </div>
 </div>
 
 <script>
-// -------------------- DATA --------------------
-let pantry = [
-    { id: 1, name: "Chicken Breast", quantity: 2, unit: "lbs"},
-    { id: 2, name: "Rice", quantity: 3, unit: "cups"},
-    { id: 3, name: "Olive Oil", quantity: 0.5, unit: "cup"},
-    { id: 4, name: "Garlic", quantity: 5, unit: "cloves"},
-    { id: 5, name: "Tomatoes", quantity: 2, unit: "whole"}
+// ----- Data -----
+const MEALS = [
+  { id: 1, name: 'Avocado Toast', mood: 'energetic', allergens: ['gluten'], energy: 8 },
+  { id: 2, name: 'Berry Smoothie Bowl', mood: 'happy', allergens: ['dairy'], energy: 9 },
+  { id: 3, name: 'Chicken Stir Fry', mood: 'focused', allergens: [], energy: 7 },
+  { id: 4, name: 'Greek Salad', mood: 'calm', allergens: ['dairy'], energy: 6 },
+  { id: 5, name: 'Veggie Burger', mood: 'energetic', allergens: ['gluten'], energy: 8 },
 ];
 
-let meals = [
-    {
-        id: 1, image:"🍗", name:"Chicken Stir Fry", servings:4,
-        ingredients:[
-            {name:"Chicken Breast", quantity:1.5, unit:"lbs", category:"Meat"},
-            {name:"Soy Sauce", quantity:3, unit:"tbsp", category:"Condiments"},
-            {name:"Bell Peppers", quantity:2, unit:"whole", category:"Produce"},
-            {name:"Garlic", quantity:3, unit:"cloves", category:"Produce"},
-            {name:"Rice", quantity:2, unit:"cups", category:"Grains"},
-            {name:"Ginger", quantity:1, unit:"tbsp", category:"Produce"},
-        ]
-    },
-    {
-        id:2, image:"🍝", name:"Spaghetti Carbonara", servings:4,
-        ingredients:[
-            {name:"Spaghetti", quantity:1, unit:"lb", category:"Grains"},
-            {name:"Bacon", quantity:8, unit:"strips", category:"Meat"},
-            {name:"Eggs", quantity:4, unit:"whole", category:"Dairy"},
-            {name:"Parmesan Cheese", quantity:1, unit:"cup", category:"Dairy"},
-            {name:"Black Pepper", quantity:1, unit:"tsp", category:"Spices"},
-        ]
-    },
-    {
-        id:3, image:"🥗", name:"Greek Salad", servings:2,
-        ingredients:[
-            {name:"Tomatoes", quantity:3, unit:"whole", category:"Produce"},
-            {name:"Cucumber", quantity:1, unit:"whole", category:"Produce"},
-            {name:"Feta Cheese", quantity:1, unit:"cup", category:"Dairy"},
-            {name:"Olive Oil", quantity:3, unit:"tbsp", category:"Condiments"},
-            {name:"Olives", quantity:0.5, unit:"cup", category:"Produce"},
-            {name:"Red Onion", quantity:0.5, unit:"whole", category:"Produce"},
-        ]
-    }
+const ACTIVITIES = [
+  { id: 1, name: 'Go for a run', mood: 'energetic', hobby: 'sports', intensity: 9 },
+  { id: 2, name: 'Paint or draw', mood: 'calm', hobby: 'arts', intensity: 3 },
+  { id: 3, name: 'Read a book', mood: 'focused', hobby: 'reading', intensity: 2 },
+  { id: 4, name: 'Dance party', mood: 'happy', hobby: 'music', intensity: 8 },
+  { id: 5, name: 'Yoga session', mood: 'calm', hobby: 'wellness', intensity: 4 },
 ];
 
-let selectedMeals = [];
-let shoppingList = [];
+const SONGS = [
+  { id: 1, title: 'Good Vibes', artist: 'The Cheerful', mood: 'happy', genre: 'pop' },
+  { id: 2, title: 'Focus Flow', artist: 'Study Beats', mood: 'focused', genre: 'lofi' },
+  { id: 3, title: 'Calm Waters', artist: 'Peaceful Mind', mood: 'calm', genre: 'ambient' },
+  { id: 4, title: 'Energy Boost', artist: 'Power Up', mood: 'energetic', genre: 'electronic' },
+  { id: 5, title: 'Sunrise Melody', artist: 'Morning Light', mood: 'happy', genre: 'indie' },
+  { id: 6, title: 'Deep Thoughts', artist: 'Contemplation', mood: 'focused', genre: 'classical' },
+];
 
-document.getElementById("pantryCount").innerText = pantry.length;
+let savedPlans = JSON.parse(localStorage.getItem("plans") || "[]");
+let favorites = new Set(JSON.parse(localStorage.getItem("favorites") || "[]"));
+let currentPlan = null;
 
-// -------------------- STEP 1 RENDER --------------------
-const mealContainer = document.getElementById("mealContainer");
-meals.forEach(m => {
-    let div = document.createElement("div");
-    div.className = "meal";
-    div.innerHTML = `<div>${m.image} <b>${m.name}</b><br>
-    <small>${m.servings} servings • ${m.ingredients.length} ingredients</small></div>`;
-    
-    div.onclick = () => toggleMeal(m.id, div);
-    mealContainer.appendChild(div);
-});
+// ----- Generate Mood Plan -----
+function generatePlan() {
+    const mood = document.getElementById("moodSelect").value;
+    const allergens = [...document.querySelectorAll(".allergenBox:checked")].map(a => a.value);
 
-function toggleMeal(id, elem) {
-    if (selectedMeals.includes(id)) {
-        selectedMeals = selectedMeals.filter(x => x !== id);
-        elem.classList.remove("selected");
-    } else {
-        selectedMeals.push(id);
-        elem.classList.add("selected");
-    }
-    document.getElementById("generateBtn").disabled = selectedMeals.length === 0;
+    // Meals
+    const safeMeals = MEALS.filter(m => !m.allergens.some(a => allergens.includes(a)));
+    safeMeals.forEach(m => m.score = (m.mood === mood ? 10 : 5));
+    safeMeals.sort((a,b) => b.score - a.score);
+
+    // Activities
+    ACTIVITIES.forEach(a => a.score = (a.mood === mood ? 10 : 5) + a.intensity);
+    ACTIVITIES.sort((a,b) => b.score - a.score);
+
+    // Songs
+    SONGS.forEach(s => s.score = (s.mood === mood ? 10 : 3));
+    SONGS.sort((a,b)=>b.score-a.score);
+
+    currentPlan = {
+        id: Date.now(),
+        timestamp: new Date().toLocaleString(),
+        mood,
+        meal: safeMeals[0],
+        activity: ACTIVITIES[0],
+        songs: SONGS.slice(0, 3)
+    };
+
+    displayCurrentPlan();
 }
 
-// -------------------- GENERATE LIST --------------------
-document.getElementById("generateBtn").onclick = () => {
-    let all = [];
+// ----- Display Current Plan -----
+function displayCurrentPlan() {
+    const div = document.getElementById("currentPlan");
+    div.classList.remove("hidden");
 
-    selectedMeals.forEach(id => {
-        let meal = meals.find(m => m.id === id);
-        meal.ingredients.forEach(i => {
-            all.push({...i, from: meal.name});
-        });
-    });
+    div.innerHTML = `
+        <h2>Your Mood Plan</h2>
 
-    // combine duplicates
-    let grouped = {};
-    all.forEach(i => {
-        let key = i.name.toLowerCase();
-        if (!grouped[key]) grouped[key] = {...i, quantityNeeded: i.quantity, fromMeals:[i.from], checked:false};
-        else {
-            grouped[key].quantityNeeded += i.quantity;
-            grouped[key].fromMeals.push(i.from);
-        }
-    });
+        <button onclick="toggleFavorite(${currentPlan.id})"
+            style="float:right; font-size:20px; background:none;">
+            <span class="${favorites.has(currentPlan.id) ? 'favorite':''}"></span>
+        </button>
 
-    let list = Object.values(grouped);
+        <p><strong>Meal:</strong> ${currentPlan.meal.name} (${currentPlan.meal.energy}/10 energy)</p>
+        <p><strong>Activity:</strong> ${currentPlan.activity.name} (${currentPlan.activity.intensity}/10 intensity)</p>
 
-    // compare with pantry
-    list.forEach(item => {
-        let p = pantry.find(p => p.name.toLowerCase() === item.name.toLowerCase());
-        if (p && p.unit === item.unit) {
-            let needed = item.quantityNeeded - p.quantity;
-            item.quantityNeeded = needed > 0 ? needed : 0;
-        }
-    });
+        <h3>Songs:</h3>
+        <ul>
+            ${currentPlan.songs.map(s => `<li>${s.title} - ${s.artist}</li>`).join("")}
+        </ul>
 
-    shoppingList = list.filter(i => i.quantityNeeded > 0);
-    renderList();
+        <button onclick="savePlan()" style="margin-top:10px;"> Save Plan</button>
+    `;
+}
 
-    document.getElementById("step1").style.display = "none";
-    document.getElementById("step3").style.display = "block";
-};
+// ----- Save Plan -----
+function savePlan() {
+    if (!currentPlan) return;
+    savedPlans.push(currentPlan);
+    localStorage.setItem("plans", JSON.stringify(savedPlans));
+    alert("Saved!");
+}
 
-// -------------------- RENDER LIST --------------------
-function renderList() {
-    const container = document.getElementById("listContainer");
-    container.innerHTML = "";
+// ----- Favorites -----
+function toggleFavorite(id) {
+    if (favorites.has(id)) favorites.delete(id);
+    else favorites.add(id);
 
-    let categories = {};
-    shoppingList.forEach(i => {
-        if (!categories[i.category]) categories[i.category] = [];
-        categories[i.category].push(i);
-    });
+    localStorage.setItem("favorites", JSON.stringify([...favorites]));
+    displayCurrentPlan();
+    showHistory();
+}
 
-    Object.entries(categories).forEach(([cat, items]) => {
-        let catDiv = document.createElement("div");
-        catDiv.className = "category";
-        catDiv.innerHTML = `<b>${cat}</b>`;
-        
-        items.forEach(item => {
-            let row = document.createElement("div");
-            row.className = "item";
-            if (item.checked) row.classList.add("checked");
+// ----- History -----
+function toggleHistory() {
+    document.getElementById("historySection").classList.toggle("hidden");
+    showHistory();
+}
 
-            row.innerHTML = `
-                <div>
-                    <input type="checkbox" ${item.checked ? "checked" : ""} onchange="toggleCheck('${item.name}')">
-                    <b>${item.name}</b><br>
-                    <small>${item.quantityNeeded} ${item.unit} • From: ${[...new Set(item.fromMeals)].join(", ")}</small>
+function showHistory() {
+    const div = document.getElementById("historySection");
+
+    if (savedPlans.length === 0) {
+        div.innerHTML = "<p>No saved plans.</p>";
+        return;
+    }
+
+    div.innerHTML = "<h2>Saved Plans</h2>";
+    savedPlans.slice().reverse().forEach(plan => {
+        div.innerHTML += `
+            <div class="card" style="margin:10px 0;">
+                <div style="display:flex; justify-content:space-between;">
+                    <div>
+                        <strong>${plan.mood}</strong><br>
+                        <span>${plan.timestamp}</span>
+                    </div>
+                    <button onclick="toggleFavorite(${plan.id})" style="font-size:20px; background:none;">
+                        <span class="${favorites.has(plan.id) ? 'favorite':''}"></span>
+                    </button>
                 </div>
-                <button onclick="deleteItem('${item.name}')">🗑</button>
-            `;
-            catDiv.appendChild(row);
-        });
-        container.appendChild(catDiv);
+                <p>Meal: ${plan.meal.name}</p>
+                <p>Activity: ${plan.activity.name}</p>
+                <p>${plan.songs.length} songs</p>
+            </div>`;
     });
 }
 
-// -------------------- ITEM ACTIONS --------------------
-function toggleCheck(name) {
-    shoppingList = shoppingList.map(i =>
-        i.name === name ? {...i, checked: !i.checked} : i
-    );
-    renderList();
+// ----- Trends -----
+function toggleTrends() {
+    document.getElementById("trendsSection").classList.toggle("hidden");
+    showTrends();
 }
 
-function deleteItem(name) {
-    shoppingList = shoppingList.filter(i => i.name !== name);
-    renderList();
-}
+function showTrends() {
+    const div = document.getElementById("trendsSection");
 
-// -------------------- CUSTOM ITEM --------------------
-function addCustom() {
-    let name = customName.value;
-    let qty = parseFloat(customQty.value);
-    let unit = customUnit.value;
-    let cat = customCat.value;
+    if (savedPlans.length === 0) {
+        div.innerHTML = "<p>No trends yet.</p>";
+        return;
+    }
 
-    if (!name || !qty) return;
+    const moodCounts = {};
+    const activityCounts = {};
 
-    shoppingList.push({
-        name, quantityNeeded: qty, unit, category: cat,
-        checked:false, fromMeals:["Manual"]
-    });
-    renderList();
-
-    customName.value = "";
-    customQty.value = "";
-    customUnit.value = "";
-}
-
-// -------------------- EXPORT --------------------
-function exportList() {
-    let text = "SHOPPING LIST\n\n";
-    shoppingList.forEach(i => {
-        text += `${i.checked ? "✓" : "☐"} ${i.name} - ${i.quantityNeeded} ${i.unit}\n`;
+    savedPlans.forEach(p => {
+        moodCounts[p.mood] = (moodCounts[p.mood] || 0) + 1;
+        activityCounts[p.activity.name] = (activityCounts[p.activity.name] || 0) + 1;
     });
 
-    let blob = new Blob([text], {type:"text/plain"});
-    let url = URL.createObjectURL(blob);
-    let a = document.createElement("a");
-    a.href = url;
-    a.download = "shopping-list.txt";
-    a.click();
+    const topMood = Object.entries(moodCounts).sort((a,b)=>b[1]-a[1])[0];
+    const topActivity = Object.entries(activityCounts).sort((a,b)=>b[1]-a[1])[0];
+
+    div.innerHTML = `
+        <h2>Trends & Insights</h2>
+        <p><strong>Total Plans:</strong> ${savedPlans.length}</p>
+        <p><strong>Most Common Mood:</strong> ${topMood[0]} (${topMood[1]} times)</p>
+        <p><strong>Favorite Activity:</strong> ${topActivity[0]} (${topActivity[1]} times)</p>
+    `;
 }
 
-// -------------------- SHARE --------------------
-function shareList() {
-    let text = shoppingList.map(i =>
-        `${i.checked ? "✓":"☐"} ${i.name} - ${i.quantityNeeded} ${i.unit}`
-    ).join("\n");
-
-    navigator.clipboard.writeText(text);
-    alert("Shopping list copied to clipboard!");
-}
-
-// -------------------- SYNC --------------------
-function syncPantry() {
-    let checked = shoppingList.filter(i => i.checked);
-
-    checked.forEach(i => {
-        let p = pantry.find(p => p.name === i.name);
-        if (p) p.quantity += i.quantityNeeded;
-        else pantry.push({...i});
-    });
-
-    alert("Pantry updated!");
-    location.reload();
-}
-
-// -------------------- NAV --------------------
-function goBack() {
-    document.getElementById("step1").style.display = "block";
-    document.getElementById("step3").style.display = "none";
-}
 </script>
-
 </body>
 </html>
