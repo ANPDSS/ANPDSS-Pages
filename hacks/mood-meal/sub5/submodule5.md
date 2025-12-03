@@ -1,218 +1,155 @@
 ---
 layout: post
 title: "Submodule 5"
-description: "Pantry & Inventory Manager"
-permalink: /mood-meal/submodule_5/
+description: "Music Recommender"
+permalink: /mood-assistant/submodule_5/
 parent: "cool"
 team: "ANDPDSS"
 microblog: True
 submodule: 5
-categories: [CSP, Submodule, mood-meal]
-tags: [mood-meal, submodule, cool]
+categories: [CSP, Submodule, mood-assistant]
+tags: [mood-assistant, submodule, cool]
 author: "ANPDSS"
 date: 2025-11-20
 footer:
-  previous: /mood-meal/submodule_4/
-  home: /mood-meal/
-  next: /mood-meal/submodule_6/
+  previous: /mood-assistant/submodule_4/
+  home: /mood-assistant/
+  next: /mood-assistant/submodule_6/
 ---
 
-# MoodMeal – Pantry & Inventory Manager
+# Mood Assistant – Music Recommender
 
-<!-- Main container for the Pantry & Inventory Manager page -->
-<main id="pantry-page">
+<!-- Main container for the Music Recommender page -->
+<main id="music-recommender-page">
 
-  <!-- 1. Pantry Dashboard Header -->
-  <section id="pantry-header" aria-label="Pantry header" style="margin-bottom: 1.5rem;">
-    <h2>Your Pantry</h2>
-    <p>Manage your ingredients, track expiration dates, and keep your inventory organized.</p>
+  <!-- 1. Music Recommendation Header -->
+  <section id="music-header" aria-label="Music header" style="margin-bottom: 1.5rem;">
+    <h2>Music Recommendations</h2>
+    <p>Get personalized music suggestions based on your current mood and preferences.</p>
+  </section>
+
+  <hr />
+
+  <!-- 2. Recommendation Filters -->
+  <section id="music-filters" aria-label="Music filters" style="margin: 1.5rem 0;">
+    <h3>Customize Your Recommendations</h3>
     
-    <div style="margin-top: 1rem;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+      <!-- Genre Filter -->
+      <div>
+        <label for="genre-filter"><strong>Genre:</strong></label>
+        <select id="genre-filter" style="width: 100%; padding: 0.5rem; margin-top: 0.3rem; border: 1px solid #666; border-radius: 4px; background: #1a1a1a; color: white;">
+          <option value="all">All Genres</option>
+          <option value="pop">Pop</option>
+          <option value="rock">Rock</option>
+          <option value="hip-hop">Hip Hop</option>
+          <option value="electronic">Electronic</option>
+          <option value="jazz">Jazz</option>
+          <option value="classical">Classical</option>
+          <option value="indie">Indie</option>
+          <option value="r&b">R&B</option>
+          <option value="country">Country</option>
+        </select>
+      </div>
+
+      <!-- Energy Level Filter -->
+      <div>
+        <label for="energy-filter"><strong>Energy Level:</strong></label>
+        <select id="energy-filter" style="width: 100%; padding: 0.5rem; margin-top: 0.3rem; border: 1px solid #666; border-radius: 4px; background: #1a1a1a; color: white;">
+          <option value="all">Any Energy</option>
+          <option value="low">Low Energy / Calm</option>
+          <option value="medium">Medium Energy</option>
+          <option value="high">High Energy / Upbeat</option>
+        </select>
+      </div>
+
+      <!-- Number of Songs -->
+      <div>
+        <label for="song-count"><strong>Number of Songs:</strong></label>
+        <select id="song-count" style="width: 100%; padding: 0.5rem; margin-top: 0.3rem; border: 1px solid #666; border-radius: 4px; background: #1a1a1a; color: white;">
+          <option value="5">5 songs</option>
+          <option value="10" selected>10 songs</option>
+          <option value="15">15 songs</option>
+          <option value="20">20 songs</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Get Recommendations Button -->
+    <div style="margin-top: 1.5rem;">
       <button
-        id="add-item-btn"
+        id="get-recommendations-btn"
         type="button"
         style="padding: 0.6rem 1.5rem; font-size: 1rem; cursor: pointer; background: #4a9eff; color: white; border: none; border-radius: 6px;"
       >
-        + Add New Item
+        🎵 Get Music Recommendations
       </button>
+      
+      <span id="loading-indicator" style="margin-left: 1rem; display: none; color: #4a9eff;">
+        Loading recommendations...
+      </span>
     </div>
   </section>
 
   <hr />
 
-  <!-- 2. Filter and Sort Options -->
-  <section id="pantry-filters" aria-label="Filter pantry items" style="margin: 1.5rem 0;">
-    <h3>Filter & Sort</h3>
-    
-    <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem;">
-      <!-- Search bar -->
-      <div style="flex: 1; min-width: 200px;">
-        <label for="search-items"><strong>Search:</strong></label>
-        <input
-          type="text"
-          id="search-items"
-          placeholder="Search ingredients..."
-          style="width: 100%; padding: 0.5rem; margin-top: 0.3rem; border: 1px solid #666; border-radius: 4px; background: #1a1a1a; color: white;"
-        />
-      </div>
-
-      <!-- Category filter -->
-      <div style="min-width: 150px;">
-        <label for="category-filter"><strong>Category:</strong></label>
-        <select id="category-filter" style="width: 100%; padding: 0.5rem; margin-top: 0.3rem; border: 1px solid #666; border-radius: 4px; background: #1a1a1a; color: white;">
-          <option value="all">All Categories</option>
-          <option value="vegetables">Vegetables</option>
-          <option value="fruits">Fruits</option>
-          <option value="dairy">Dairy</option>
-          <option value="meat">Meat</option>
-          <option value="grains">Grains</option>
-          <option value="spices">Spices</option>
-          <option value="other">Other</option>
-        </select>
-      </div>
-
-      <!-- Expiration filter -->
-      <div style="min-width: 150px;">
-        <label for="expiration-filter"><strong>Status:</strong></label>
-        <select id="expiration-filter" style="width: 100%; padding: 0.5rem; margin-top: 0.3rem; border: 1px solid #666; border-radius: 4px; background: #1a1a1a; color: white;">
-          <option value="all">All Items</option>
-          <option value="fresh">Fresh (7+ days)</option>
-          <option value="expiring">Expiring Soon (3-7 days)</option>
-          <option value="expired">Expired/Critical (0-3 days)</option>
-        </select>
+  <!-- 3. Recommended Songs Display -->
+  <section id="recommendations-section" aria-label="Recommended songs" style="margin: 1.5rem 0; display: none;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <h3>Your Personalized Playlist (<span id="song-count-display">0</span> songs)</h3>
+      <div style="display: flex; gap: 0.5rem;">
+        <button
+          id="save-playlist-btn"
+          type="button"
+          style="padding: 0.5rem 1rem; font-size: 0.9rem; cursor: pointer; background: transparent; color: #4a9eff; border: 1px solid #4a9eff; border-radius: 6px;"
+        >
+          💾 Save Playlist
+        </button>
+        <button
+          id="export-playlist-btn"
+          type="button"
+          style="padding: 0.5rem 1rem; font-size: 0.9rem; cursor: pointer; background: transparent; color: #4a9eff; border: 1px solid #4a9eff; border-radius: 6px;"
+        >
+          📤 Export
+        </button>
       </div>
     </div>
+
+    <!-- Success message -->
+    <div id="save-success" style="color: #4eff9e; margin-bottom: 1rem; display: none;">
+      ✓ Playlist saved successfully!
+    </div>
+
+    <!-- Songs List -->
+    <div id="songs-list" style="display: flex; flex-direction: column; gap: 1rem;">
+      <!-- Songs will be dynamically added here -->
+    </div>
+  </section>
+
+  <!-- Empty State -->
+  <section id="empty-state" aria-label="Empty state" style="margin: 2rem 0; text-align: center;">
+    <p style="color: #666; font-size: 1.1rem;">
+      Click "Get Music Recommendations" to discover songs that match your mood!
+    </p>
   </section>
 
   <hr />
 
-  <!-- 3. Pantry Items Grid -->
-  <section id="pantry-items-section" aria-label="Pantry items" style="margin: 1.5rem 0;">
-    <h3>Your Items (<span id="item-count">0</span>)</h3>
+  <!-- 4. Saved Playlists Section -->
+  <section id="saved-playlists-section" aria-label="Saved playlists" style="margin: 1.5rem 0;">
+    <h3>Your Saved Playlists</h3>
     
-    <div id="pantry-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem; margin-top: 1rem;">
-      <!-- Items will be dynamically added here -->
-      <p id="no-items-message" style="grid-column: 1 / -1; text-align: center; color: #666; padding: 2rem;">
-        No items in your pantry. Click "Add New Item" to get started!
+    <div id="saved-playlists-list" style="margin-top: 1rem;">
+      <p id="no-playlists-message" style="color: #666; text-align: center; padding: 2rem;">
+        No saved playlists yet. Save your first playlist above!
       </p>
     </div>
   </section>
 
 </main>
 
-<!-- Add/Edit Item Modal -->
-<div id="item-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; overflow-y: auto;">
-  <div style="max-width: 500px; margin: 2rem auto; background: #0a0a0a; border-radius: 8px; border: 1px solid #444; padding: 2rem;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-      <h2 id="modal-title" style="margin: 0;">Add New Item</h2>
-      <button id="close-modal-btn" type="button" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #666;">×</button>
-    </div>
-
-    <form id="item-form">
-      <!-- Item Name -->
-      <div style="margin-bottom: 1rem;">
-        <label for="item-name"><strong>Item Name *</strong></label>
-        <input
-          type="text"
-          id="item-name"
-          required
-          placeholder="e.g., Tomatoes"
-          style="width: 100%; padding: 0.5rem; margin-top: 0.3rem; border: 1px solid #666; border-radius: 4px; background: #1a1a1a; color: white;"
-        />
-      </div>
-
-      <!-- Category -->
-      <div style="margin-bottom: 1rem;">
-        <label for="item-category"><strong>Category *</strong></label>
-        <select id="item-category" required style="width: 100%; padding: 0.5rem; margin-top: 0.3rem; border: 1px solid #666; border-radius: 4px; background: #1a1a1a; color: white;">
-          <option value="">Select category...</option>
-          <option value="vegetables">Vegetables</option>
-          <option value="fruits">Fruits</option>
-          <option value="dairy">Dairy</option>
-          <option value="meat">Meat</option>
-          <option value="grains">Grains</option>
-          <option value="spices">Spices</option>
-          <option value="other">Other</option>
-        </select>
-      </div>
-
-      <!-- Quantity -->
-      <div style="margin-bottom: 1rem;">
-        <label for="item-quantity"><strong>Quantity *</strong></label>
-        <div style="display: flex; gap: 0.5rem; margin-top: 0.3rem;">
-          <input
-            type="number"
-            id="item-quantity"
-            required
-            min="0"
-            step="0.1"
-            placeholder="1"
-            style="flex: 1; padding: 0.5rem; border: 1px solid #666; border-radius: 4px; background: #1a1a1a; color: white;"
-          />
-          <input
-            type="text"
-            id="item-unit"
-            placeholder="unit (e.g., lbs, cups)"
-            style="width: 120px; padding: 0.5rem; border: 1px solid #666; border-radius: 4px; background: #1a1a1a; color: white;"
-          />
-        </div>
-      </div>
-
-      <!-- Expiration Date -->
-      <div style="margin-bottom: 1rem;">
-        <label for="item-expiration"><strong>Expiration Date</strong></label>
-        <input
-          type="date"
-          id="item-expiration"
-          style="width: 100%; padding: 0.5rem; margin-top: 0.3rem; border: 1px solid #666; border-radius: 4px; background: #1a1a1a; color: white;"
-        />
-      </div>
-
-      <!-- Location -->
-      <div style="margin-bottom: 1rem;">
-        <label for="item-location"><strong>Location</strong></label>
-        <select id="item-location" style="width: 100%; padding: 0.5rem; margin-top: 0.3rem; border: 1px solid #666; border-radius: 4px; background: #1a1a1a; color: white;">
-          <option value="refrigerator">Refrigerator</option>
-          <option value="freezer">Freezer</option>
-          <option value="pantry">Pantry</option>
-          <option value="cabinet">Cabinet</option>
-        </select>
-      </div>
-
-      <!-- Notes -->
-      <div style="margin-bottom: 1.5rem;">
-        <label for="item-notes"><strong>Notes (Optional)</strong></label>
-        <textarea
-          id="item-notes"
-          placeholder="Any additional information..."
-          rows="3"
-          style="width: 100%; padding: 0.5rem; margin-top: 0.3rem; border: 1px solid #666; border-radius: 4px; background: #1a1a1a; color: white; resize: vertical;"
-        ></textarea>
-      </div>
-
-      <!-- Form Actions -->
-      <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
-        <button
-          type="button"
-          id="cancel-btn"
-          style="padding: 0.6rem 1.5rem; cursor: pointer; background: transparent; color: #666; border: 1px solid #666; border-radius: 6px;"
-        >
-          Cancel
-        </button>
-        <button
-          type="submit"
-          id="save-item-btn"
-          style="padding: 0.6rem 1.5rem; cursor: pointer; background: #4a9eff; color: white; border: none; border-radius: 6px;"
-        >
-          Save Item
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
-
 <script>
-// MoodMeal - Pantry & Inventory Manager JavaScript
+// Music Recommender JavaScript
 (function() {
   'use strict';
 
@@ -220,33 +157,35 @@ footer:
   const API_BASE_URL = 'http://localhost:5000/api';
   
   // State
-  let pantryItems = [];
-  let editingItemId = null;
+  let currentRecommendations = [];
+  let savedPlaylists = [];
   let currentUserId = null;
 
   // DOM Elements
-  const addItemBtn = document.getElementById('add-item-btn');
-  const itemModal = document.getElementById('item-modal');
-  const closeModalBtn = document.getElementById('close-modal-btn');
-  const cancelBtn = document.getElementById('cancel-btn');
-  const itemForm = document.getElementById('item-form');
-  const pantryGrid = document.getElementById('pantry-grid');
-  const noItemsMessage = document.getElementById('no-items-message');
-  const itemCount = document.getElementById('item-count');
-  const searchInput = document.getElementById('search-items');
-  const categoryFilter = document.getElementById('category-filter');
-  const expirationFilter = document.getElementById('expiration-filter');
-  const modalTitle = document.getElementById('modal-title');
+  const getRecommendationsBtn = document.getElementById('get-recommendations-btn');
+  const loadingIndicator = document.getElementById('loading-indicator');
+  const recommendationsSection = document.getElementById('recommendations-section');
+  const emptyState = document.getElementById('empty-state');
+  const songsList = document.getElementById('songs-list');
+  const songCountDisplay = document.getElementById('song-count-display');
+  const savePlaylistBtn = document.getElementById('save-playlist-btn');
+  const exportPlaylistBtn = document.getElementById('export-playlist-btn');
+  const saveSuccess = document.getElementById('save-success');
+  const savedPlaylistsList = document.getElementById('saved-playlists-list');
+  const noPlaylistsMessage = document.getElementById('no-playlists-message');
+  
+  const genreFilter = document.getElementById('genre-filter');
+  const energyFilter = document.getElementById('energy-filter');
+  const songCount = document.getElementById('song-count');
 
-  // Helper: Get JWT token from localStorage
+  // Helper: Get JWT token
   function getAuthToken() {
-    return localStorage.getItem('moodmeal_token');
+    return localStorage.getItem('moodassistant_token');
   }
 
-  // Helper: Get current user ID from token or localStorage
+  // Helper: Get current user ID
   function getCurrentUserId() {
-    // TODO: Decode JWT to get user_id, for now use localStorage
-    return localStorage.getItem('moodmeal_user_id') || 'user123';
+    return localStorage.getItem('moodassistant_user_id') || 'user123';
   }
 
   // Helper: Make authenticated API request
@@ -275,349 +214,448 @@ footer:
     }
   }
 
-  // Helper: Calculate days until expiration
-  function getDaysUntilExpiration(expirationDate) {
-    if (!expirationDate) return null;
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const expDate = new Date(expirationDate);
-    expDate.setHours(0, 0, 0, 0);
-    const diffTime = expDate - today;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
+  // Helper: Generate mock recommendations (fallback)
+  function generateMockRecommendations() {
+    const mockArtists = [
+      'The Weeknd', 'Taylor Swift', 'Drake', 'Billie Eilish', 'Ed Sheeran',
+      'Ariana Grande', 'Post Malone', 'Dua Lipa', 'Harry Styles', 'Olivia Rodrigo',
+      'Bruno Mars', 'Adele', 'Coldplay', 'Imagine Dragons', 'Twenty One Pilots'
+    ];
+
+    const mockTitles = [
+      'Blinding Lights', 'Anti-Hero', 'One Dance', 'Bad Guy', 'Shape of You',
+      'Thank U, Next', 'Circles', 'Levitating', 'As It Was', 'Good 4 U',
+      'Uptown Funk', 'Easy On Me', 'Viva La Vida', 'Radioactive', 'Stressed Out'
+    ];
+
+    const count = parseInt(songCount.value);
+    const genre = genreFilter.value;
+    const energy = energyFilter.value;
+
+    return Array.from({ length: count }, (_, i) => ({
+      song_id: `song_${Date.now()}_${i}`,
+      title: mockTitles[i % mockTitles.length] + (i >= mockTitles.length ? ` ${Math.floor(i / mockTitles.length) + 1}` : ''),
+      artist: mockArtists[i % mockArtists.length],
+      album: 'Album ' + (i % 5 + 1),
+      duration: Math.floor(Math.random() * 120 + 120), // 2-4 minutes in seconds
+      genre: genre !== 'all' ? genre : ['pop', 'rock', 'hip-hop', 'electronic'][i % 4],
+      energy_level: energy !== 'all' ? energy : ['low', 'medium', 'high'][i % 3],
+      preview_url: null,
+      spotify_url: `https://open.spotify.com/track/example${i}`,
+      cover_art: `https://via.placeholder.com/200x200/1a1a1a/4a9eff?text=${encodeURIComponent(mockTitles[i % mockTitles.length])}`
+    }));
   }
 
-  // Helper: Get expiration status badge
-  function getExpirationBadge(expirationDate) {
-    if (!expirationDate) {
-      return '<span style="padding: 0.2rem 0.5rem; background: #666; border-radius: 4px; font-size: 0.8rem;">No Date</span>';
-    }
-
-    const days = getDaysUntilExpiration(expirationDate);
-    
-    if (days < 0) {
-      return `<span style="padding: 0.2rem 0.5rem; background: #d32f2f; border-radius: 4px; font-size: 0.8rem;">Expired ${Math.abs(days)} days ago</span>`;
-    } else if (days === 0) {
-      return '<span style="padding: 0.2rem 0.5rem; background: #d32f2f; border-radius: 4px; font-size: 0.8rem;">Expires Today!</span>';
-    } else if (days <= 3) {
-      return `<span style="padding: 0.2rem 0.5rem; background: #ff6b6b; border-radius: 4px; font-size: 0.8rem;">Expires in ${days} days</span>`;
-    } else if (days <= 7) {
-      return `<span style="padding: 0.2rem 0.5rem; background: #ffa726; border-radius: 4px; font-size: 0.8rem;">Expires in ${days} days</span>`;
-    } else {
-      return `<span style="padding: 0.2rem 0.5rem; background: #4caf50; border-radius: 4px; font-size: 0.8rem;">Fresh (${days} days)</span>`;
-    }
+  // Format duration (seconds to mm:ss)
+  function formatDuration(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
   }
 
-  // Load items from backend API
-  async function loadItems() {
-    try {
-      currentUserId = getCurrentUserId();
-      const data = await apiRequest(`/pantry?user_id=${currentUserId}`);
-      pantryItems = data.items || [];
-      renderItems();
-    } catch (error) {
-      console.error('Failed to load pantry items:', error);
-      // Fallback to localStorage if API fails
-      loadItemsFromLocalStorage();
-    }
+  // Render song card
+  function renderSongCard(song, index) {
+    return `
+      <div class="song-card" data-song-id="${song.song_id}" style="background: #1a1a1a; border-radius: 8px; padding: 1rem; border: 1px solid #333; display: flex; gap: 1rem; align-items: center;">
+        <!-- Song Number -->
+        <div style="font-size: 1.2rem; font-weight: bold; color: #666; min-width: 30px;">
+          ${index + 1}
+        </div>
+
+        <!-- Album Art -->
+        <div style="width: 60px; height: 60px; border-radius: 4px; overflow: hidden; flex-shrink: 0; background: #0a0a0a;">
+          <img src="${song.cover_art}" alt="${song.title}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://via.placeholder.com/60x60/0a0a0a/666?text=♪'">
+        </div>
+
+        <!-- Song Info -->
+        <div style="flex: 1; min-width: 0;">
+          <h4 style="margin: 0 0 0.3rem 0; color: white; font-size: 1rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+            ${song.title}
+          </h4>
+          <p style="margin: 0; color: #999; font-size: 0.9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+            ${song.artist}
+          </p>
+          <p style="margin: 0.2rem 0 0 0; color: #666; font-size: 0.8rem;">
+            ${song.album} • ${formatDuration(song.duration)}
+          </p>
+        </div>
+
+        <!-- Genre/Energy Badge -->
+        <div style="display: flex; flex-direction: column; gap: 0.3rem; align-items: flex-end;">
+          <span style="padding: 0.2rem 0.5rem; background: #4a9eff; border-radius: 4px; font-size: 0.75rem; text-transform: capitalize;">
+            ${song.genre}
+          </span>
+          <span style="padding: 0.2rem 0.5rem; background: ${song.energy_level === 'high' ? '#4eff9e' : song.energy_level === 'medium' ? '#ffa726' : '#666'}; border-radius: 4px; font-size: 0.75rem; text-transform: capitalize;">
+            ${song.energy_level}
+          </span>
+        </div>
+
+        <!-- Actions -->
+        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+          ${song.preview_url ? `
+            <button class="play-preview-btn" data-song-id="${song.song_id}" style="background: none; border: none; cursor: pointer; color: #4a9eff; font-size: 1.5rem;" title="Play Preview">
+              ▶️
+            </button>
+          ` : ''}
+          ${song.spotify_url ? `
+            <a href="${song.spotify_url}" target="_blank" style="color: #4a9eff; font-size: 1.2rem; text-decoration: none;" title="Open in Spotify">
+              🎵
+            </a>
+          ` : ''}
+          <button class="favorite-song-btn" data-song-id="${song.song_id}" style="background: none; border: none; cursor: pointer; font-size: 1.3rem;" title="Add to Favorites">
+            ♡
+          </button>
+          <button class="remove-song-btn" data-song-id="${song.song_id}" style="background: none; border: none; cursor: pointer; color: #ff4a4a; font-size: 1.3rem;" title="Remove from List">
+            ✕
+          </button>
+        </div>
+      </div>
+    `;
   }
 
-  // Fallback: Load from localStorage
-  function loadItemsFromLocalStorage() {
-    const userId = getCurrentUserId();
-    const storageKey = `moodmeal_pantry_${userId}`;
-    const stored = localStorage.getItem(storageKey);
-    pantryItems = stored ? JSON.parse(stored) : [];
-    renderItems();
-  }
-
-  // Save item to localStorage as backup
-  function saveToLocalStorage() {
-    const userId = getCurrentUserId();
-    const storageKey = `moodmeal_pantry_${userId}`;
-    localStorage.setItem(storageKey, JSON.stringify(pantryItems));
-  }
-
-  // Helper: Filter items based on current filters
-  function getFilteredItems() {
-    let filtered = [...pantryItems];
-
-    // Search filter
-    const searchTerm = searchInput.value.toLowerCase();
-    if (searchTerm) {
-      filtered = filtered.filter(item => 
-        item.name.toLowerCase().includes(searchTerm)
-      );
-    }
-
-    // Category filter
-    const category = categoryFilter.value;
-    if (category !== 'all') {
-      filtered = filtered.filter(item => item.category === category);
-    }
-
-    // Expiration filter
-    const expStatus = expirationFilter.value;
-    if (expStatus !== 'all') {
-      filtered = filtered.filter(item => {
-        if (!item.expirationDate) return false;
-        const days = getDaysUntilExpiration(item.expirationDate);
-        
-        if (expStatus === 'fresh') return days >= 7;
-        if (expStatus === 'expiring') return days >= 3 && days < 7;
-        if (expStatus === 'expired') return days < 3;
-        return true;
-      });
-    }
-
-    return filtered;
-  }
-
-  // Render pantry items
-  function renderItems() {
-    const filtered = getFilteredItems();
-    
-    itemCount.textContent = filtered.length;
-
-    if (filtered.length === 0) {
-      noItemsMessage.style.display = 'block';
+  // Render recommendations
+  function renderRecommendations() {
+    if (currentRecommendations.length === 0) {
+      recommendationsSection.style.display = 'none';
+      emptyState.style.display = 'block';
       return;
     }
 
-    noItemsMessage.style.display = 'none';
+    emptyState.style.display = 'none';
+    recommendationsSection.style.display = 'block';
+    songCountDisplay.textContent = currentRecommendations.length;
+
+    songsList.innerHTML = currentRecommendations.map((song, index) => 
+      renderSongCard(song, index)
+    ).join('');
+
+    // Attach event listeners
+    document.querySelectorAll('.favorite-song-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const songId = e.target.dataset.songId;
+        toggleFavorite(songId, e.target);
+      });
+    });
+
+    document.querySelectorAll('.remove-song-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const songId = e.target.dataset.songId;
+        removeSong(songId);
+      });
+    });
+
+    document.querySelectorAll('.play-preview-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const songId = e.target.dataset.songId;
+        playPreview(songId);
+      });
+    });
+  }
+
+  // Toggle favorite
+  function toggleFavorite(songId, element) {
+    if (element.textContent === '♡') {
+      element.textContent = '♥';
+      element.style.color = '#ff4a4a';
+    } else {
+      element.textContent = '♡';
+      element.style.color = '';
+    }
+  }
+
+  // Remove song from list
+  function removeSong(songId) {
+    currentRecommendations = currentRecommendations.filter(song => song.song_id !== songId);
+    renderRecommendations();
+  }
+
+  // Play preview (placeholder)
+  function playPreview(songId) {
+    alert('Preview playback would start here. This requires audio player implementation.');
+  }
+
+  // Get recommendations from API
+  async function getRecommendations() {
+    loadingIndicator.style.display = 'inline';
+    getRecommendationsBtn.disabled = true;
+
+    try {
+      const userId = getCurrentUserId();
+      const params = new URLSearchParams({
+        user_id: userId,
+        genre: genreFilter.value,
+        energy_level: energyFilter.value,
+        count: songCount.value
+      });
+
+      const data = await apiRequest(`/music/recommend?${params}`);
+      currentRecommendations = data.songs || [];
+      
+      renderRecommendations();
+    } catch (error) {
+      console.error('Failed to get recommendations:', error);
+      // Fallback to mock data
+      currentRecommendations = generateMockRecommendations();
+      renderRecommendations();
+    } finally {
+      loadingIndicator.style.display = 'none';
+      getRecommendationsBtn.disabled = false;
+    }
+  }
+
+  // Save playlist
+  async function savePlaylist() {
+    if (currentRecommendations.length === 0) {
+      alert('No songs to save!');
+      return;
+    }
+
+    const playlistName = prompt('Enter a name for this playlist:', `Playlist ${new Date().toLocaleDateString()}`);
+    if (!playlistName) return;
+
+    try {
+      const userId = getCurrentUserId();
+      const playlistData = {
+        user_id: userId,
+        name: playlistName,
+        songs: currentRecommendations,
+        created_at: new Date().toISOString()
+      };
+
+      await apiRequest('/music/playlist/save', {
+        method: 'POST',
+        body: JSON.stringify(playlistData)
+      });
+
+      // Add to local state
+      savedPlaylists.push(playlistData);
+      saveToLocalStorage();
+      renderSavedPlaylists();
+
+      // Show success message
+      saveSuccess.style.display = 'block';
+      setTimeout(() => {
+        saveSuccess.style.display = 'none';
+      }, 3000);
+    } catch (error) {
+      console.error('Failed to save playlist:', error);
+      // Fallback to localStorage
+      savedPlaylists.push({
+        playlist_id: `playlist_${Date.now()}`,
+        user_id: getCurrentUserId(),
+        name: playlistName,
+        songs: currentRecommendations,
+        created_at: new Date().toISOString()
+      });
+      saveToLocalStorage();
+      renderSavedPlaylists();
+      
+      saveSuccess.style.display = 'block';
+      setTimeout(() => {
+        saveSuccess.style.display = 'none';
+      }, 3000);
+    }
+  }
+
+  // Export playlist
+  function exportPlaylist() {
+    if (currentRecommendations.length === 0) {
+      alert('No songs to export!');
+      return;
+    }
+
+    const playlistText = currentRecommendations.map((song, i) => 
+      `${i + 1}. ${song.title} - ${song.artist} (${song.album})`
+    ).join('\n');
+
+    const blob = new Blob([playlistText], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `playlist_${new Date().toISOString().split('T')[0]}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // Load saved playlists
+  function loadSavedPlaylists() {
+    const userId = getCurrentUserId();
+    const storageKey = `moodassistant_playlists_${userId}`;
+    const stored = localStorage.getItem(storageKey);
+    savedPlaylists = stored ? JSON.parse(stored) : [];
+  }
+
+  // Save to localStorage
+  function saveToLocalStorage() {
+    const userId = getCurrentUserId();
+    const storageKey = `moodassistant_playlists_${userId}`;
+    localStorage.setItem(storageKey, JSON.stringify(savedPlaylists));
+  }
+
+  // Render saved playlists
+  function renderSavedPlaylists() {
+    if (savedPlaylists.length === 0) {
+      noPlaylistsMessage.style.display = 'block';
+      return;
+    }
+
+    noPlaylistsMessage.style.display = 'none';
     
-    pantryGrid.innerHTML = filtered.map(item => `
-      <div class="pantry-item-card" data-item-id="${item.pantry_id || item.id}" style="background: #1a1a1a; border-radius: 8px; padding: 1rem; border: 1px solid #333;">
-        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
-          <h4 style="margin: 0; color: #4a9eff;">${item.ingredient_name || item.name}</h4>
-          <div style="display: flex; gap: 0.3rem;">
-            <button class="edit-item-btn" data-item-id="${item.pantry_id || item.id}" style="background: none; border: none; cursor: pointer; color: #4a9eff; font-size: 1.2rem;" title="Edit">✎</button>
-            <button class="delete-item-btn" data-item-id="${item.pantry_id || item.id}" style="background: none; border: none; cursor: pointer; color: #ff4a4a; font-size: 1.2rem;" title="Delete">🗑</button>
+    savedPlaylistsList.innerHTML = savedPlaylists.map(playlist => `
+      <div class="saved-playlist-card" style="background: #1a1a1a; border-radius: 8px; padding: 1rem; border: 1px solid #333; margin-bottom: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: start;">
+          <div style="flex: 1;">
+            <h4 style="margin: 0 0 0.5rem 0; color: #4a9eff;">${playlist.name}</h4>
+            <p style="margin: 0; color: #999; font-size: 0.9rem;">
+              ${playlist.songs.length} songs • Created ${new Date(playlist.created_at).toLocaleDateString()}
+            </p>
+          </div>
+          <div style="display: flex; gap: 0.5rem;">
+            <button class="load-playlist-btn" data-playlist-id="${playlist.playlist_id || playlist.created_at}" style="padding: 0.4rem 0.8rem; background: #4a9eff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+              Load
+            </button>
+            <button class="delete-playlist-btn" data-playlist-id="${playlist.playlist_id || playlist.created_at}" style="padding: 0.4rem 0.8rem; background: transparent; color: #ff4a4a; border: 1px solid #ff4a4a; border-radius: 4px; cursor: pointer;">
+              Delete
+            </button>
           </div>
         </div>
-        
-        <p style="margin: 0.3rem 0; color: #999; font-size: 0.9rem; text-transform: capitalize;">${item.category || 'Other'}</p>
-        
-        <p style="margin: 0.5rem 0; font-size: 1rem;">
-          <strong>${item.quantity} ${item.unit || ''}</strong>
-        </p>
-        
-        <div style="margin: 0.5rem 0;">
-          ${getExpirationBadge(item.expiration_date || item.expirationDate)}
-        </div>
-        
-        <p style="margin: 0.5rem 0; color: #999; font-size: 0.85rem;">
-          📍 ${item.location ? item.location.charAt(0).toUpperCase() + item.location.slice(1) : 'Pantry'}
-        </p>
-        
-        ${item.notes ? `<p style="margin: 0.5rem 0; color: #666; font-size: 0.85rem; font-style: italic;">${item.notes}</p>` : ''}
       </div>
     `).join('');
 
-    // Attach event listeners to edit and delete buttons
-    document.querySelectorAll('.edit-item-btn').forEach(btn => {
+    // Attach event listeners
+    document.querySelectorAll('.load-playlist-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
-        const itemId = e.target.dataset.itemId;
-        openEditModal(itemId);
+        const playlistId = e.target.dataset.playlistId;
+        loadPlaylist(playlistId);
       });
     });
 
-    document.querySelectorAll('.delete-item-btn').forEach(btn => {
+    document.querySelectorAll('.delete-playlist-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
-        const itemId = e.target.dataset.itemId;
-        deleteItem(itemId);
+        const playlistId = e.target.dataset.playlistId;
+        deletePlaylist(playlistId);
       });
     });
   }
 
-  // Open modal for adding new item
-  function openAddModal() {
-    editingItemId = null;
-    modalTitle.textContent = 'Add New Item';
-    itemForm.reset();
-    itemModal.style.display = 'block';
+  // Load a saved playlist
+  function loadPlaylist(playlistId) {
+    const playlist = savedPlaylists.find(p => (p.playlist_id || p.created_at) === playlistId);
+    if (!playlist) return;
+
+    currentRecommendations = [...playlist.songs];
+    renderRecommendations();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  // Open modal for editing item
-  function openEditModal(itemId) {
-    const item = pantryItems.find(i => (i.pantry_id || i.id) === itemId || (i.pantry_id || i.id) === parseInt(itemId));
-    if (!item) return;
+  // Delete a saved playlist
+  function deletePlaylist(playlistId) {
+    if (!confirm('Are you sure you want to delete this playlist?')) return;
 
-    editingItemId = itemId;
-    modalTitle.textContent = 'Edit Item';
-    
-    document.getElementById('item-name').value = item.ingredient_name || item.name || '';
-    document.getElementById('item-category').value = item.category || '';
-    document.getElementById('item-quantity').value = item.quantity || '';
-    document.getElementById('item-unit').value = item.unit || '';
-    document.getElementById('item-expiration').value = item.expiration_date || item.expirationDate || '';
-    document.getElementById('item-location').value = item.location || 'pantry';
-    document.getElementById('item-notes').value = item.notes || '';
-    
-    itemModal.style.display = 'block';
-  }
-
-  // Close modal
-  function closeModal() {
-    itemModal.style.display = 'none';
-    itemForm.reset();
-    editingItemId = null;
-  }
-
-  // Delete item via API
-  async function deleteItem(itemId) {
-    if (!confirm('Are you sure you want to delete this item?')) return;
-    
-    try {
-      await apiRequest(`/pantry/${itemId}`, {
-        method: 'DELETE'
-      });
-      
-      // Remove from local state
-      pantryItems = pantryItems.filter(item => (item.pantry_id || item.id) !== itemId && (item.pantry_id || item.id) !== parseInt(itemId));
-      saveToLocalStorage();
-      renderItems();
-    } catch (error) {
-      console.error('Failed to delete item:', error);
-      alert('Failed to delete item. Please try again.');
-    }
+    savedPlaylists = savedPlaylists.filter(p => (p.playlist_id || p.created_at) !== playlistId);
+    saveToLocalStorage();
+    renderSavedPlaylists();
   }
 
   // Event Listeners
-  addItemBtn.addEventListener('click', openAddModal);
-  closeModalBtn.addEventListener('click', closeModal);
-  cancelBtn.addEventListener('click', closeModal);
-
-  // Close modal when clicking outside
-  itemModal.addEventListener('click', (e) => {
-    if (e.target === itemModal) {
-      closeModal();
-    }
-  });
-
-  // Form submission - save item via API
-  itemForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const itemData = {
-      user_id: getCurrentUserId(),
-      ingredient_name: document.getElementById('item-name').value.trim(),
-      category: document.getElementById('item-category').value,
-      quantity: parseFloat(document.getElementById('item-quantity').value),
-      unit: document.getElementById('item-unit').value.trim(),
-      expiration_date: document.getElementById('item-expiration').value || null,
-      location: document.getElementById('item-location').value,
-      notes: document.getElementById('item-notes').value.trim()
-    };
-
-    try {
-      if (editingItemId) {
-        // Update existing item
-        await apiRequest(`/pantry/${editingItemId}`, {
-          method: 'PUT',
-          body: JSON.stringify(itemData)
-        });
-        
-        // Update local state
-        const index = pantryItems.findIndex(i => (i.pantry_id || i.id) === editingItemId || (i.pantry_id || i.id) === parseInt(editingItemId));
-        if (index !== -1) {
-          pantryItems[index] = { ...pantryItems[index], ...itemData, pantry_id: editingItemId };
-        }
-      } else {
-        // Add new item
-        const response = await apiRequest('/pantry/add', {
-          method: 'POST',
-          body: JSON.stringify(itemData)
-        });
-        
-        // Add to local state with returned pantry_id
-        pantryItems.push({ ...itemData, pantry_id: response.pantry_id || response.id });
-      }
-
-      saveToLocalStorage();
-      renderItems();
-      closeModal();
-    } catch (error) {
-      console.error('Failed to save item:', error);
-      alert('Failed to save item. Please try again.');
-    }
-  });
-
-  // Filter event listeners
-  searchInput.addEventListener('input', renderItems);
-  categoryFilter.addEventListener('change', renderItems);
-  expirationFilter.addEventListener('change', renderItems);
+  getRecommendationsBtn.addEventListener('click', getRecommendations);
+  savePlaylistBtn.addEventListener('click', savePlaylist);
+  exportPlaylistBtn.addEventListener('click', exportPlaylist);
 
   // Initialize
-  loadItems();
-  renderItems();
+  currentUserId = getCurrentUserId();
+  loadSavedPlaylists();
+  renderSavedPlaylists();
 
-  console.log('MoodMeal Pantry & Inventory Manager - Submodule 5 Loaded');
+  console.log('Music Recommender - Submodule 5 Loaded');
 })();
 </script>
 
 <style>
-/* Pantry & Inventory Manager Styling */
+/* Music Recommender Styling */
 
 /* Button hover effects */
-button:not(.edit-item-btn):not(.delete-item-btn):hover {
+button:hover:not(:disabled) {
   opacity: 0.9;
   transform: translateY(-1px);
   transition: all 0.2s ease;
 }
 
-#add-item-btn:hover {
+#get-recommendations-btn:hover {
   background: #6ab4ff;
   box-shadow: 0 4px 8px rgba(74, 158, 255, 0.3);
 }
 
-#cancel-btn:hover {
-  background: rgba(102, 102, 102, 0.1);
+#save-playlist-btn:hover,
+#export-playlist-btn:hover {
+  background: rgba(74, 158, 255, 0.1);
 }
 
-#save-item-btn:hover {
+.load-playlist-btn:hover {
   background: #6ab4ff;
 }
 
-/* Item card hover effect */
-.pantry-item-card {
+.delete-playlist-btn:hover {
+  background: rgba(255, 74, 74, 0.1);
+}
+
+/* Song card hover effect */
+.song-card {
   transition: all 0.2s ease;
 }
 
-.pantry-item-card:hover {
+.song-card:hover {
   border-color: #4a9eff !important;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(74, 158, 255, 0.2);
+  transform: translateX(5px);
+  box-shadow: -3px 0 0 #4a9eff, 0 4px 12px rgba(74, 158, 255, 0.2);
 }
 
-/* Edit and delete button hover */
-.edit-item-btn:hover {
+/* Action button hover */
+.favorite-song-btn:hover,
+.remove-song-btn:hover,
+.play-preview-btn:hover {
   transform: scale(1.2);
   transition: transform 0.2s ease;
 }
 
-.delete-item-btn:hover {
-  transform: scale(1.2);
-  transition: transform 0.2s ease;
-}
-
-/* Input focus effects */
-input:focus, select:focus, textarea:focus {
+/* Select and input focus */
+select:focus {
   outline: none;
   border-color: #4a9eff !important;
   box-shadow: 0 0 0 2px rgba(74, 158, 255, 0.2);
 }
 
+/* Saved playlist card hover */
+.saved-playlist-card {
+  transition: all 0.2s ease;
+}
+
+.saved-playlist-card:hover {
+  border-color: #4a9eff !important;
+  box-shadow: 0 4px 12px rgba(74, 158, 255, 0.2);
+}
+
+/* Loading animation */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+#loading-indicator {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
 /* Responsive adjustments */
-@media (max-width: 600px) {
-  #pantry-grid {
-    grid-template-columns: 1fr !important;
-  }
-  
-  #pantry-filters > div {
-    display: flex;
+@media (max-width: 768px) {
+  .song-card {
     flex-direction: column;
-    gap: 0.5rem;
+    align-items: flex-start !important;
+  }
+
+  .song-card > div:last-child {
+    flex-direction: row !important;
+    width: 100%;
+    justify-content: flex-end;
   }
 }
 </style>
