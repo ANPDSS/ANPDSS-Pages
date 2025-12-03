@@ -16,7 +16,7 @@ footer:
   home: /mood-meal/
   next: /mood-meal/submodule_2/
 ---
-<!DOCTYPE html>
+
 <html lang="en">
 <head>
   <meta charset="UTF-8">
