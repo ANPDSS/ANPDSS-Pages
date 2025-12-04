@@ -21,155 +21,47 @@ footer:
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MoodMeal - Dietary Restrictions</title>
+  <title>MoodMeal - Your Profile</title>
   <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      background: #0a0a0a;
-      color: #e0e0e0;
+    * {
       margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #000000;
+      color: #ffffff;
       padding: 20px;
       line-height: 1.6;
     }
- 
+
     main {
-      max-width: 1200px;
+      max-width: 1000px;
       margin: 0 auto;
     }
 
-    h1, h2, h3 {
-      color: #4a9eff;
-    }
-
-    .header {
-      text-align: center;
-      margin-bottom: 3rem;
-    }
-
-    .header h1 {
-      margin-bottom: 0.5rem;
-      font-size: 2.5rem;
-    }
-
-    .header p {
-      color: #999;
-      font-size: 1.1rem;
-    }
-
-    .section-card {
-      background: #1a1a1a;
-      border-radius: 12px;
-      padding: 2rem;
-      margin-bottom: 2rem;
-      border-left: 4px solid #4a9eff;
-    }
-
-    .section-card h2 {
-      margin-top: 0;
+    .nav-bar {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 0.5rem;
-      font-size: 1.5rem;
-    }
-
-    .section-description {
-      color: #999;
-      margin-bottom: 1.5rem;
-    }
-
-    .restrictions-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .restriction-card {
-      background: #0a0a0a;
-      border: 2px solid #444;
+      padding: 1.5rem;
+      background: #111111;
       border-radius: 8px;
-      padding: 1.25rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-align: center;
+      border: 2px solid #2196F3;
+      margin-bottom: 2rem;
     }
 
-    .restriction-card:hover {
-      border-color: #4a9eff;
-      background: rgba(74, 158, 255, 0.05);
-      transform: translateY(-2px);
+    .nav-bar h2 {
+      color: #2196F3;
+      margin: 0;
     }
 
-    .restriction-card.selected {
-      border-color: #4a9eff;
-      background: rgba(74, 158, 255, 0.15);
-      box-shadow: 0 0 20px rgba(74, 158, 255, 0.2);
-    }
-
-    .restriction-card .icon {
-      font-size: 2rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .restriction-card .name {
-      font-weight: 600;
-      font-size: 1rem;
-      color: #e0e0e0;
-    }
-
-    .restriction-card .description {
-      font-size: 0.85rem;
-      color: #999;
-      margin-top: 0.5rem;
-    }
-
-    .restriction-card.selected .name {
-      color: #4a9eff;
-    }
-
-    .allergy-card {
-      border-color: #ff4a4a;
-    }
-
-    .allergy-card:hover {
-      border-color: #ff4a4a;
-      background: rgba(255, 74, 74, 0.05);
-    }
-
-    .allergy-card.selected {
-      border-color: #ff4a4a;
-      background: rgba(255, 74, 74, 0.15);
-      box-shadow: 0 0 20px rgba(255, 74, 74, 0.2);
-    }
-
-    .allergy-card.selected .name {
-      color: #ff4a4a;
-    }
-
-    .cuisine-card {
-      border-color: #aa4aff;
-    }
-
-    .cuisine-card:hover {
-      border-color: #aa4aff;
-      background: rgba(170, 74, 255, 0.05);
-    }
-
-    .cuisine-card.selected {
-      border-color: #aa4aff;
-      background: rgba(170, 74, 255, 0.15);
-      box-shadow: 0 0 20px rgba(170, 74, 255, 0.2);
-    }
-
-    .cuisine-card.selected .name {
-      color: #aa4aff;
-    }
-
-    .actions {
+    .nav-actions {
       display: flex;
       gap: 1rem;
-      justify-content: flex-end;
-      flex-wrap: wrap;
+      align-items: center;
     }
 
     .btn {
@@ -178,122 +70,280 @@ footer:
       cursor: pointer;
       border: none;
       border-radius: 6px;
-      transition: all 0.2s ease;
       font-weight: 600;
+      transition: all 0.2s ease;
     }
 
     .btn-primary {
-      background: #4a9eff;
+      background: #2196F3;
       color: white;
     }
 
     .btn-primary:hover {
-      background: #6ab4ff;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(74, 158, 255, 0.4);
+      background: #1976D2;
     }
 
     .btn-secondary {
       background: transparent;
-      color: #4a9eff;
-      border: 2px solid #4a9eff;
+      color: #2196F3;
+      border: 2px solid #2196F3;
     }
 
     .btn-secondary:hover {
-      background: rgba(74, 158, 255, 0.1);
+      background: #001a33;
     }
 
-    .btn-clear {
-      background: transparent;
-      color: #ff4a4a;
-      border: 2px solid #ff4a4a;
+    .dropdown-section {
+      background: #111111;
+      border: 2px solid #2196F3;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
     }
 
-    .btn-clear:hover {
-      background: rgba(255, 74, 74, 0.1);
+    .dropdown-header {
+      padding: 1.5rem;
+      background: #1a1a1a;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.2s ease;
     }
 
-    .summary-panel {
-      background: linear-gradient(135deg, #1a1a1a 0%, #252525 100%);
-      border-radius: 12px;
-      padding: 2rem;
-      margin-bottom: 2rem;
-      border: 2px solid #4a9eff;
+    .dropdown-header:hover {
+      background: #222222;
     }
 
-    .summary-panel h2 {
-      margin-top: 0;
+    .dropdown-header h3 {
+      color: #2196F3;
+      margin: 0;
+      font-size: 1.3rem;
+    }
+
+    .dropdown-arrow {
+      font-size: 1.5rem;
+      color: #2196F3;
+      transition: transform 0.3s ease;
+    }
+
+    .dropdown-arrow.open {
+      transform: rotate(180deg);
+    }
+
+    .dropdown-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+
+    .dropdown-content.open {
+      max-height: 2000px;
+    }
+
+    .dropdown-inner {
+      padding: 1.5rem;
+    }
+
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .checkbox-item {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      background: #000000;
+      border: 2px solid #333;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
     }
 
-    .summary-section {
+    .checkbox-item:hover {
+      border-color: #2196F3;
+      background: #001a33;
+    }
+
+    .checkbox-item input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      accent-color: #2196F3;
+    }
+
+    .checkbox-item label {
+      cursor: pointer;
+      flex: 1;
+      color: #ffffff;
+    }
+
+    .sub-dropdown {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #333;
+    }
+
+    .sub-dropdown-header {
+      padding: 1rem;
+      background: #0a0a0a;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 6px;
+      margin-bottom: 0.5rem;
+    }
+
+    .sub-dropdown-header:hover {
+      background: #1a1a1a;
+    }
+
+    .sub-dropdown-header h4 {
+      color: #2196F3;
+      margin: 0;
+      font-size: 1.1rem;
+    }
+
+    .sub-dropdown-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+
+    .sub-dropdown-content.open {
+      max-height: 1000px;
+      padding-top: 0.5rem;
+    }
+
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal.hidden {
+      display: none;
+    }
+
+    .modal-content {
+      background: #111111;
+      border: 2px solid #2196F3;
+      border-radius: 8px;
+      padding: 2rem;
+      max-width: 500px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       margin-bottom: 1.5rem;
     }
 
-    .summary-section:last-child {
-      margin-bottom: 0;
+    .modal-header h2 {
+      color: #2196F3;
+      margin: 0;
     }
 
-    .summary-section h3 {
-      font-size: 1rem;
+    .close-btn {
+      background: none;
+      border: none;
+      color: #888;
+      font-size: 2rem;
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+    }
+
+    .close-btn:hover {
+      color: #2196F3;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
       margin-bottom: 0.5rem;
-      color: #999;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      color: #ccc;
+      font-weight: 500;
     }
 
-    .summary-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
+    .form-group input {
+      width: 100%;
+      padding: 0.75rem;
+      background: #000000;
+      border: 1px solid #333;
+      border-radius: 6px;
+      color: #ffffff;
+      font-size: 1rem;
     }
 
-    .summary-tag {
-      display: inline-block;
-      padding: 0.4rem 1rem;
-      background: rgba(74, 158, 255, 0.2);
-      border: 1px solid #4a9eff;
-      border-radius: 20px;
+    .form-group input:focus {
+      outline: none;
+      border-color: #2196F3;
+    }
+
+    .form-group input:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .demo-info {
+      background: #001a33;
+      border: 1px solid #2196F3;
+      padding: 1rem;
+      border-radius: 6px;
+      margin-bottom: 1rem;
       font-size: 0.9rem;
-      color: #4a9eff;
     }
 
-    .summary-tag.allergy {
-      background: rgba(255, 74, 74, 0.2);
-      border-color: #ff4a4a;
-      color: #ff4a4a;
+    .demo-info strong {
+      color: #2196F3;
     }
 
-    .summary-tag.cuisine {
-      background: rgba(170, 74, 255, 0.2);
-      border-color: #aa4aff;
-      color: #aa4aff;
+    .text-link {
+      color: #2196F3;
+      text-decoration: underline;
+      cursor: pointer;
     }
 
-    .empty-state {
-      color: #666;
-      font-style: italic;
+    .text-link:hover {
+      color: #1976D2;
     }
 
     .message {
       padding: 1rem;
+      margin-bottom: 1rem;
       border-radius: 6px;
-      margin-bottom: 1.5rem;
       animation: slideIn 0.3s ease;
     }
 
     .message-success {
-      background: rgba(74, 255, 158, 0.1);
-      border: 1px solid #4aff9e;
-      color: #4aff9e;
+      background: #001a33;
+      border: 1px solid #2196F3;
+      color: #2196F3;
     }
 
     .message-info {
-      background: rgba(74, 158, 255, 0.1);
-      border: 1px solid #4a9eff;
-      color: #4a9eff;
+      background: #001a33;
+      border: 1px solid #2196F3;
+      color: #2196F3;
     }
 
     @keyframes slideIn {
@@ -307,106 +357,25 @@ footer:
       }
     }
 
+    .save-section {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 2rem;
+    }
+
     .hidden {
       display: none !important;
     }
 
-    .modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      animation: fadeIn 0.3s ease;
-    }
-
-    .modal-content {
-      background: #1a1a1a;
-      border-radius: 12px;
-      padding: 2rem;
-      max-width: 500px;
-      width: 90%;
-      border: 2px solid #4a9eff;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-      animation: slideUp 0.3s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    @keyframes slideUp {
-      from { transform: translateY(20px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-
-    .close-modal {
-      color: #999;
-      font-size: 2rem;
-      cursor: pointer;
-      line-height: 1;
-      transition: color 0.2s ease;
-    }
-
-    .close-modal:hover {
-      color: #4a9eff;
-    }
-
-    .form-group {
-      margin-bottom: 1.5rem;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-      color: #ccc;
-    }
-
-    input[type="text"],
-    input[type="email"],
-    input[type="password"] {
-      width: 100%;
-      padding: 0.75rem;
-      background: #0a0a0a;
-      border: 1px solid #444;
-      border-radius: 6px;
-      color: #e0e0e0;
-      font-size: 1rem;
-      box-sizing: border-box;
-      transition: border-color 0.2s ease;
-    }
-
-    input[type="text"]:focus,
-    input[type="email"]:focus,
-    input[type="password"]:focus {
-      outline: none;
-      border-color: #4a9eff;
-    }
-
-    .text-link {
-      color: #4a9eff;
-      cursor: pointer;
-      text-decoration: underline;
-    }
-
-    .text-link:hover {
-      color: #6ab4ff;
-    }
-
     @media (max-width: 768px) {
-      .restrictions-grid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      .checkbox-grid {
+        grid-template-columns: 1fr;
       }
 
-      .actions {
+      .nav-actions {
         flex-direction: column;
+        width: 100%;
       }
 
       .btn {
@@ -418,53 +387,128 @@ footer:
 <body>
 
 <main>
-  <!-- Navigation Bar -->
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding: 1rem; background: #1a1a1a; border-radius: 8px;">
-    <div>
-      <h3 style="margin: 0; color: #4a9eff;">MoodMeal</h3>
+  <div class="nav-bar">
+    <h2>🍽️ MoodMeal</h2>
+    <div class="nav-actions">
+      <div id="guest-buttons">
+        <button class="btn btn-secondary" id="login-btn">Login</button>
+        <button class="btn btn-primary" id="signup-btn">Sign Up</button>
+      </div>
+      <div id="user-section" class="hidden">
+        <button class="btn btn-secondary" id="profile-btn">👤 Profile</button>
+        <button class="btn btn-secondary" id="logout-btn">Logout</button>
+      </div>
     </div>
-    <div id="nav-buttons">
-      <button class="btn btn-secondary" id="nav-login" style="margin-right: 0.5rem;">Login</button>
-      <button class="btn btn-primary" id="nav-signup">Sign Up</button>
-    </div>
-    <div id="user-info" class="hidden" style="display: flex; align-items: center; gap: 1rem;">
-      <span style="color: #999;">Welcome, <span id="user-name-display">User</span>!</span>
-      <button class="btn btn-secondary" id="nav-logout">Logout</button>
-    </div>
-  </div>
-
-  <div class="header">
-    <h1>🥗 Dietary Restrictions</h1>
-    <p>Customize your meal preferences to get personalized recommendations</p>
   </div>
 
   <div id="message-container"></div>
 
+  <!-- Cuisines Dropdown with Sub-dropdowns -->
+  <div class="dropdown-section">
+    <div class="dropdown-header" data-dropdown="cuisines">
+      <h3>🍽️ Food Preferences</h3>
+      <span class="dropdown-arrow">▼</span>
+    </div>
+    <div class="dropdown-content" id="cuisines-content">
+      <div class="dropdown-inner">
+        
+        <!-- Dietary Restrictions Sub-dropdown -->
+        <div class="sub-dropdown">
+          <div class="sub-dropdown-header" data-subdropdown="dietary">
+            <h4>🌱 Dietary Restrictions</h4>
+            <span class="dropdown-arrow">▼</span>
+          </div>
+          <div class="sub-dropdown-content" id="dietary-subdropdown">
+            <div class="checkbox-grid" id="dietary-options"></div>
+          </div>
+        </div>
+
+        <!-- Allergies Sub-dropdown -->
+        <div class="sub-dropdown">
+          <div class="sub-dropdown-header" data-subdropdown="allergies">
+            <h4>⚠️ Allergies & Intolerances</h4>
+            <span class="dropdown-arrow">▼</span>
+          </div>
+          <div class="sub-dropdown-content" id="allergies-subdropdown">
+            <div class="checkbox-grid" id="allergies-options"></div>
+          </div>
+        </div>
+
+        <!-- Cuisines Sub-dropdown -->
+        <div class="sub-dropdown">
+          <div class="sub-dropdown-header" data-subdropdown="cuisines-list">
+            <h4>🍽️ Favorite Cuisines</h4>
+            <span class="dropdown-arrow">▼</span>
+          </div>
+          <div class="sub-dropdown-content" id="cuisines-subdropdown">
+            <div class="checkbox-grid" id="cuisines-options"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Music Dropdown -->
+  <div class="dropdown-section">
+    <div class="dropdown-header" data-dropdown="music">
+      <h3>🎵 Music Preferences</h3>
+      <span class="dropdown-arrow">▼</span>
+    </div>
+    <div class="dropdown-content" id="music-content">
+      <div class="dropdown-inner">
+        <div class="checkbox-grid" id="music-options"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Activities Dropdown -->
+  <div class="dropdown-section">
+    <div class="dropdown-header" data-dropdown="activities">
+      <h3>🎯 Favorite Activities</h3>
+      <span class="dropdown-arrow">▼</span>
+    </div>
+    <div class="dropdown-content" id="activities-content">
+      <div class="dropdown-inner">
+        <div class="checkbox-grid" id="activities-options"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="save-section">
+    <button class="btn btn-secondary" id="reset-btn">Reset All</button>
+    <button class="btn btn-primary" id="save-btn">💾 Save Preferences</button>
+  </div>
+
   <!-- Login Modal -->
   <div id="login-modal" class="modal hidden">
     <div class="modal-content">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-        <h2 style="margin: 0;">Sign In</h2>
-        <span class="close-modal" data-modal="login-modal">&times;</span>
+      <div class="modal-header">
+        <h2>Sign In</h2>
+        <button class="close-btn" data-modal="login-modal">&times;</button>
       </div>
-      
+
+      <div class="demo-info">
+        <strong>Demo Account:</strong><br>
+        Email: demo@moodmeal.com<br>
+        Password: demo123
+      </div>
+
       <div class="form-group">
-        <label for="login-email">Email Address</label>
-        <input type="email" id="login-email" placeholder="your@email.com" required>
+        <label>Email Address</label>
+        <input type="email" id="login-email" placeholder="your@email.com">
       </div>
 
       <div class="form-group">
-        <label for="login-password">Password</label>
-        <input type="password" id="login-password" placeholder="Enter your password" required>
+        <label>Password</label>
+        <input type="password" id="login-password" placeholder="Enter password">
       </div>
 
-      <button id="login-btn" class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;">
-        Sign In
-      </button>
+      <button class="btn btn-primary" id="do-login" style="width: 100%; margin-bottom: 1rem;">Sign In</button>
 
-      <p style="text-align: center; color: #999;">
+      <p style="text-align: center; color: #888;">
         Don't have an account? 
-        <span class="text-link" id="show-signup-from-login">Sign up here</span>
+        <span class="text-link" id="switch-to-signup">Sign up here</span>
       </p>
     </div>
   </div>
@@ -472,110 +516,65 @@ footer:
   <!-- Signup Modal -->
   <div id="signup-modal" class="modal hidden">
     <div class="modal-content">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-        <h2 style="margin: 0;">Create Account</h2>
-        <span class="close-modal" data-modal="signup-modal">&times;</span>
+      <div class="modal-header">
+        <h2>Create Account</h2>
+        <button class="close-btn" data-modal="signup-modal">&times;</button>
       </div>
 
       <div class="form-group">
-        <label for="signup-name">Full Name</label>
-        <input type="text" id="signup-name" placeholder="John Doe" required>
+        <label>Full Name</label>
+        <input type="text" id="signup-name" placeholder="John Doe">
       </div>
 
       <div class="form-group">
-        <label for="signup-email">Email Address</label>
-        <input type="email" id="signup-email" placeholder="your@email.com" required>
+        <label>Email Address</label>
+        <input type="email" id="signup-email" placeholder="your@email.com">
       </div>
 
       <div class="form-group">
-        <label for="signup-password">Password</label>
-        <input type="password" id="signup-password" placeholder="At least 6 characters" required>
+        <label>Password</label>
+        <input type="password" id="signup-password" placeholder="At least 6 characters">
       </div>
 
       <div class="form-group">
-        <label for="signup-confirm-password">Confirm Password</label>
-        <input type="password" id="signup-confirm-password" placeholder="Re-enter your password" required>
+        <label>Confirm Password</label>
+        <input type="password" id="signup-confirm" placeholder="Re-enter password">
       </div>
 
-      <button id="signup-btn" class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;">
-        Create Account
-      </button>
+      <button class="btn btn-primary" id="do-signup" style="width: 100%; margin-bottom: 1rem;">Create Account</button>
 
-      <p style="text-align: center; color: #999;">
+      <p style="text-align: center; color: #888;">
         Already have an account? 
-        <span class="text-link" id="show-login-from-signup">Sign in here</span>
+        <span class="text-link" id="switch-to-login">Sign in here</span>
       </p>
     </div>
   </div>
 
-  <!-- Summary Panel -->
-  <div class="summary-panel">
-    <h2>📋 Your Current Selections</h2>
-    
-    <div class="summary-section">
-      <h3>Dietary Restrictions</h3>
-      <div id="summary-dietary" class="summary-tags">
-        <span class="empty-state">None selected</span>
+  <!-- Profile Modal -->
+  <div id="profile-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Your Profile</h2>
+        <button class="close-btn" data-modal="profile-modal">&times;</button>
       </div>
-    </div>
 
-    <div class="summary-section">
-      <h3>Allergies & Intolerances</h3>
-      <div id="summary-allergies" class="summary-tags">
-        <span class="empty-state">None selected</span>
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="profile-name" disabled>
       </div>
-    </div>
 
-    <div class="summary-section">
-      <h3>Favorite Cuisines</h3>
-      <div id="summary-cuisines" class="summary-tags">
-        <span class="empty-state">None selected</span>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" id="profile-email" disabled>
       </div>
+
+      <div class="form-group">
+        <label>Member Since</label>
+        <input type="text" id="profile-created" disabled>
+      </div>
+
+      <button class="btn btn-primary" style="width: 100%;" onclick="document.getElementById('profile-modal').classList.add('hidden')">Close</button>
     </div>
-  </div>
-
-  <!-- Dietary Restrictions Section -->
-  <div class="section-card">
-    <h2>🌱 Dietary Restrictions</h2>
-    <p class="section-description">Select the dietary restrictions you follow</p>
-    
-    <div class="restrictions-grid" id="dietary-grid"></div>
-
-    <div class="actions">
-      <button class="btn btn-clear" id="clear-dietary">Clear All</button>
-    </div>
-  </div>
-
-  <!-- Allergies Section -->
-  <div class="section-card" style="border-left-color: #ff4a4a;">
-    <h2>⚠️ Allergies & Intolerances</h2>
-    <p class="section-description">Let us know about any food allergies or intolerances you have</p>
-    
-    <div class="restrictions-grid" id="allergies-grid"></div>
-
-    <div class="actions">
-      <button class="btn btn-clear" id="clear-allergies">Clear All</button>
-    </div>
-  </div>
-
-  <!-- Cuisines Section -->
-  <div class="section-card" style="border-left-color: #aa4aff;">
-    <h2>🍽️ Favorite Cuisines</h2>
-    <p class="section-description">Choose the types of cuisine you enjoy most</p>
-    
-    <div class="restrictions-grid" id="cuisines-grid"></div>
-
-    <div class="actions">
-      <button class="btn btn-clear" id="clear-cuisines">Clear All</button>
-    </div>
-  </div>
-
-  <!-- Save Actions -->
-  <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem; flex-wrap: wrap;">
-    <button class="btn btn-secondary" id="reset-all">Reset Everything</button>
-    <button class="btn btn-primary" id="save-preferences" style="min-width: 200px;">
-      💾 Save All Preferences
-    </button>
   </div>
 
 </main>
@@ -585,392 +584,344 @@ footer:
   'use strict';
 
   // Data
-  const dietaryRestrictions = [
-    { id: 'vegetarian', name: 'Vegetarian', icon: '🥬', description: 'No meat or fish' },
-    { id: 'vegan', name: 'Vegan', icon: '🌱', description: 'No animal products' },
-    { id: 'pescatarian', name: 'Pescatarian', icon: '🐟', description: 'Fish but no meat' },
-    { id: 'gluten-free', name: 'Gluten-Free', icon: '🌾', description: 'No gluten' },
-    { id: 'dairy-free', name: 'Dairy-Free', icon: '🥛', description: 'No dairy products' },
-    { id: 'keto', name: 'Keto', icon: '🥑', description: 'Low carb, high fat' },
-    { id: 'paleo', name: 'Paleo', icon: '🍖', description: 'Whole foods only' },
-    { id: 'halal', name: 'Halal', icon: '☪️', description: 'Islamic dietary laws' },
-    { id: 'kosher', name: 'Kosher', icon: '✡️', description: 'Jewish dietary laws' },
-    { id: 'low-carb', name: 'Low-Carb', icon: '🥗', description: 'Reduced carbohydrates' },
-    { id: 'low-sodium', name: 'Low-Sodium', icon: '🧂', description: 'Reduced salt' },
-    { id: 'sugar-free', name: 'Sugar-Free', icon: '🍬', description: 'No added sugar' }
+  var dietary = [
+    { id: 'vegetarian', name: 'Vegetarian' },
+    { id: 'vegan', name: 'Vegan' },
+    { id: 'pescatarian', name: 'Pescatarian' },
+    { id: 'gluten-free', name: 'Gluten-Free' },
+    { id: 'dairy-free', name: 'Dairy-Free' },
+    { id: 'keto', name: 'Keto' },
+    { id: 'paleo', name: 'Paleo' },
+    { id: 'halal', name: 'Halal' },
+    { id: 'kosher', name: 'Kosher' },
+    { id: 'low-carb', name: 'Low-Carb' },
+    { id: 'low-sodium', name: 'Low-Sodium' },
+    { id: 'sugar-free', name: 'Sugar-Free' }
   ];
 
-  const allergies = [
-    { id: 'nuts', name: 'Tree Nuts', icon: '🥜', description: 'Almonds, walnuts, etc.' },
-    { id: 'peanuts', name: 'Peanuts', icon: '🥜', description: 'Peanut allergy' },
-    { id: 'shellfish', name: 'Shellfish', icon: '🦐', description: 'Shrimp, crab, lobster' },
-    { id: 'fish', name: 'Fish', icon: '🐠', description: 'All fish' },
-    { id: 'eggs', name: 'Eggs', icon: '🥚', description: 'Egg allergy' },
-    { id: 'dairy', name: 'Dairy', icon: '🧀', description: 'Milk products' },
-    { id: 'soy', name: 'Soy', icon: '🫘', description: 'Soy products' },
-    { id: 'wheat', name: 'Wheat', icon: '🌾', description: 'Wheat allergy' },
-    { id: 'gluten', name: 'Gluten', icon: '🍞', description: 'Gluten intolerance' },
-    { id: 'sesame', name: 'Sesame', icon: '🫘', description: 'Sesame seeds' },
-    { id: 'mustard', name: 'Mustard', icon: '🌭', description: 'Mustard allergy' },
-    { id: 'sulfites', name: 'Sulfites', icon: '🍷', description: 'Preservative allergy' }
+  var allergies = [
+    { id: 'nuts', name: 'Tree Nuts' },
+    { id: 'peanuts', name: 'Peanuts' },
+    { id: 'shellfish', name: 'Shellfish' },
+    { id: 'fish', name: 'Fish' },
+    { id: 'eggs', name: 'Eggs' },
+    { id: 'dairy', name: 'Dairy' },
+    { id: 'soy', name: 'Soy' },
+    { id: 'wheat', name: 'Wheat' },
+    { id: 'gluten', name: 'Gluten' },
+    { id: 'sesame', name: 'Sesame' }
   ];
 
-  const cuisines = [
-    { id: 'italian', name: 'Italian', icon: '🍝', description: 'Pasta, pizza' },
-    { id: 'asian', name: 'Asian', icon: '🍜', description: 'Various Asian' },
-    { id: 'mexican', name: 'Mexican', icon: '🌮', description: 'Tacos, burritos' },
-    { id: 'mediterranean', name: 'Mediterranean', icon: '🫒', description: 'Healthy cuisine' },
-    { id: 'indian', name: 'Indian', icon: '🍛', description: 'Curry, spices' },
-    { id: 'thai', name: 'Thai', icon: '🥘', description: 'Spicy and sweet' },
-    { id: 'american', name: 'American', icon: '🍔', description: 'Classic comfort' },
-    { id: 'japanese', name: 'Japanese', icon: '🍣', description: 'Sushi, ramen' },
-    { id: 'chinese', name: 'Chinese', icon: '🥟', description: 'Dim sum, stir-fry' },
-    { id: 'french', name: 'French', icon: '🥐', description: 'Elegant cuisine' },
-    { id: 'greek', name: 'Greek', icon: '🥙', description: 'Mediterranean style' },
-    { id: 'korean', name: 'Korean', icon: '🍲', description: 'BBQ, kimchi' }
+  var cuisines = [
+    { id: 'italian', name: 'Italian' },
+    { id: 'asian', name: 'Asian' },
+    { id: 'mexican', name: 'Mexican' },
+    { id: 'mediterranean', name: 'Mediterranean' },
+    { id: 'indian', name: 'Indian' },
+    { id: 'thai', name: 'Thai' },
+    { id: 'american', name: 'American' },
+    { id: 'japanese', name: 'Japanese' },
+    { id: 'chinese', name: 'Chinese' },
+    { id: 'french', name: 'French' },
+    { id: 'greek', name: 'Greek' },
+    { id: 'korean', name: 'Korean' }
   ];
 
-  // State
-  let selectedDietary = [];
-  let selectedAllergies = [];
-  let selectedCuisines = [];
-  let currentUser = null;
-  let users = [];
+  var music = [
+    { id: 'pop', name: 'Pop' },
+    { id: 'rock', name: 'Rock' },
+    { id: 'jazz', name: 'Jazz' },
+    { id: 'classical', name: 'Classical' },
+    { id: 'hiphop', name: 'Hip-Hop' },
+    { id: 'electronic', name: 'Electronic' },
+    { id: 'country', name: 'Country' },
+    { id: 'rnb', name: 'R&B' },
+    { id: 'indie', name: 'Indie' },
+    { id: 'latin', name: 'Latin' }
+  ];
 
-  // DOM Elements
-  const dietaryGrid = document.getElementById('dietary-grid');
-  const allergiesGrid = document.getElementById('allergies-grid');
-  const cuisinesGrid = document.getElementById('cuisines-grid');
-  const messageContainer = document.getElementById('message-container');
+  var activities = [
+    { id: 'reading', name: 'Reading' },
+    { id: 'gaming', name: 'Gaming' },
+    { id: 'sports', name: 'Sports' },
+    { id: 'cooking', name: 'Cooking' },
+    { id: 'hiking', name: 'Hiking' },
+    { id: 'movies', name: 'Watching Movies' },
+    { id: 'art', name: 'Art & Crafts' },
+    { id: 'photography', name: 'Photography' },
+    { id: 'travel', name: 'Traveling' },
+    { id: 'music', name: 'Playing Music' },
+    { id: 'yoga', name: 'Yoga' },
+    { id: 'dancing', name: 'Dancing' }
+  ];
 
-  // Modals
-  const loginModal = document.getElementById('login-modal');
-  const signupModal = document.getElementById('signup-modal');
-  const navLogin = document.getElementById('nav-login');
-  const navSignup = document.getElementById('nav-signup');
-  const navLogout = document.getElementById('nav-logout');
-  const navButtons = document.getElementById('nav-buttons');
-  const userInfo = document.getElementById('user-info');
-  const userNameDisplay = document.getElementById('user-name-display');
-
-  // Modal Functions
-  function openModal(modal) {
-    modal.classList.remove('hidden');
-  }
-
-  function closeModal(modal) {
-    modal.classList.add('hidden');
-  }
-
-  // Close modal when clicking X
-  document.querySelectorAll('.close-modal').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const modalId = e.target.dataset.modal;
-      const modal = document.getElementById(modalId);
-      closeModal(modal);
-    });
-  });
-
-  // Close modal when clicking outside
-  window.addEventListener('click', (e) => {
-    if (e.target.classList.contains('modal')) {
-      closeModal(e.target);
+  var currentUser = null;
+  var users = [
+    {
+      name: 'Demo User',
+      email: 'demo@moodmeal.com',
+      password: 'demo123',
+      preferences: {
+        dietary: ['vegetarian', 'gluten-free'],
+        allergies: ['nuts', 'dairy'],
+        cuisines: ['italian', 'mediterranean'],
+        music: ['jazz', 'classical'],
+        activities: ['reading', 'cooking', 'hiking']
+      },
+      createdAt: new Date().toISOString()
     }
-  });
+  ];
 
-  // Navigation
-  navLogin.addEventListener('click', () => openModal(loginModal));
-  navSignup.addEventListener('click', () => openModal(signupModal));
+  function renderCheckboxes(containerId, items, selectedIds) {
+    var container = document.getElementById(containerId);
+    var html = '';
+    for (var i = 0; i < items.length; i++) {
+      var item = items[i];
+      var checked = selectedIds.indexOf(item.id) > -1 ? 'checked' : '';
+      html += '<div class="checkbox-item">';
+      html += '<input type="checkbox" id="' + item.id + '" ' + checked + '>';
+      html += '<label for="' + item.id + '">' + item.name + '</label>';
+      html += '</div>';
+    }
+    container.innerHTML = html;
+  }
 
-  document.getElementById('show-signup-from-login').addEventListener('click', () => {
-    closeModal(loginModal);
-    openModal(signupModal);
-  });
+  function loadUserPreferences() {
+    if (currentUser && currentUser.preferences) {
+      renderCheckboxes('dietary-options', dietary, currentUser.preferences.dietary || []);
+      renderCheckboxes('allergies-options', allergies, currentUser.preferences.allergies || []);
+      renderCheckboxes('cuisines-options', cuisines, currentUser.preferences.cuisines || []);
+      renderCheckboxes('music-options', music, currentUser.preferences.music || []);
+      renderCheckboxes('activities-options', activities, currentUser.preferences.activities || []);
+    } else {
+      renderCheckboxes('dietary-options', dietary, []);
+      renderCheckboxes('allergies-options', allergies, []);
+      renderCheckboxes('cuisines-options', cuisines, []);
+      renderCheckboxes('music-options', music, []);
+      renderCheckboxes('activities-options', activities, []);
+    }
+  }
 
-  document.getElementById('show-login-from-signup').addEventListener('click', () => {
-    closeModal(signupModal);
-    openModal(loginModal);
-  });
+  function getSelectedIds(containerId) {
+    var container = document.getElementById(containerId);
+    var checkboxes = container.querySelectorAll('input[type="checkbox"]:checked');
+    var selected = [];
+    for (var i = 0; i < checkboxes.length; i++) {
+      selected.push(checkboxes[i].id);
+    }
+    return selected;
+  }
 
-  // Update UI based on login state
+  function showMessage(text) {
+    var container = document.getElementById('message-container');
+    var msg = document.createElement('div');
+    msg.className = 'message message-success';
+    msg.textContent = text;
+    container.appendChild(msg);
+    setTimeout(function() {
+      msg.remove();
+    }, 3000);
+  }
+
   function updateAuthUI() {
     if (currentUser) {
-      navButtons.classList.add('hidden');
-      userInfo.classList.remove('hidden');
-      userNameDisplay.textContent = currentUser.name;
+      document.getElementById('guest-buttons').classList.add('hidden');
+      document.getElementById('user-section').classList.remove('hidden');
     } else {
-      navButtons.classList.remove('hidden');
-      userInfo.classList.add('hidden');
+      document.getElementById('guest-buttons').classList.remove('hidden');
+      document.getElementById('user-section').classList.add('hidden');
     }
   }
 
-  // Login Handler
-  document.getElementById('login-btn').addEventListener('click', () => {
-    const email = document.getElementById('login-email').value.trim();
-    const password = document.getElementById('login-password').value;
+  // Dropdown toggles
+  var headers = document.querySelectorAll('.dropdown-header');
+  for (var i = 0; i < headers.length; i++) {
+    headers[i].addEventListener('click', function() {
+      var dropdown = this.getAttribute('data-dropdown');
+      var content = document.getElementById(dropdown + '-content');
+      var arrow = this.querySelector('.dropdown-arrow');
+      
+      content.classList.toggle('open');
+      arrow.classList.toggle('open');
+    });
+  }
+
+  // Sub-dropdown toggles
+  var subHeaders = document.querySelectorAll('.sub-dropdown-header');
+  for (var i = 0; i < subHeaders.length; i++) {
+    subHeaders[i].addEventListener('click', function() {
+      var subdropdown = this.getAttribute('data-subdropdown');
+      var content = document.getElementById(subdropdown + '-subdropdown');
+      var arrow = this.querySelector('.dropdown-arrow');
+      
+      content.classList.toggle('open');
+      arrow.classList.toggle('open');
+    });
+  }
+
+  // Modal controls
+  var closeBtns = document.querySelectorAll('.close-btn');
+  for (var i = 0; i < closeBtns.length; i++) {
+    closeBtns[i].addEventListener('click', function() {
+      var modalId = this.getAttribute('data-modal');
+      document.getElementById(modalId).classList.add('hidden');
+    });
+  }
+
+  document.getElementById('login-btn').addEventListener('click', function() {
+    document.getElementById('login-modal').classList.remove('hidden');
+  });
+
+  document.getElementById('signup-btn').addEventListener('click', function() {
+    document.getElementById('signup-modal').classList.remove('hidden');
+  });
+
+  document.getElementById('profile-btn').addEventListener('click', function() {
+    if (currentUser) {
+      document.getElementById('profile-name').value = currentUser.name;
+      document.getElementById('profile-email').value = currentUser.email;
+      document.getElementById('profile-created').value = new Date(currentUser.createdAt).toLocaleDateString();
+      document.getElementById('profile-modal').classList.remove('hidden');
+    }
+  });
+
+  document.getElementById('switch-to-signup').addEventListener('click', function() {
+    document.getElementById('login-modal').classList.add('hidden');
+    document.getElementById('signup-modal').classList.remove('hidden');
+  });
+
+  document.getElementById('switch-to-login').addEventListener('click', function() {
+    document.getElementById('signup-modal').classList.add('hidden');
+    document.getElementById('login-modal').classList.remove('hidden');
+  });
+
+  // Login
+  document.getElementById('do-login').addEventListener('click', function() {
+    var email = document.getElementById('login-email').value.trim();
+    var password = document.getElementById('login-password').value;
 
     if (!email || !password) {
-      showMessage('Please fill in all fields', 'info');
+      showMessage('Please fill in all fields');
       return;
     }
 
-    const user = users.find(u => u.email === email);
+    var user = null;
+    for (var i = 0; i < users.length; i++) {
+      if (users[i].email === email && users[i].password === password) {
+        user = users[i];
+        break;
+      }
+    }
+
     if (!user) {
-      showMessage('No account found with this email', 'info');
-      return;
-    }
-
-    if (user.password !== password) {
-      showMessage('Incorrect password', 'info');
+      showMessage('Invalid email or password');
       return;
     }
 
     currentUser = user;
-    
-    // Load user's saved preferences
-    if (user.preferences) {
-      selectedDietary = user.preferences.dietary || [];
-      selectedAllergies = user.preferences.allergies || [];
-      selectedCuisines = user.preferences.cuisines || [];
-      
-      renderCards(dietaryGrid, dietaryRestrictions, selectedDietary, '');
-      renderCards(allergiesGrid, allergies, selectedAllergies, 'allergy-card');
-      renderCards(cuisinesGrid, cuisines, selectedCuisines, 'cuisine-card');
-      updateSummary();
-    }
-
-    closeModal(loginModal);
-    updateAuthUI();
-    showMessage(`Welcome back, ${currentUser.name}!`, 'success');
-    
-    // Clear form
+    document.getElementById('login-modal').classList.add('hidden');
     document.getElementById('login-email').value = '';
     document.getElementById('login-password').value = '';
+    updateAuthUI();
+    loadUserPreferences();
+    showMessage('Welcome back, ' + currentUser.name + '!');
   });
 
-  // Signup Handler
-  document.getElementById('signup-btn').addEventListener('click', () => {
-    const name = document.getElementById('signup-name').value.trim();
-    const email = document.getElementById('signup-email').value.trim();
-    const password = document.getElementById('signup-password').value;
-    const confirmPassword = document.getElementById('signup-confirm-password').value;
+  // Signup
+  document.getElementById('do-signup').addEventListener('click', function() {
+    var name = document.getElementById('signup-name').value.trim();
+    var email = document.getElementById('signup-email').value.trim();
+    var password = document.getElementById('signup-password').value;
+    var confirm = document.getElementById('signup-confirm').value;
 
-    if (!name || !email || !password || !confirmPassword) {
-      showMessage('Please fill in all fields', 'info');
+    if (!name || !email || !password || !confirm) {
+      showMessage('Please fill in all fields');
+      return;
+    }
+
+    if (password !== confirm) {
+      showMessage('Passwords do not match');
       return;
     }
 
     if (password.length < 6) {
-      showMessage('Password must be at least 6 characters', 'info');
+      showMessage('Password must be at least 6 characters');
       return;
     }
 
-    if (password !== confirmPassword) {
-      showMessage('Passwords do not match', 'info');
-      return;
+    for (var i = 0; i < users.length; i++) {
+      if (users[i].email === email) {
+        showMessage('Email already exists');
+        return;
+      }
     }
 
-    if (users.find(u => u.email === email)) {
-      showMessage('An account with this email already exists', 'info');
-      return;
-    }
-
-    const newUser = {
+    var newUser = {
       name: name,
       email: email,
       password: password,
       preferences: {
         dietary: [],
         allergies: [],
-        cuisines: []
+        cuisines: [],
+        music: [],
+        activities: []
       },
       createdAt: new Date().toISOString()
     };
 
     users.push(newUser);
     currentUser = newUser;
-
-    closeModal(signupModal);
-    updateAuthUI();
-    showMessage(`Account created successfully! Welcome, ${currentUser.name}!`, 'success');
-
-    // Clear form
+    document.getElementById('signup-modal').classList.add('hidden');
     document.getElementById('signup-name').value = '';
     document.getElementById('signup-email').value = '';
     document.getElementById('signup-password').value = '';
-    document.getElementById('signup-confirm-password').value = '';
-  });
-
-  // Logout Handler
-  navLogout.addEventListener('click', () => {
-    currentUser = null;
-    
-    // Clear selections
-    selectedDietary = [];
-    selectedAllergies = [];
-    selectedCuisines = [];
-    
-    renderCards(dietaryGrid, dietaryRestrictions, selectedDietary, '');
-    renderCards(allergiesGrid, allergies, selectedAllergies, 'allergy-card');
-    renderCards(cuisinesGrid, cuisines, selectedCuisines, 'cuisine-card');
-    updateSummary();
-    
+    document.getElementById('signup-confirm').value = '';
     updateAuthUI();
-    showMessage('Logged out successfully', 'info');
+    loadUserPreferences();
+    showMessage('Account created! Welcome, ' + currentUser.name + '!');
   });
 
-  // Render cards
-  function renderCards(container, items, selectedArray, cardClass = '') {
-    container.innerHTML = items.map(item => `
-      <div class="restriction-card ${cardClass} ${selectedArray.includes(item.id) ? 'selected' : ''}" 
-           data-id="${item.id}">
-        <div class="icon">${item.icon}</div>
-        <div class="name">${item.name}</div>
-        <div class="description">${item.description}</div>
-      </div>
-    `).join('');
-  }
-
-  // Update summary
-  function updateSummary() {
-    const summaryDietary = document.getElementById('summary-dietary');
-    const summaryAllergies = document.getElementById('summary-allergies');
-    const summaryCuisines = document.getElementById('summary-cuisines');
-
-    summaryDietary.innerHTML = selectedDietary.length > 0
-      ? selectedDietary.map(id => {
-          const item = dietaryRestrictions.find(d => d.id === id);
-          return `<span class="summary-tag">${item.icon} ${item.name}</span>`;
-        }).join('')
-      : '<span class="empty-state">None selected</span>';
-
-    summaryAllergies.innerHTML = selectedAllergies.length > 0
-      ? selectedAllergies.map(id => {
-          const item = allergies.find(a => a.id === id);
-          return `<span class="summary-tag allergy">${item.icon} ${item.name}</span>`;
-        }).join('')
-      : '<span class="empty-state">None selected</span>';
-
-    summaryCuisines.innerHTML = selectedCuisines.length > 0
-      ? selectedCuisines.map(id => {
-          const item = cuisines.find(c => c.id === id);
-          return `<span class="summary-tag cuisine">${item.icon} ${item.name}</span>`;
-        }).join('')
-      : '<span class="empty-state">None selected</span>';
-  }
-
-  // Show message
-  function showMessage(text, type = 'success') {
-    const message = document.createElement('div');
-    message.className = `message message-${type}`;
-    message.textContent = text;
-    messageContainer.appendChild(message);
-
-    setTimeout(() => {
-      message.remove();
-    }, 3000);
-  }
-
-  // Handle card click
-  function handleCardClick(e, array, grid, items, cardClass) {
-    const card = e.target.closest('.restriction-card');
-    if (!card) return;
-
-    const id = card.dataset.id;
-    const index = array.indexOf(id);
-
-    if (index > -1) {
-      array.splice(index, 1);
-    } else {
-      array.push(id);
-    }
-
-    renderCards(grid, items, array, cardClass);
-    updateSummary();
-  }
-
-  // Event listeners
-  dietaryGrid.addEventListener('click', (e) => {
-    handleCardClick(e, selectedDietary, dietaryGrid, dietaryRestrictions, '');
+  // Logout
+  document.getElementById('logout-btn').addEventListener('click', function() {
+    currentUser = null;
+    updateAuthUI();
+    loadUserPreferences();
+    showMessage('Logged out successfully');
   });
 
-  allergiesGrid.addEventListener('click', (e) => {
-    handleCardClick(e, selectedAllergies, allergiesGrid, allergies, 'allergy-card');
-  });
-
-  cuisinesGrid.addEventListener('click', (e) => {
-    handleCardClick(e, selectedCuisines, cuisinesGrid, cuisines, 'cuisine-card');
-  });
-
-  // Clear buttons
-  document.getElementById('clear-dietary').addEventListener('click', () => {
-    selectedDietary = [];
-    renderCards(dietaryGrid, dietaryRestrictions, selectedDietary, '');
-    updateSummary();
-    showMessage('Dietary restrictions cleared', 'info');
-  });
-
-  document.getElementById('clear-allergies').addEventListener('click', () => {
-    selectedAllergies = [];
-    renderCards(allergiesGrid, allergies, selectedAllergies, 'allergy-card');
-    updateSummary();
-    showMessage('Allergies cleared', 'info');
-  });
-
-  document.getElementById('clear-cuisines').addEventListener('click', () => {
-    selectedCuisines = [];
-    renderCards(cuisinesGrid, cuisines, selectedCuisines, 'cuisine-card');
-    updateSummary();
-    showMessage('Cuisines cleared', 'info');
-  });
-
-  // Reset all
-  document.getElementById('reset-all').addEventListener('click', () => {
-    selectedDietary = [];
-    selectedAllergies = [];
-    selectedCuisines = [];
-    renderCards(dietaryGrid, dietaryRestrictions, selectedDietary, '');
-    renderCards(allergiesGrid, allergies, selectedAllergies, 'allergy-card');
-    renderCards(cuisinesGrid, cuisines, selectedCuisines, 'cuisine-card');
-    updateSummary();
-    showMessage('All preferences reset', 'info');
-  });
-
-  // Save preferences
-  document.getElementById('save-preferences').addEventListener('click', () => {
-    const totalSelections = selectedDietary.length + selectedAllergies.length + selectedCuisines.length;
-    
-    if (totalSelections === 0) {
-      showMessage('Please select at least one preference before saving', 'info');
-      return;
-    }
-
+  // Save
+  document.getElementById('save-btn').addEventListener('click', function() {
     if (!currentUser) {
-      showMessage('Please sign in to save your preferences', 'info');
-      openModal(loginModal);
+      showMessage('Please log in to save preferences');
+      document.getElementById('login-modal').classList.remove('hidden');
       return;
     }
 
-    // Save to current user
     currentUser.preferences = {
-      dietary: selectedDietary,
-      allergies: selectedAllergies,
-      cuisines: selectedCuisines,
-      savedAt: new Date().toISOString()
+      dietary: getSelectedIds('dietary-options'),
+      allergies: getSelectedIds('allergies-options'),
+      cuisines: getSelectedIds('cuisines-options'),
+      music: getSelectedIds('music-options'),
+      activities: getSelectedIds('activities-options')
     };
 
-    console.log('Saved preferences for user:', currentUser.email, currentUser.preferences);
-    showMessage(`Successfully saved ${totalSelections} preference(s)!`, 'success');
+    showMessage('Preferences saved successfully!');
+  });
+
+  // Reset
+  document.getElementById('reset-btn').addEventListener('click', function() {
+    renderCheckboxes('dietary-options', dietary, []);
+    renderCheckboxes('allergies-options', allergies, []);
+    renderCheckboxes('cuisines-options', cuisines, []);
+    renderCheckboxes('music-options', music, []);
+    renderCheckboxes('activities-options', activities, []);
+    showMessage('All selections reset');
   });
 
   // Initialize
-  renderCards(dietaryGrid, dietaryRestrictions, selectedDietary, '');
-  renderCards(allergiesGrid, allergies, selectedAllergies, 'allergy-card');
-  renderCards(cuisinesGrid, cuisines, selectedCuisines, 'cuisine-card');
-  updateSummary();
+  loadUserPreferences();
   updateAuthUI();
-
-  console.log('MoodMeal Dietary Restrictions Page Loaded');
 })();
 </script>
 
