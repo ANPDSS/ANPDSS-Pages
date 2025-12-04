@@ -1,0 +1,264 @@
+[
+  {
+    "id": "oatmeal-bowl",
+    "title": "Comfort Oatmeal Bowl",
+    "subtitle": "Warm, easy, and mood-friendly",
+    "baseServings": 1,
+    "meta": { "time": "10 min", "difficulty": "Easy", "mood": "calm", "type": "breakfast" },
+    "photos": [
+      "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1200&q=60"
+    ],
+    "ingredients": [
+      { "name": "Rolled oats", "amount": 0.5, "unit": "cup" },
+      { "name": "Milk (or oat milk)", "amount": 1, "unit": "cup" },
+      { "name": "Banana", "amount": 0.5, "unit": "" },
+      { "name": "Honey", "amount": 1, "unit": "tbsp" },
+      { "name": "Cinnamon", "amount": 0.25, "unit": "tsp" },
+      { "name": "Peanut butter", "amount": 1, "unit": "tbsp" }
+    ],
+    "steps": [
+      { "title": "Heat", "text": "Bring milk to a gentle simmer in a small pot.", "timerSec": 120 },
+      { "title": "Cook oats", "text": "Stir in oats and cook, stirring occasionally, until thick.", "timerSec": 300 },
+      { "title": "Finish", "text": "Top with banana, honey, cinnamon, and peanut butter. Serve warm.", "timerSec": 0 }
+    ]
+  },
+  {
+    "id": "savory-tofu-scramble",
+    "title": "Savory Tofu Scramble",
+    "subtitle": "Protein-packed breakfast with veggies",
+    "baseServings": 2,
+    "meta": { "time": "18 min", "difficulty": "Medium", "mood": "energized", "type": "breakfast" },
+    "photos": [
+      "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1200&q=60"
+    ],
+    "ingredients": [
+      { "name": "Firm tofu", "amount": 0.75, "unit": "lb" },
+      { "name": "Bell pepper", "amount": 1, "unit": "" },
+      { "name": "Spinach", "amount": 1, "unit": "cup" },
+      { "name": "Turmeric", "amount": 0.25, "unit": "tsp" },
+      { "name": "Olive oil", "amount": 1, "unit": "tbsp" },
+      { "name": "Salt & pepper", "amount": 0, "unit": "" }
+    ],
+    "steps": [
+      { "title": "Prep", "text": "Crumble tofu and chop vegetables.", "timerSec": 180 },
+      { "title": "Cook", "text": "Sauté pepper in oil, add tofu, turmeric, salt, pepper, then spinach.", "timerSec": 480 },
+      { "title": "Serve", "text": "Plate the scramble and serve with toast.", "timerSec": 0 }
+    ]
+  },
+  {
+    "id": "mushroom-shakshuka",
+    "title": "Mushroom Shakshuka",
+    "subtitle": "Rich skillet eggs with mushrooms",
+    "baseServings": 2,
+    "meta": { "time": "30 min", "difficulty": "Hard", "mood": "comfort", "type": "breakfast" },
+    "photos": [
+      "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1200&q=60"
+    ],
+    "ingredients": [
+      { "name": "Eggs", "amount": 4, "unit": "" },
+      { "name": "Crushed tomatoes", "amount": 1.5, "unit": "cups" },
+      { "name": "Mushrooms", "amount": 1, "unit": "cup" },
+      { "name": "Onion", "amount": 0.5, "unit": "" },
+      { "name": "Garlic", "amount": 2, "unit": "cloves" },
+      { "name": "Cumin", "amount": 0.5, "unit": "tsp" }
+    ],
+    "steps": [
+      { "title": "Base", "text": "Sauté onion, garlic, and mushrooms until browned.", "timerSec": 480 },
+      { "title": "Simmer", "text": "Add tomatoes, cumin, salt, and simmer to thicken.", "timerSec": 600 },
+      { "title": "Eggs", "text": "Make wells, crack eggs, cover, and cook until set.", "timerSec": 420 }
+    ]
+  },
+  {
+    "id": "chicken-rice-bowl",
+    "title": "Chicken & Rice Bowl",
+    "subtitle": "Simple protein + carbs (great post-gym)",
+    "baseServings": 2,
+    "meta": { "time": "25 min", "difficulty": "Medium", "mood": "energetic", "type": "lunch" },
+    "photos": [
+      "https://images.unsplash.com/photo-1604908176997-125f25cc5004?auto=format&fit=crop&w=1200&q=60"
+    ],
+    "ingredients": [
+      { "name": "Cooked rice", "amount": 2, "unit": "cups" },
+      { "name": "Chicken breast", "amount": 1, "unit": "lb" },
+      { "name": "Soy sauce", "amount": 2, "unit": "tbsp" },
+      { "name": "Garlic", "amount": 2, "unit": "cloves" },
+      { "name": "Broccoli", "amount": 2, "unit": "cups" },
+      { "name": "Olive oil", "amount": 1, "unit": "tbsp" }
+    ],
+    "steps": [
+      { "title": "Prep", "text": "Dice chicken, mince garlic, and cut broccoli into florets.", "timerSec": 240 },
+      { "title": "Sear chicken", "text": "Heat oil, cook chicken until browned and cooked through.", "timerSec": 600 },
+      { "title": "Sauce + veg", "text": "Add garlic + soy sauce, toss broccoli until tender-crisp.", "timerSec": 480 },
+      { "title": "Assemble", "text": "Serve chicken + broccoli over rice. Enjoy!", "timerSec": 0 }
+    ]
+  },
+  {
+    "id": "grilled-cheese-tomato",
+    "title": "Grilled Cheese & Tomato",
+    "subtitle": "Classic melty sandwich",
+    "baseServings": 1,
+    "meta": { "time": "12 min", "difficulty": "Easy", "mood": "nostalgic", "type": "lunch" },
+    "photos": [
+      "https://images.unsplash.com/photo-1505253758473-96b7015fcd40?auto=format&fit=crop&w=1200&q=60"
+    ],
+    "ingredients": [
+      { "name": "Bread slices", "amount": 2, "unit": "" },
+      { "name": "Cheddar cheese", "amount": 2, "unit": "slices" },
+      { "name": "Tomato", "amount": 0.5, "unit": "" },
+      { "name": "Butter", "amount": 1, "unit": "tbsp" }
+    ],
+    "steps": [
+      { "title": "Assemble", "text": "Butter bread, layer cheese and tomato.", "timerSec": 180 },
+      { "title": "Grill", "text": "Cook in skillet on medium until golden and melty.", "timerSec": 420 }
+    ]
+  },
+  {
+    "id": "thai-basil-stirfry",
+    "title": "Thai Basil Stir-Fry",
+    "subtitle": "Spicy beef with basil over rice",
+    "baseServings": 2,
+    "meta": { "time": "28 min", "difficulty": "Hard", "mood": "focused", "type": "lunch" },
+    "photos": [
+      "https://images.unsplash.com/photo-1604908176997-125f25cc5004?auto=format&fit=crop&w=1200&q=60"
+    ],
+    "ingredients": [
+      { "name": "Ground beef", "amount": 0.75, "unit": "lb" },
+      { "name": "Jalapeño", "amount": 1, "unit": "" },
+      { "name": "Garlic", "amount": 3, "unit": "cloves" },
+      { "name": "Soy sauce", "amount": 2, "unit": "tbsp" },
+      { "name": "Fish sauce", "amount": 1, "unit": "tbsp" },
+      { "name": "Fresh basil", "amount": 1, "unit": "cup" }
+    ],
+    "steps": [
+      { "title": "Cook beef", "text": "Brown beef with chopped jalapeño and garlic.", "timerSec": 420 },
+      { "title": "Sauce", "text": "Stir in soy, fish sauce, and a splash of water; reduce slightly.", "timerSec": 240 },
+      { "title": "Finish", "text": "Cut heat, fold in basil, serve over rice.", "timerSec": 120 }
+    ]
+  },
+  {
+    "id": "pasta-primavera",
+    "title": "15-Min Pasta Primavera",
+    "subtitle": "Fast comfort meal with veggies",
+    "baseServings": 2,
+    "meta": { "time": "15 min", "difficulty": "Easy", "mood": "happy", "type": "dinner" },
+    "photos": [
+      "https://images.unsplash.com/photo-1521389508051-d7ffb5dc8a40?auto=format&fit=crop&w=1200&q=60"
+    ],
+    "ingredients": [
+      { "name": "Pasta", "amount": 8, "unit": "oz" },
+      { "name": "Cherry tomatoes", "amount": 1, "unit": "cup" },
+      { "name": "Spinach", "amount": 2, "unit": "cups" },
+      { "name": "Parmesan", "amount": 0.25, "unit": "cup" },
+      { "name": "Garlic", "amount": 2, "unit": "cloves" },
+      { "name": "Olive oil", "amount": 1, "unit": "tbsp" }
+    ],
+    "steps": [
+      { "title": "Boil pasta", "text": "Boil pasta in salted water until al dente.", "timerSec": 600 },
+      { "title": "Quick sauté", "text": "Sauté garlic in oil, add tomatoes, then wilt spinach.", "timerSec": 300 },
+      { "title": "Combine", "text": "Toss pasta with veggies and parmesan. Season to taste.", "timerSec": 0 }
+    ]
+  },
+  {
+    "id": "sheet-pan-salmon",
+    "title": "Sheet-Pan Lemon Salmon",
+    "subtitle": "One-pan weeknight dinner",
+    "baseServings": 2,
+    "meta": { "time": "22 min", "difficulty": "Medium", "mood": "calm", "type": "dinner" },
+    "photos": [
+      "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1200&q=60"
+    ],
+    "ingredients": [
+      { "name": "Salmon fillets", "amount": 2, "unit": "" },
+      { "name": "Asparagus", "amount": 1, "unit": "bunch" },
+      { "name": "Lemon", "amount": 1, "unit": "" },
+      { "name": "Olive oil", "amount": 1, "unit": "tbsp" },
+      { "name": "Salt & pepper", "amount": 0, "unit": "" }
+    ],
+    "steps": [
+      { "title": "Prep", "text": "Preheat oven to 400°F, line sheet, trim asparagus.", "timerSec": 300 },
+      { "title": "Roast", "text": "Arrange salmon and asparagus, drizzle oil, season, add lemon slices, roast.", "timerSec": 720 }
+    ]
+  },
+  {
+    "id": "beef-stew",
+    "title": "Slow Beef Stew",
+    "subtitle": "Hearty stew for cozy nights",
+    "baseServings": 4,
+    "meta": { "time": "60 min", "difficulty": "Hard", "mood": "grounded", "type": "dinner" },
+    "photos": [
+      "https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&w=1200&q=60"
+    ],
+    "ingredients": [
+      { "name": "Beef chuck", "amount": 1.25, "unit": "lb" },
+      { "name": "Carrots", "amount": 2, "unit": "" },
+      { "name": "Potatoes", "amount": 2, "unit": "" },
+      { "name": "Onion", "amount": 1, "unit": "" },
+      { "name": "Beef broth", "amount": 3, "unit": "cups" },
+      { "name": "Thyme", "amount": 0.5, "unit": "tsp" }
+    ],
+    "steps": [
+      { "title": "Brown", "text": "Sear beef cubes until browned on all sides.", "timerSec": 600 },
+      { "title": "Simmer", "text": "Add vegetables, broth, thyme; simmer until tender.", "timerSec": 2400 },
+      { "title": "Finish", "text": "Adjust seasoning and serve warm.", "timerSec": 0 }
+    ]
+  },
+  {
+    "id": "apple-peanut-snack",
+    "title": "Apple Peanut Snack",
+    "subtitle": "Crunchy apple slices with peanut butter",
+    "baseServings": 1,
+    "meta": { "time": "5 min", "difficulty": "Easy", "mood": "cheerful", "type": "snack" },
+    "photos": [
+      "https://images.unsplash.com/photo-1505253758473-96b7015fcd40?auto=format&fit=crop&w=1200&q=60"
+    ],
+    "ingredients": [
+      { "name": "Apple", "amount": 1, "unit": "" },
+      { "name": "Peanut butter", "amount": 2, "unit": "tbsp" },
+      { "name": "Cinnamon", "amount": 0.25, "unit": "tsp" }
+    ],
+    "steps": [
+      { "title": "Slice", "text": "Core and slice apple.", "timerSec": 120 },
+      { "title": "Serve", "text": "Spread peanut butter, sprinkle cinnamon, and enjoy.", "timerSec": 60 }
+    ]
+  },
+  {
+    "id": "energy-bites",
+    "title": "No-Bake Energy Bites",
+    "subtitle": "Oats, honey, and chocolate chip bites",
+    "baseServings": 4,
+    "meta": { "time": "15 min", "difficulty": "Medium", "mood": "focused", "type": "snack" },
+    "photos": [
+      "https://images.unsplash.com/photo-1505253758473-96b7015fcd40?auto=format&fit=crop&w=1200&q=60"
+    ],
+    "ingredients": [
+      { "name": "Rolled oats", "amount": 1, "unit": "cup" },
+      { "name": "Peanut butter", "amount": 0.5, "unit": "cup" },
+      { "name": "Honey", "amount": 0.25, "unit": "cup" },
+      { "name": "Chocolate chips", "amount": 0.25, "unit": "cup" }
+    ],
+    "steps": [
+      { "title": "Mix", "text": "Combine oats, peanut butter, honey, and chips.", "timerSec": 240 },
+      { "title": "Roll", "text": "Roll into bite-sized balls and chill briefly.", "timerSec": 300 }
+    ]
+  },
+  {
+    "id": "stuffed-dates",
+    "title": "Stuffed Dates with Goat Cheese",
+    "subtitle": "Sweet-salty snack with crunch",
+    "baseServings": 4,
+    "meta": { "time": "12 min", "difficulty": "Hard", "mood": "elevated", "type": "snack" },
+    "photos": [
+      "https://images.unsplash.com/photo-1505253758473-96b7015fcd40?auto=format&fit=crop&w=1200&q=60"
+    ],
+    "ingredients": [
+      { "name": "Medjool dates", "amount": 8, "unit": "" },
+      { "name": "Goat cheese", "amount": 0.33, "unit": "cup" },
+      { "name": "Walnuts", "amount": 0.25, "unit": "cup" },
+      { "name": "Honey", "amount": 1, "unit": "tbsp" }
+    ],
+    "steps": [
+      { "title": "Fill", "text": "Pit dates, stuff with goat cheese and walnuts.", "timerSec": 360 },
+      { "title": "Finish", "text": "Drizzle with honey and serve.", "timerSec": 120 }
+    ]
+  }
+]
