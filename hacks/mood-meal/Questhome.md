@@ -12,7 +12,7 @@ lxdData:
     - Title: "Module 1"
       Genre: "Introduction"
       Level: 1
-      Description: "Introduction to Mood Meal"
+      Description: "Profile Builder (Allergens, Hobbies, Artists)"
       Categories: ["Getting Started", "Introduction"]
       Lessons: "/mood-meal/submodule_1/"
       Image: "/images/mood-meal-module1.png"
@@ -20,7 +20,7 @@ lxdData:
     - Title: "Module 2"
       Genre: "Analysis"
       Level: 2
-      Description: "Mood Analysis and Tracking"
+      Description: "Mood detection"
       Categories: ["Mood", "Analysis", "User Input"]
       Lessons: "/mood-meal/submodule_2/"
       Image: "/images/mood-meal-module2.png"
@@ -28,7 +28,7 @@ lxdData:
     - Title: "Module 3"
       Genre: "Recommendation"
       Level: 3
-      Description: "Meal Recommendation Engine"
+      Description: "Cooking Plan"
       Categories: ["AI", "Recommendations", "Meals"]
       Lessons: "/mood-meal/submodule_3/"
       Image: "/images/mood-meal-module3.png"
@@ -36,7 +36,7 @@ lxdData:
     - Title: "Module 4"
       Genre: "Details"
       Level: 4
-      Description: "Recipe Details and Instructions"
+      Description: "Activity Recommender"
       Categories: ["Recipes", "Instructions", "Cooking"]
       Lessons: "/mood-meal/submodule_4/"
       Image: "/images/mood-meal-module4.png"
@@ -44,7 +44,7 @@ lxdData:
     - Title: "Module 5"
       Genre: "Management"
       Level: 5
-      Description: "Pantry and Inventory Management"
+      Description: "Music Recommender"
       Categories: ["Pantry", "Inventory", "Ingredients"]
       Lessons: "/mood-meal/submodule_5/"
       Image: "/images/mood-meal-module5.png"
@@ -52,7 +52,7 @@ lxdData:
     - Title: "Module 6"
       Genre: "Configuration"
       Level: 6
-      Description: "Settings and User Preferences"
+      Description: "Mood Plan Dashboard & Insights (Aggregator)
       Categories: ["Settings", "Preferences", "Configuration"]
       Lessons: "/mood-meal/submodule_6/"
       Image: "/images/mood-meal-module6.png"

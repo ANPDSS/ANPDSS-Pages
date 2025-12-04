@@ -16,12 +16,11 @@ footer:
   home: /mood-meal/
   next: /mood-meal/submodule_2/
 ---
-
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mood Life - Your Profile</title>
+  <title>5Mood Life</title>
   <style>
     * {
       margin: 0;
