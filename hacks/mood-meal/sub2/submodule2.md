@@ -294,9 +294,34 @@ footer:
     });
   });
 
+  // Random jokes array
+  const jokes = [
+    "Why don't scientists trust atoms? Because they make up everything!",
+    "What do you call a bear with no teeth? A gummy bear!",
+    "Why did the scarecrow win an award? He was outstanding in his field!",
+    "What do you call a fake noodle? An impasta!",
+    "Why don't eggs tell jokes? They'd crack each other up!",
+    "What did the ocean say to the beach? Nothing, it just waved!",
+    "Why did the math book look so sad? Because it had too many problems!",
+    "What do you call a dinosaur that crashes his car? Tyrannosaurus Wrecks!",
+    "Why couldn't the bicycle stand up by itself? It was two tired!",
+    "What do you call cheese that isn't yours? Nacho cheese!"
+  ];
+
+  // Helper: Get random joke
+  function getRandomJoke() {
+    return jokes[Math.floor(Math.random() * jokes.length)];
+  }
+
   // Save Mood Button Handler
   if (saveMoodBtn) {
     saveMoodBtn.addEventListener('click', async () => {
+      // Check if mood is under 40 and show a joke
+      if (currentMoodScore < 40) {
+        const joke = getRandomJoke();
+        alert(`Here's a joke to cheer you up! 😊\n\n${joke}`);
+      }
+
       // Hide previous messages
       saveMoodSuccess.style.display = 'none';
       saveMoodError.style.display = 'none';
