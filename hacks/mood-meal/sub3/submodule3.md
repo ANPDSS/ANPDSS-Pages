@@ -24,20 +24,22 @@ footer:
 
   <!-- 1. Mood Summary (placeholder data from Module 2) -->
   <section id="mood-summary" aria-label="Mood summary" style="margin-bottom: 1.5rem;">
-    <h2>Today's Mood</h2>
-    <p>
-      Mood score:
-      <span id="mood-score" style="font-weight: bold;">72</span>/100
-    </p>
-    <p>
-      Mood tags:
-      <span id="mood-tags">tired, stressed</span>
-    </p>
-    <p>
-      Mood category:
-      <span id="mood-category">not set</span>
-    </p>
-    <div id="mood-status" style="margin-top:0.35rem; color:#8df0c8;">Waiting for your saved mood...</div>
+    <div class="mm-panel">
+      <h2>Today's Mood</h2>
+      <p>
+        Mood score:
+        <span id="mood-score" style="font-weight: bold;">72</span>/100
+      </p>
+      <p>
+        Mood tags:
+        <span id="mood-tags">tired, stressed</span>
+      </p>
+      <p>
+        Mood category:
+        <span id="mood-category">not set</span>
+      </p>
+      <div id="mood-status" style="margin-top:0.35rem; color:#8df0c8;">Waiting for your saved mood...</div>
+    </div>
     <!-- Your JS will later replace the score/tags above with real data -->
   </section>
 
@@ -46,49 +48,51 @@ footer:
   <!-- 2. Optional Filters Section -->
   <section id="filters-section" aria-label="Recommendation filters" style="margin: 1.5rem 0;">
     <h2>2. Optional Filters</h2>
-    <p>You can refine your meal recommendations before sending the request.</p>
+    <div class="mm-panel">
+      <p>You can refine your meal recommendations before sending the request.</p>
 
-    <!-- Meal type dropdown -->
-    <div style="margin-bottom: 0.75rem;">
-      <label for="meal-type-select"><strong>Meal type:</strong></label>
-      <select id="meal-type-select" name="mealType">
-        <option value="">Any</option>
-        <option value="breakfast">Breakfast</option>
-        <option value="lunch">Lunch</option>
-        <option value="dinner">Dinner</option>
-        <option value="snack">Snack</option>
-      </select>
-    </div>
+      <!-- Meal type dropdown -->
+      <div style="margin-bottom: 0.75rem;">
+        <label for="meal-type-select"><strong>Meal type:</strong></label>
+        <select id="meal-type-select" name="mealType">
+          <option value="">Any</option>
+          <option value="breakfast">Breakfast</option>
+          <option value="lunch">Lunch</option>
+          <option value="dinner">Dinner</option>
+          <option value="snack">Snack</option>
+        </select>
+      </div>
 
-    <!-- Prep time dropdown -->
-    <div style="margin-bottom: 0.75rem;">
-      <label for="prep-time-select"><strong>Max prep time:</strong></label>
-      <select id="prep-time-select" name="maxPrepTimeMinutes">
-        <option value="">Any</option>
-        <option value="15">&lt; 15 min</option>
-        <option value="30">&lt; 30 min</option>
-        <option value="45">&lt; 45 min</option>
-        <option value="60">&lt; 60 min</option>
-      </select>
-    </div>
+      <!-- Prep time dropdown -->
+      <div style="margin-bottom: 0.75rem;">
+        <label for="prep-time-select"><strong>Max prep time:</strong></label>
+        <select id="prep-time-select" name="maxPrepTimeMinutes">
+          <option value="">Any</option>
+          <option value="15">&lt; 15 min</option>
+          <option value="30">&lt; 30 min</option>
+          <option value="45">&lt; 45 min</option>
+          <option value="60">&lt; 60 min</option>
+        </select>
+      </div>
 
-    <!-- Difficulty dropdown -->
-    <div style="margin-bottom: 0.75rem;">
-      <label for="difficulty-select"><strong>Difficulty:</strong></label>
-      <select id="difficulty-select" name="difficulty">
-        <option value="">Any</option>
-        <option value="easy">Easy</option>
-        <option value="medium">Medium</option>
-        <option value="hard">Hard</option>
-      </select>
-    </div>
+      <!-- Difficulty dropdown -->
+      <div style="margin-bottom: 0.75rem;">
+        <label for="difficulty-select"><strong>Difficulty:</strong></label>
+        <select id="difficulty-select" name="difficulty">
+          <option value="">Any</option>
+          <option value="easy">Easy</option>
+          <option value="medium">Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+      </div>
 
-    <!-- Pantry boost checkbox -->
-    <div style="margin-bottom: 0.75rem;">
-      <label>
-        <input type="checkbox" id="boost-pantry-checkbox" name="boostPantry" />
-        Use pantry ingredients to boost matches
-      </label>
+      <!-- Pantry boost checkbox -->
+      <div style="margin-bottom: 0.75rem;">
+        <label>
+          <input type="checkbox" id="boost-pantry-checkbox" name="boostPantry" />
+          Use pantry ingredients to boost matches
+        </label>
+      </div>
     </div>
   </section>
 
@@ -97,39 +101,44 @@ footer:
   <!-- 3. Extra Notes Textbox -->
   <section id="extra-notes-section" aria-label="Extra preferences" style="margin: 1.5rem 0;">
     <h2>3. Extra Preferences</h2>
-    <p>
-      Add anything else you want MoodMeal to consider
-      (e.g. “no soup”, “something warm”, “spicy but quick”):
-    </p>
-    <textarea
-      id="extra-notes-input"
-      name="extraNotes"
-      rows="4"
-      style="width: 100%; max-width: 600px;"
-      placeholder="Type any extra notes here..."
-    ></textarea>
+    <div class="mm-panel">
+      <p>
+        Add anything else you want MoodMeal to consider
+        (e.g. “no soup”, “something warm”, “spicy but quick”):
+      </p>
+      <textarea
+        id="extra-notes-input"
+        name="extraNotes"
+        rows="4"
+        style="width: 100%; max-width: 600px;"
+        placeholder="Type any extra notes here..."
+      ></textarea>
+    </div>
   </section>
 
   <hr />
 
   <!-- 4. Submit Button -->
   <section id="submit-section" style="margin: 1.5rem 0;">
-    <button
-      id="get-recommendations-btn"
-      type="button"
-      style="padding: 0.6rem 1.2rem; font-size: 1rem; cursor: pointer;"
-    >
-      Get Recommendations
-    </button>
+    <div class="mm-panel" style="display:flex; flex-direction:column; gap:0.6rem;">
+      <div>
+        <button
+          id="get-recommendations-btn"
+          type="button"
+          style="padding: 0.6rem 1.2rem; font-size: 1rem; cursor: pointer;"
+        >
+          Get Recommendations
+        </button>
+        <!-- Simple loading text placeholder, your JS can toggle display -->
+        <span id="recommendations-loading" style="margin-left: 1rem; display: none;">
+          Loading recommendations...
+        </span>
+      </div>
 
-    <!-- Simple loading text placeholder, your JS can toggle display -->
-    <span id="recommendations-loading" style="margin-left: 1rem; display: none;">
-      Loading recommendations...
-    </span>
-
-    <!-- Simple error text placeholder -->
-    <div id="recommendations-error" style="color: red; margin-top: 0.5rem; display: none;">
-      Something went wrong. Please try again. 
+      <!-- Simple error text placeholder -->
+      <div id="recommendations-error" style="color: red; margin-top: 0.5rem; display: none;">
+        Something went wrong. Please try again. 
+      </div>
     </div>
   </section>
 
@@ -138,12 +147,34 @@ footer:
   <!-- 5. Recommendations List -->
   <section id="recommendations-section" aria-label="Recommended meals" style="margin: 1.5rem 0;">
     <h2>4. Recommended Meals</h2>
-
-    <!-- This container will be filled/updated by JS. Static examples below. -->
-    <div id="recommendations-container"></div>
+    <div class="mm-panel">
+      <!-- This container will be filled/updated by JS. Static examples below. -->
+      <div id="recommendations-container"></div>
+    </div>
   </section>
 
 </main>
+
+<!-- Saved Recipes (mirrors Submodule 4 saved list) -->
+<section id="saved-recipes" aria-label="Saved recipes" style="margin: 1.5rem 0;">
+  <h2>Saved Recipes</h2>
+  <div id="saved-card" style="border: 1px solid #2a2a2a; border-radius: 16px; background:#0f0f0f; padding: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.35);">
+
+    <div id="saved-empty" style="color:#777; padding: 0.75rem 0;">
+      No saved recipes yet. Click “Save” on a card above.
+    </div>
+
+    <div id="saved-list" style="display:none; gap:0.75rem; flex-wrap: wrap;"></div>
+
+    <div style="margin-top: 1rem; display:flex; gap:0.6rem; flex-wrap: wrap;">
+      <button id="clear-saved-recipes" type="button" style="padding:0.55rem 0.9rem; border-radius: 12px; border:1px solid #333; background:#161616; color:#eee; cursor:pointer;">
+        Clear Saved
+      </button>
+      <span id="clear-msg" style="display:none; color:#4eff9e; align-self:center;">✓ Cleared</span>
+    </div>
+
+  </div>
+</section>
 
 <!-- Combined Recipe Viewer (merged from Submodule 4) -->
 <section id="recipe-viewer" style="max-width:980px; margin: 1.25rem auto; display: none;">
@@ -217,6 +248,29 @@ document.addEventListener('DOMContentLoaded', () => {
     try { if (moodKey) moodData = JSON.parse(localStorage.getItem(moodKey)); } catch(e) { moodData = null; }
 
     const extraNotesEl = $('extra-notes-input');
+
+    // favorite toggling stored locally (moved up so render can show saved state)
+    const FAVORITES_KEY = 'moodmeal_favorites_v1';
+    function getFavorites(){
+      try {
+        const raw = localStorage.getItem(FAVORITES_KEY);
+        const arr = raw ? JSON.parse(raw) : [];
+        return Array.isArray(arr) ? arr : [];
+      } catch { return []; }
+    }
+    function setFavorites(ids){ localStorage.setItem(FAVORITES_KEY, JSON.stringify(ids)); }
+    function isFavorited(id){ return getFavorites().includes(id); }
+    function toggleFavorite(id){
+      const favs = getFavorites();
+      const already = favs.includes(id);
+      const updated = already ? favs.filter(x=>x!==id) : Array.from(new Set([...favs, id]));
+      setFavorites(updated);
+      // if viewer is open and showing this id, update its button
+      try { updateFavBtn && typeof updateFavBtn === 'function' && updateFavBtn(id); } catch(e){}
+      // refresh saved-list UI (if present) and recommendations
+      try { if (typeof renderSavedRecipes === 'function') renderSavedRecipes(); } catch(e){}
+      try { renderRecommendations && renderRecommendations(recipesLoaded); } catch(e){}
+    }
 
     // Update the mood banner at the top to reflect the saved data from Submodule 2
     function renderMoodSummaryBanner() {
@@ -325,10 +379,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const scored = filtered.map(r => ({ r, s: scoreRecipe(r) }));
       scored.sort((a,b) => b.s - a.s);
 
+      // build HTML and include a Save/Saved button reflecting favorites
       recContainer.innerHTML = scored.map(({r}) => {
         const time = r.meta && r.meta.time ? r.meta.time : '—';
         const difficulty = r.meta && r.meta.difficulty ? r.meta.difficulty : '';
         const moodTag = r.meta && r.meta.mood ? r.meta.mood : 'mood friendly';
+        const fav = isFavorited(r.id) ? '★ Saved' : '☆ Save';
         return `
           <article class="meal-card" data-meal-id="${r.id}" style="border: 1px solid #444; border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
             <h3>${r.title}</h3>
@@ -337,18 +393,27 @@ document.addEventListener('DOMContentLoaded', () => {
             <p><strong>Mood tag:</strong> ${moodTag}</p>
             <p><strong>Uses pantry items:</strong> ${r.ingredients.slice(0,2).map(i => i.name).join(', ')}</p>
             <p><strong>Mood match:</strong> ${Math.min(99, Math.max(40, scoreRecipe(r) + 40))}%</p>
-            <button type="button" class="view-recipe-btn" data-recipe-id="${r.id}" style="margin-top: 0.5rem;">
-              View Recipe
-            </button>
+            <div style="margin-top:0.5rem; display:flex; gap:0.5rem; align-items:center;">
+              <button type="button" class="view-recipe-btn" data-recipe-id="${r.id}" style="">View Recipe</button>
+              <button type="button" class="save-recipe-btn" data-recipe-id="${r.id}" style="">${fav}</button>
+            </div>
           </article>
         `;
       }).join('');
 
-      // attach listeners
+      // attach listeners: view and save
       recContainer.querySelectorAll('.view-recipe-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
           const id = btn.dataset.recipeId;
           loadRecipeById(id);
+        });
+      });
+      recContainer.querySelectorAll('.save-recipe-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const id = btn.dataset.recipeId;
+          toggleFavorite(id);
+          // re-render to update button states
+          renderRecommendations(recipesLoaded);
         });
       });
     }
@@ -393,10 +458,7 @@ document.addEventListener('DOMContentLoaded', () => {
       window.scrollTo({ top: document.getElementById('recommendations-section').offsetTop - 20, behavior: 'smooth' });
     });
 
-    // favorite toggling stored locally
-    const FAVORITES_KEY = 'moodmeal_favorites_v1';
-    function getFavorites(){ try { const raw = localStorage.getItem(FAVORITES_KEY); const arr = raw ? JSON.parse(raw) : []; return Array.isArray(arr)?arr:[]; } catch { return []; } }
-    function setFavorites(ids){ localStorage.setItem(FAVORITES_KEY, JSON.stringify(ids)); }
+    // update the viewer's favorite button (uses shared helpers above)
     function updateFavBtn(id){ const favs = getFavorites(); const is = favs.includes(id); rvFav.textContent = is ? '★ Favorited' : '☆ Favorite'; }
 
     rvFav.addEventListener('click', () => {
@@ -409,6 +471,59 @@ document.addEventListener('DOMContentLoaded', () => {
       setFavorites(updated);
       updateFavBtn(r.id);
     });
+
+    // Saved recipes rendering and controls
+    const savedEmptyEl = $('saved-empty');
+    const savedListEl = $('saved-list');
+    const clearSavedBtn = $('clear-saved-recipes');
+    const clearMsgEl = $('clear-msg');
+
+    function renderSavedRecipes() {
+      try {
+        const ids = getFavorites();
+        const items = RECIPES.filter(r => ids.includes(r.id));
+        if (!items.length) {
+          if (savedEmptyEl) savedEmptyEl.style.display = 'block';
+          if (savedListEl) { savedListEl.style.display = 'none'; savedListEl.innerHTML = ''; }
+          return;
+        }
+        if (savedEmptyEl) savedEmptyEl.style.display = 'none';
+        if (savedListEl) {
+          savedListEl.style.display = 'flex';
+          savedListEl.innerHTML = items.map(r => `
+            <div style="width: 320px; border: 1px solid #2a2a2a; border-radius: 12px; background:#0b0b0b; padding: 0.75rem; margin:0.4rem;">
+              <div style="display:flex; justify-content:space-between; gap:0.5rem; align-items:flex-start;">
+                <div style="min-width:0;">
+                  <div style="font-size:1rem; margin-bottom:0.12rem;"><strong>${r.title}</strong></div>
+                  <div style="color:#bbb; line-height:1.4;">${r.subtitle || ''}</div>
+                </div>
+                <button class="remove-saved" data-id="${r.id}" type="button" style="height:34px; padding:0 0.6rem; border-radius:10px; border:1px solid #333; background:#161616; color:#eee; cursor:pointer;">✕</button>
+              </div>
+            </div>
+          `).join('');
+
+          // attach remove handlers
+          savedListEl.querySelectorAll('.remove-saved').forEach(btn => {
+            btn.addEventListener('click', () => {
+              toggleFavorite(btn.dataset.id);
+              // ensure saved list updates (toggleFavorite will call renderSavedRecipes)
+            });
+          });
+        }
+      } catch (e) { console.error('renderSavedRecipes error', e); }
+    }
+
+    if (clearSavedBtn) {
+      clearSavedBtn.addEventListener('click', () => {
+        setFavorites([]);
+        renderSavedRecipes();
+        if (clearMsgEl) { clearMsgEl.style.display = 'inline'; setTimeout(()=>{ clearMsgEl.style.display = 'none'; }, 1200); }
+        try { renderRecommendations && renderRecommendations(recipesLoaded); } catch(e){}
+      });
+    }
+
+    // expose renderSavedRecipes to other callers and initialize it
+    try { if (typeof renderSavedRecipes === 'function') renderSavedRecipes(); } catch(e){}
 
     // load recipes.json and then render
     let recipesLoaded = false;
@@ -471,6 +586,15 @@ document.addEventListener('DOMContentLoaded', () => {
   background-color: #111; /* darker background to match page */
   border: 1px solid #444;
   padding: 0.25rem 0.4rem;
+}
+
+/* Panel/card used across sections to match Submodule 4/5 */
+.mm-panel {
+  border: 1px solid #2a2a2a;
+  border-radius: 16px;
+  background: #0f0f0f;
+  padding: 1rem;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.35);
 }
 
 /* Try to style the option text and dropdown appearance where supported. */
