@@ -507,6 +507,7 @@ footer:
     if (savedPlaylists.length === 0) {
       noPlaylistsMessage.style.display = 'block';
       clearAllPlaylistsBtn.style.display = 'none';
+      savedPlaylistsList.innerHTML = ''; // Clear any remaining HTML
       return;
     }
 
