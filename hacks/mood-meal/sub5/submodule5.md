@@ -137,7 +137,16 @@ footer:
 
   <!-- 4. Saved Playlists Section -->
   <section id="saved-playlists-section" aria-label="Saved playlists" style="margin: 1.5rem 0;">
-    <h3>Your Saved Playlists</h3>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <h3 style="margin: 0;">Your Saved Playlists</h3>
+      <button
+        id="clear-all-playlists-btn"
+        type="button"
+        style="padding: 0.5rem 1rem; font-size: 0.9rem; cursor: pointer; background: transparent; color: #ff4a4a; border: 1px solid #ff4a4a; border-radius: 6px; display: none;"
+      >
+        🗑️ Clear All
+      </button>
+    </div>
     
     <div id="saved-playlists-list" style="margin-top: 1rem;">
       <p id="no-playlists-message" style="color: #666; text-align: center; padding: 2rem;">
@@ -173,6 +182,7 @@ footer:
   const saveSuccess = document.getElementById('save-success');
   const savedPlaylistsList = document.getElementById('saved-playlists-list');
   const noPlaylistsMessage = document.getElementById('no-playlists-message');
+  const clearAllPlaylistsBtn = document.getElementById('clear-all-playlists-btn');
   
   const genreFilter = document.getElementById('genre-filter');
   const energyFilter = document.getElementById('energy-filter');
@@ -480,7 +490,7 @@ footer:
   // Load saved playlists
   function loadSavedPlaylists() {
     const userId = getCurrentUserId();
-    const storageKey = `moodassistant_playlists_${userId}`;
+    const storageKey = `moodmeal_playlists_${userId}`;
     const stored = localStorage.getItem(storageKey);
     savedPlaylists = stored ? JSON.parse(stored) : [];
   }
@@ -488,7 +498,7 @@ footer:
   // Save to localStorage
   function saveToLocalStorage() {
     const userId = getCurrentUserId();
-    const storageKey = `moodassistant_playlists_${userId}`;
+    const storageKey = `moodmeal_playlists_${userId}`;
     localStorage.setItem(storageKey, JSON.stringify(savedPlaylists));
   }
 
@@ -496,10 +506,12 @@ footer:
   function renderSavedPlaylists() {
     if (savedPlaylists.length === 0) {
       noPlaylistsMessage.style.display = 'block';
+      clearAllPlaylistsBtn.style.display = 'none';
       return;
     }
 
     noPlaylistsMessage.style.display = 'none';
+    clearAllPlaylistsBtn.style.display = 'block';
     
     savedPlaylistsList.innerHTML = savedPlaylists.map(playlist => `
       <div class="saved-playlist-card" style="background: #1a1a1a; border-radius: 8px; padding: 1rem; border: 1px solid #333; margin-bottom: 1rem;">
@@ -576,10 +588,39 @@ footer:
     }
   }
 
+  // Clear all playlists
+  async function clearAllPlaylists() {
+    if (!confirm('Are you sure you want to delete ALL saved playlists? This cannot be undone.')) return;
+
+    try {
+      const userId = getCurrentUserId();
+      
+      // Try to delete all from backend
+      await apiRequest(`/music/playlist/clear?user_id=${userId}`, {
+        method: 'DELETE'
+      });
+
+      // Clear local state
+      savedPlaylists = [];
+      saveToLocalStorage();
+      renderSavedPlaylists();
+      
+      console.log('All playlists cleared successfully');
+    } catch (error) {
+      console.error('Failed to clear playlists from backend, clearing locally:', error);
+      
+      // Fallback: clear localStorage only
+      savedPlaylists = [];
+      saveToLocalStorage();
+      renderSavedPlaylists();
+    }
+  }
+
   // Event Listeners
   getRecommendationsBtn.addEventListener('click', getRecommendations);
   savePlaylistBtn.addEventListener('click', savePlaylist);
   exportPlaylistBtn.addEventListener('click', exportPlaylist);
+  clearAllPlaylistsBtn.addEventListener('click', clearAllPlaylists);
 
   // Initialize
   currentUserId = getCurrentUserId();
@@ -615,6 +656,10 @@ button:hover:not(:disabled) {
 }
 
 .delete-playlist-btn:hover {
+  background: rgba(255, 74, 74, 0.1);
+}
+
+#clear-all-playlists-btn:hover {
   background: rgba(255, 74, 74, 0.1);
 }
 
