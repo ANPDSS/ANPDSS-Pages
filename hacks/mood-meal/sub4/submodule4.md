@@ -22,36 +22,7 @@ footer:
 
 <main id="activity-page" style="max-width: 980px; margin: 0 auto;">
 
-  <!-- =========================
-       OVERVIEW (AP WRITEUP)
-  ========================== -->
-  <section aria-label="Submodule overview" style="margin: 1rem 0 1.25rem;">
-    <div style="border: 1px solid #2a2a2a; border-radius: 16px; background:#0f0f0f; padding: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.25);">
-      <h2 style="margin:0;">Submodule 4: Activity Recommender</h2>
-
-      <div style="margin-top:0.75rem; color:#ddd; line-height:1.6;">
-        <div><strong>Input:</strong> Users click the Recommend Activities button and choose filters time (15/30/60 min), alone vs. social, and indoor vs. outdoor.</div>
-        <div style="margin-top:0.4rem;"><strong>List/Collection:</strong> The program uses lists/arrays to store user hobbies and preferences, available activity options (internal dataset), and the recommended activities (2–4 cards). This meets AP requirements for using lists to manage complexity.</div>
-        <div style="margin-top:0.4rem;"><strong>Sequencing:</strong> Our procedure runs steps in order; read mood & hobbies, read filters, build request, call /activity/recommend, then display activity cards. This meets AP requirements for sequencing.</div>
-        <div style="margin-top:0.4rem;"><strong>Selection:</strong> The procedure uses if statements to decide what to recommend based on time, social setting, indoors/outdoors, and whether the user has enough saved preferences to personalize results. This meets AP requirements for selection.</div>
-        <div style="margin-top:0.4rem;"><strong>Iteration:</strong> The procedure loops through the activity dataset or generated options to filter matches, score/rank activities, and pick the top 2–4 results. This meets AP requirements for iteration.</div>
-        <div style="margin-top:0.4rem;"><strong>Output:</strong> Users see 2–4 personalized activity cards (title + short description) that match their mood, hobbies, and selected filters.</div>
-      </div>
-
-      <details style="margin-top: 0.9rem;">
-        <summary style="cursor:pointer; color:#bbb;">Connections to other submodules</summary>
-        <div style="margin-top: 0.6rem; color:#ddd; line-height:1.6;">
-          <div>• Submodule 1 provides saved preferences/hobbies to personalize activities.</div>
-          <div>• Submodule 2 provides the mood score/label to influence recommendations.</div>
-        </div>
-      </details>
-    </div>
-  </section>
-
-  <!-- =========================
-       HEADER + ACTIONS
-  ========================== -->
-  <section aria-label="Activity header" style="margin: 0 0 1.25rem;">
+  <section aria-label="Activity header" style="margin: 1rem 0 1.25rem;">
     <div style="display:flex; justify-content:space-between; align-items:flex-start; gap: 1rem; flex-wrap: wrap;">
       <div>
         <h2 style="margin: 0;">Activities</h2>
@@ -79,14 +50,9 @@ footer:
 
   <hr style="border-color:#262626;" />
 
-  <!-- =========================
-       INPUT FILTERS (AP: Input)
-  ========================== -->
+
   <section aria-label="Filters" style="margin: 1.25rem 0;">
-    <h2 style="margin-bottom: 0.5rem;">1) Filters (Input)</h2>
-    <p style="margin-top:0.25rem; color:#aaa;">
-      These choices are the input used by the recommendation procedure.
-    </p>
+    <h2 style="margin-bottom: 0.5rem;">1. Filters (Input)</h2>
 
     <div
       style="border: 1px solid #2a2a2a; border-radius: 16px; background:#0f0f0f; padding: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.35);">
@@ -102,7 +68,7 @@ footer:
           </select>
 
           <div style="margin-top: 0.9rem;">
-            <label style="color:#bbb; display:block; margin-bottom: 0.4rem;">Alone vs. Social</label>
+            <label style="color:#bbb; display:block; margin-bottom: 0.4rem;">Alone vs Social</label>
             <div style="display:flex; gap:0.5rem; flex-wrap: wrap;">
               <button class="pill vibe-pill" data-value="alone" type="button"
                 style="padding:0.45rem 0.8rem; border-radius: 999px; border: 1px solid #333; background:#161616; color:#eee; cursor:pointer;">
@@ -117,12 +83,12 @@ footer:
                 Either
               </button>
             </div>
-            <div style="color:#777; font-size:0.9rem; margin-top: 0.5rem;">Tip: “Either” shows the most options.</div>
+         
           </div>
         </div>
 
         <div>
-          <label style="color:#bbb; display:block; margin-bottom: 0.4rem;">Indoor vs. Outdoor</label>
+          <label style="color:#bbb; display:block; margin-bottom: 0.4rem;">Indoor vs Outdoor</label>
           <div style="display:flex; gap:0.5rem; flex-wrap: wrap;">
             <button class="pill loc-pill" data-value="indoor" type="button"
               style="padding:0.45rem 0.8rem; border-radius: 999px; border: 1px solid #333; background:#161616; color:#eee; cursor:pointer;">
@@ -139,36 +105,22 @@ footer:
           </div>
 
           <div style="margin-top: 0.9rem;">
-            <label style="color:#bbb; display:block; margin-bottom: 0.4rem;">Mood keyword (connects to Submodule 2 later)</label>
+            <label style="color:#bbb; display:block; margin-bottom: 0.4rem;">Mood keyword</label>
             <input id="mood-input" placeholder="ex: stressed, tired, happy, focused..."
-              style="width:100%; padding: 0.55rem 0.7rem; border-radius: 12px; background:#121212; color:#eee; border: 1px solid #333; outline: none;" />
-            <div style="color:#777; font-size:0.9rem; margin-top: 0.5rem;">
-              For now this is optional. Later it can auto-fill from Mood Detection.
-            </div>
+              style="width:100%; padding: 0.55rem 0.7rem; border-radius: 12px; background:#121212; 
+              color:#eee; border: 1px solid #333; outline: none;" />
           </div>
         </div>
       </div>
 
-      <details style="margin-top: 1rem;">
-        <summary style="cursor:pointer; color:#bbb;">AP Note: where the list + algorithm happens</summary>
-        <div style="margin-top: 0.65rem; color:#ddd; line-height: 1.6;">
-          <div>• We store activity options in a list (internal dataset).</div>
-          <div>• We loop through that list, filter matches, score them, and pick the top 2–4.</div>
-          <div>• That is our iteration + selection working together.</div>
-        </div>
-      </details>
-
-   
     </div>
   </section>
 
   <hr style="border-color:#262626;" />
 
-  <!-- =========================
-       OUTPUT RESULTS
-  ========================== -->
+
   <section id="results" aria-label="Recommended activities" style="margin: 1.25rem 0;">
-    <h2 style="margin-bottom: 0.5rem;">2) Recommendations (Output)</h2>
+    <h2 style="margin-bottom: 0.5rem;">2. Recommendations (Output)</h2>
     <p id="results-sub" style="margin-top:0.25rem; color:#aaa;">
       Click “Recommend Activities” to generate 2–4 cards.
     </p>
@@ -193,15 +145,9 @@ footer:
 
   <hr style="border-color:#262626;" />
 
-  <!-- =========================
-       SAVED LIST (AP: List/Collection)
-  ========================== -->
+
   <section id="saved" aria-label="Saved activities" style="margin: 1.25rem 0;">
-    <h2 style="margin-bottom: 0.5rem;">3) Saved Activities (List/Collection)</h2>
-    <p style="margin-top:0.25rem; color:#aaa;">
-      Saving uses a list stored in
-      <code style="background:#141414; padding:0.12rem 0.35rem; border-radius: 8px; border:1px solid #2a2a2a;">localStorage</code>.
-    </p>
+    <h2 style="margin-bottom: 0.5rem;">3. Saved Activities (List)</h2>
 
     <div id="saved-card"
       style="border: 1px solid #2a2a2a; border-radius: 16px; background:#0f0f0f; padding: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.35);">
@@ -228,7 +174,7 @@ footer:
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   try {
-    // LIST/COLLECTION: internal dataset of activity options
+    // List/Collection: internal activity dataset
     const ACTIVITIES = [
       { id:"walk-reset", emoji:"🚶‍♂️", title:"Short walk reset", desc:"Walk outside, no phone, just breathe and reset.", min:15, loc:"outdoor", vibe:"alone", tags:["stressed","tired","calm"] },
       { id:"stretch-mobility", emoji:"🧘", title:"Mobility stretch", desc:"10–15 minutes of hips/hamstrings/shoulders.", min:15, loc:"indoor", vibe:"alone", tags:["tired","sore","calm"] },
@@ -277,9 +223,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const clearSavedBtn = $("clear-saved");
     const clearMsg = $("clear-msg");
 
-    // (Optional) Preferences list placeholder: later this comes from Submodule 1
-    // LIST/COLLECTION example for "hobbies/preferences"
-    const userHobbies = ["music", "fitness", "outdoors"]; // demo list
+
 
     let vibeChoice = "either";
     let locChoice = "either";
@@ -311,33 +255,33 @@ document.addEventListener("DOMContentLoaded", () => {
       .filter(Boolean)
       .slice(0, 8);
 
-    // PROCEDURE: recommendActivities (AP: sequencing + selection + iteration)
+    // Procedure: recommendActivities (sequencing + selection + iteration)
     const scoreActivity = (a, time, vibe, loc, moodTokens) => {
       let score = 0;
 
-      // SELECTION: must fit time
+      // Selection: must fit time
       if (a.min > time) return -9999;
 
-      // SELECTION: match vibe/location when chosen
+      // Selection: match vibe/location when chosen
       if (vibe !== "either" && a.vibe !== "either") score += (a.vibe === vibe) ? 10 : -4;
       if (loc !== "either" && a.loc !== "either") score += (a.loc === loc) ? 10 : -4;
 
-      // Bonus: closer to time
+      // Bonus: closer to the available time
       score += Math.round((a.min / time) * 6);
 
-      // Optional mood keyword scoring (connects to Submodule 2 later)
+      // Iteration: mood keyword boosts matching tags
       if (moodTokens.length) {
         const tags = (a.tags || []).map(t => t.toLowerCase());
-        let hit = 0;
-        // ITERATION: loop through tokens and tags
+      
+      let hit = 0;
         for (const tok of moodTokens) if (tags.some(t => t.includes(tok))) hit++;
         score += hit * 5;
       }
 
-      // Optional: small hobby boost (connects to Submodule 1 later)
-      if (userHobbies.includes("outdoors") && a.loc === "outdoor") score += 2;
+      // small randomness so results vary
+      score += (Math.random() * 1.5);
 
-      return score + (Math.random() * 1.5);
+      return score;
     };
 
     const pickTop = (arr, k) => {
@@ -352,24 +296,19 @@ document.addEventListener("DOMContentLoaded", () => {
       return out;
     };
 
-    // MAIN ACTION (AP: Sequencing)
+
     const recommendActivities = () => {
-      // 1) read mood & hobbies (hobbies is a list + mood keyword)
+      // Sequencing: read inputs → score → pick → render
+      const time = Number(timeSelect.value);
       const moodTokens = tokenize(moodInput.value);
 
-      // 2) read filters
-      const time = Number(timeSelect.value);
-
-      // 3) build request (here: local scoring instead of backend)
-      // 4) "call /activity/recommend" (simulated by our procedure)
-
-      // ITERATION: map through dataset, filter, and rank
+      
       const scored = ACTIVITIES
         .map(a => ({ ...a, _score: scoreActivity(a, time, vibeChoice, locChoice, moodTokens) }))
         .filter(a => a._score > -1000)
         .sort((x, y) => y._score - x._score);
 
-      // 5) output 2–4 cards
+
       const targetCount = clamp(2 + Math.floor(Math.random() * 3), 2, 4);
       const picks = pickTop(scored, targetCount);
 
@@ -424,16 +363,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <div style="margin-top:0.7rem; display:flex; gap:0.4rem; flex-wrap: wrap;">
               ${renderTagPills(a)}
             </div>
-
-            <details style="margin-top:0.75rem;">
-              <summary style="cursor:pointer; color:#bbb;">Why this was picked</summary>
-              <div style="margin-top:0.55rem; color:#ddd; line-height:1.55;">
-                • Fits your time (≤ ${Number(timeSelect.value)}m).<br/>
-                • Matches vibe/location when possible.<br/>
-                • Mood keyword boosts matching tags.
-              </div>
-            </details>
-          </div>
+           </div>
         `;
       }).join("");
 
@@ -450,7 +380,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const ids = getSaved();
         const already = ids.includes(id);
 
-        // ITERATION: remove duplicates via Set
+        // Iteration: keep list clean (no duplicates)
         const updated = already ? ids.filter(x => x !== id) : Array.from(new Set([...ids, id]));
         setSaved(updated);
 
@@ -458,7 +388,6 @@ document.addEventListener("DOMContentLoaded", () => {
         toast.style.display = "inline";
         setTimeout(() => toast.style.display = "none", 1100);
 
-        
         renderSaved();
 
         if (lastPicks.length) {
@@ -577,8 +506,7 @@ document.addEventListener("DOMContentLoaded", () => {
   button:disabled { cursor: not-allowed !important; opacity: 0.6; }
   summary { list-style: none; }
   summary::-webkit-details-marker { display: none; }
-  summary::before { content: "▸"; margin-right: 0.45rem; color: #666; }
-  details[open] summary::before { content: "▾"; }
+
 
   @media (max-width: 900px) {
     #activity-grid { grid-template-columns: 1fr !important; }
