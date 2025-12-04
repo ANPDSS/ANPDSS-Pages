@@ -388,7 +388,7 @@ footer:
 
 <main>
   <div class="nav-bar">
-    <h2>🍽️ MoodMeal</h2>
+    <h2>🍽️ Mood Life</h2>
     <div class="nav-actions">
       <div id="guest-buttons">
         <button class="btn btn-secondary" id="login-btn">Login</button>
