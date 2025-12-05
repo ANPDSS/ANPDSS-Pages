@@ -190,8 +190,10 @@ footer:
 
 </main>
 
-<script>
+<script type="module">
 // MoodMeal - Mood Input & Emotion Analyzer JavaScript
+import { pythonURI, fetchOptions } from '{{ site.baseurl }}/assets/js/api/config.js';
+
 (function() {
   'use strict';
 
@@ -294,31 +296,33 @@ footer:
     });
   });
 
-  // Random jokes array
-  const jokes = [
-    "Why don't scientists trust atoms? Because they make up everything!",
-    "What do you call a bear with no teeth? A gummy bear!",
-    "Why did the scarecrow win an award? He was outstanding in his field!",
-    "What do you call a fake noodle? An impasta!",
-    "Why don't eggs tell jokes? They'd crack each other up!",
-    "What did the ocean say to the beach? Nothing, it just waved!",
-    "Why did the math book look so sad? Because it had too many problems!",
-    "What do you call a dinosaur that crashes his car? Tyrannosaurus Wrecks!",
-    "Why couldn't the bicycle stand up by itself? It was two tired!",
-    "What do you call cheese that isn't yours? Nacho cheese!"
-  ];
+  // Fetch random joke from backend API (ANPDSS-flask/hacks/jokes.py)
+  async function getRandomJoke() {
+    try {
+      const url = `${pythonURI}/api/jokes/random`;
+      const response = await fetch(url, fetchOptions);
 
-  // Helper: Get random joke
-  function getRandomJoke() {
-    return jokes[Math.floor(Math.random() * jokes.length)];
+      if (!response.ok) {
+        console.error('Failed to fetch joke:', response.status);
+        // Fallback joke if API fails
+        return "Why do programmers prefer dark mode? Because light attracts bugs!";
+      }
+
+      const data = await response.json();
+      return data.joke;
+    } catch (error) {
+      console.error('Error fetching joke:', error);
+      // Fallback joke if API fails
+      return "Why do programmers prefer dark mode? Because light attracts bugs!";
+    }
   }
 
   // Save Mood Button Handler
   if (saveMoodBtn) {
     saveMoodBtn.addEventListener('click', async () => {
-      // Check if mood is under 40 and show a joke
+      // Check if mood is under 40 and show a joke from backend
       if (currentMoodScore < 40) {
-        const joke = getRandomJoke();
+        const joke = await getRandomJoke();
         alert(`Here's a joke to cheer you up! 😊\n\n${joke}`);
       }
 
