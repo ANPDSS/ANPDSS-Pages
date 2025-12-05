@@ -52,7 +52,7 @@ lxdData:
     - Title: "Module 6"
       Genre: "Configuration"
       Level: 6
-      Description: "Mood Plan Dashboard & Insights (Aggregator)
+      Description: "Mood Plan Dashboard & Insights (Aggregator)"
       Categories: ["Settings", "Preferences", "Configuration"]
       Lessons: "/mood-meal/submodule_6/"
       Image: "/images/mood-meal-module6.png"
