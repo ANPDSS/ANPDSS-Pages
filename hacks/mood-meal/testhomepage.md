@@ -677,7 +677,18 @@ tags: [mood-tracking, meals, activities, music, wellness]
     </div>
   </div>
 
-  <script>
+    <!-- Joke Modal for Low Mood (added) -->
+    <div id="joke-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 1000; align-items: center; justify-content: center;">
+      <div style="background: #1a1a1a; padding: 2rem; border-radius: 12px; max-width: 600px; width: 90%; border: 2px solid #4a9eff; box-shadow: 0 8px 32px rgba(74, 158, 255, 0.3);">
+        <h3 style="color: #4a9eff; margin-top: 0; font-size: 1.5rem; text-align: center;">Here's a joke to cheer you up! 😊</h3>
+        <p id="joke-text" style="font-size: 1.1rem; line-height: 1.6; color: #fff; margin: 1.5rem 0; text-align: center; font-style: italic;"></p>
+        <div style="text-align: center; margin-top: 1.5rem;">
+          <button id="joke-modal-close" style="padding: 0.6rem 1.5rem; font-size: 1rem; cursor: pointer; background: #4a9eff; color: white; border: none; border-radius: 6px;">Thanks! 😊</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
     // State Management
     const state = {
       currentMood: { score: 50, tags: [], primaryTag: null },
@@ -764,15 +775,68 @@ tags: [mood-tracking, meals, activities, music, wellness]
       });
     });
 
-    function saveMood() {
+    async function getRandomJoke() {
+      // Determine pythonURI similar to the shared config
+      const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+        ? 'http://localhost:8587'
+        : 'https://flask.opencodingsociety.com';
+
+      const fetchOptions = {
+        method: 'GET',
+        mode: 'cors',
+        cache: 'default',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Origin': 'client'
+        }
+      };
+
+      // Local fallback jokes
+      const fallbackJokes = [
+        "Why don't scientists trust atoms? Because they make up everything!",
+        "What do you call a bear with no teeth? A gummy bear!",
+        "Why did the scarecrow win an award? He was outstanding in his field!",
+        "Why do programmers prefer dark mode? Because light attracts bugs!"
+      ];
+
+      try {
+        const url = `${pythonURI}/api/jokes/random`;
+        const resp = await fetch(url, fetchOptions);
+        if (!resp.ok) {
+          console.warn('Jokes API returned non-ok status', resp.status);
+          return fallbackJokes[Math.floor(Math.random() * fallbackJokes.length)];
+        }
+        const data = await resp.json();
+        return data.joke || fallbackJokes[Math.floor(Math.random() * fallbackJokes.length)];
+      } catch (err) {
+        console.warn('Error fetching joke, using fallback:', err);
+        return fallbackJokes[Math.floor(Math.random() * fallbackJokes.length)];
+      }
+    }
+
+    function showJokeModal(joke) {
+      const modal = document.getElementById('joke-modal');
+      const jokeText = document.getElementById('joke-text');
+      const closeBtn = document.getElementById('joke-modal-close');
+
+      jokeText.textContent = joke;
+      modal.style.display = 'flex';
+
+      closeBtn.onclick = () => {
+        modal.style.display = 'none';
+      };
+
+      // Close on backdrop click
+      modal.onclick = (e) => {
+        if (e.target === modal) modal.style.display = 'none';
+      };
+    }
+
+    async function saveMood() {
       if (state.currentMood.score < 40) {
-        const jokes = [
-          "Why don't scientists trust atoms? Because they make up everything!",
-          "What do you call a bear with no teeth? A gummy bear!",
-          "Why did the scarecrow win an award? He was outstanding in his field!"
-        ];
-        const joke = jokes[Math.floor(Math.random() * jokes.length)];
-        showToast(`Here's a joke to cheer you up! 😊\n\n${joke}`);
+        const joke = await getRandomJoke();
+        showJokeModal(joke);
       }
 
       localStorage.setItem('moodlife_mood', JSON.stringify(state.currentMood));
