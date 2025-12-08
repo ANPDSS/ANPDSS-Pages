@@ -228,6 +228,7 @@ show_reading_time: false
         const flaskEl = document.getElementById('flaskStatus');
         const springEl = document.getElementById('springStatus');
         const overallEl = document.getElementById('overallStatus');
+        const isLocalhost = location.hostname === "localhost" || location.hostname === "127.0.0.1";
 
         const flaskSuccess = flaskEl.classList.contains('success');
         const springSuccess = springEl.classList.contains('success');
@@ -240,8 +241,12 @@ show_reading_time: false
             overallEl.classList.add('success');
             overallEl.textContent = '🎉 Account created on both backends! You can now login.';
         } else if (flaskSuccess && springError) {
-            overallEl.classList.add('partial');
-            overallEl.textContent = '⚠️ Flask account created successfully! Spring failed but you can still login.';
+            overallEl.classList.add(isLocalhost ? 'success' : 'partial');
+            if (isLocalhost) {
+                overallEl.textContent = '🎉 Account created successfully! You can now login. (Spring not running locally)';
+            } else {
+                overallEl.textContent = '⚠️ Flask account created successfully! Spring failed but you can still login.';
+            }
         } else if (flaskError && springSuccess) {
             overallEl.classList.add('partial');
             overallEl.textContent = '⚠️ Spring account created! Flask failed - please try again.';
@@ -364,9 +369,10 @@ show_reading_time: false
 };
     // Function to handle Python login
     window.pythonLogin = function () {
+        const isLocalhost = location.hostname === "localhost" || location.hostname === "127.0.0.1";
         const options = {
             URL: `${pythonURI}/api/authenticate`,
-            callback: pythonDatabase,
+            callback: isLocalhost ? pythonDatabaseLocalhost : pythonDatabase,
             message: "message",
             method: "POST",
             cache: "no-cache",
@@ -471,7 +477,20 @@ show_reading_time: false
             }
         });
 };
-    // Function to fetch and display Python data
+    // Function for localhost - skip /api/id check and show success
+    function pythonDatabaseLocalhost() {
+        document.getElementById("message").textContent = "Login successful!";
+        document.getElementById("message").style.color = "green";
+        // Clear the form
+        document.getElementById("uid").value = "";
+        document.getElementById("password").value = "";
+        // Optionally redirect after a short delay
+        setTimeout(() => {
+            window.location.href = '{{site.baseurl}}/';
+        }, 1000);
+    }
+
+    // Function to fetch and display Python data (for production)
     function pythonDatabase() {
         const URL = `${pythonURI}/api/id`;
         fetch(URL, fetchOptions)
@@ -493,6 +512,10 @@ show_reading_time: false
         // Disable the button and change its color
         signupButton.disabled = true;
         signupButton.classList.add("disabled");
+
+        // Check if we're on localhost
+        const isLocalhost = location.hostname === "localhost" || location.hostname === "127.0.0.1";
+
         // Reset status indicators
         updateBackendStatus('flask', 'pending');
         updateBackendStatus('spring', 'pending');
@@ -523,10 +546,13 @@ show_reading_time: false
         }
 
         console.log("Sending this data to Flask:", JSON.stringify(data, null, 2));
-        console.log("Request URL:", `${pythonURI}/api/user`);
+
+        // Use /api/user/guest endpoint on localhost to bypass GitHub validation
+        const flaskEndpoint = isLocalhost ? `${pythonURI}/api/user/guest` : `${pythonURI}/api/user`;
+        console.log("Request URL:", flaskEndpoint);
 
         // Flask Backend Request
-        const flaskPromise = fetch(`${pythonURI}/api/user`, {
+        const flaskPromise = fetch(flaskEndpoint, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
