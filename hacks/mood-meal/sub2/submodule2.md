@@ -187,6 +187,19 @@ footer:
     </div>
   </section>
 
+  <!-- Joke Modal for Low Mood -->
+  <div id="joke-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 1000; align-items: center; justify-content: center;">
+    <div style="background: #1a1a1a; padding: 2rem; border-radius: 12px; max-width: 500px; width: 90%; border: 2px solid #4a9eff; box-shadow: 0 8px 32px rgba(74, 158, 255, 0.3);">
+      <h3 style="color: #4a9eff; margin-top: 0; font-size: 1.5rem; text-align: center;">Here's a joke to cheer you up! 😊</h3>
+      <p id="joke-text" style="font-size: 1.1rem; line-height: 1.6; color: #fff; margin: 1.5rem 0; text-align: center; font-style: italic;"></p>
+      <div style="text-align: center; margin-top: 1.5rem;">
+        <button id="joke-modal-close" style="padding: 0.6rem 1.5rem; font-size: 1rem; cursor: pointer; background: #4a9eff; color: white; border: none; border-radius: 6px;">
+          Thanks! 😊
+        </button>
+      </div>
+    </div>
+  </div>
+
 
 </main>
 
@@ -317,13 +330,34 @@ import { pythonURI, fetchOptions } from '{{ site.baseurl }}/assets/js/api/config
     }
   }
 
+  // Show joke modal
+  function showJokeModal(joke) {
+    const modal = document.getElementById('joke-modal');
+    const jokeText = document.getElementById('joke-text');
+    const closeBtn = document.getElementById('joke-modal-close');
+
+    jokeText.textContent = joke;
+    modal.style.display = 'flex';
+
+    closeBtn.onclick = () => {
+      modal.style.display = 'none';
+    };
+
+    // Close on backdrop click
+    modal.onclick = (e) => {
+      if (e.target === modal) {
+        modal.style.display = 'none';
+      }
+    };
+  }
+
   // Save Mood Button Handler
   if (saveMoodBtn) {
     saveMoodBtn.addEventListener('click', async () => {
       // Check if mood is under 40 and show a joke from backend
       if (currentMoodScore < 40) {
         const joke = await getRandomJoke();
-        alert(`Here's a joke to cheer you up! 😊\n\n${joke}`);
+        showJokeModal(joke);
       }
 
       // Hide previous messages
@@ -484,6 +518,41 @@ table tr:hover {
   background: rgba(74, 158, 255, 0.05);
 }
 
+/* Joke Modal Animations */
+#joke-modal {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+#joke-modal > div {
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+#joke-modal-close:hover {
+  background: #6ab4ff;
+  transform: scale(1.05);
+  transition: all 0.2s ease;
+}
+
 /* Responsive adjustments */
 @media (max-width: 600px) {
   .mood-emoji-btn {
@@ -493,6 +562,14 @@ table tr:hover {
 
   input[type="range"] {
     max-width: 100%;
+  }
+
+  #joke-modal > div {
+    padding: 1.5rem;
+  }
+
+  #joke-text {
+    font-size: 1rem !important;
   }
 }
 </style>
