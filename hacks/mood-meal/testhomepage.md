@@ -2,7 +2,7 @@
 layout: post
 title: "MoodLife - Complete Wellness App"
 description: "Personalized mood tracking, meal recommendations, activities, and music in one unified experience"
-permalink: /mood-meal/
+permalink: /mood-meal1/
 author: ANPDSS
 date: 2025-12-05
 categories: [CSP, MoodLife, Wellness]
