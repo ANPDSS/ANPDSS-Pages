@@ -387,17 +387,7 @@ footer:
 
 <main>
   <div class="nav-bar">
-    <h2>Mood Life</h2>
-    <div class="nav-actions">
-      <div id="guest-buttons">
-        <button class="btn btn-secondary" id="login-btn">Login</button>
-        <button class="btn btn-primary" id="signup-btn">Sign Up</button>
-      </div>
-      <div id="user-section" class="hidden">
-        <button class="btn btn-secondary" id="profile-btn">👤 Profile</button>
-        <button class="btn btn-secondary" id="logout-btn">Logout</button>
-      </div>
-    </div>
+    <h2>Mood Life - User Preferences</h2>
   </div>
 
   <div id="message-container"></div>
@@ -479,102 +469,6 @@ footer:
     <button class="btn btn-primary" id="save-btn">💾 Save Preferences</button>
   </div>
 
-  <!-- Login Modal -->
-  <div id="login-modal" class="modal hidden">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>Sign In</h2>
-        <button class="close-btn" data-modal="login-modal">&times;</button>
-      </div>
-
-      <div class="demo-info">
-        <strong>Demo Account:</strong><br>
-        Email: demo@moodmeal.com<br>
-        Password: demo123
-      </div>
-
-      <div class="form-group">
-        <label>Email Address</label>
-        <input type="email" id="login-email" placeholder="your@email.com">
-      </div>
-
-      <div class="form-group">
-        <label>Password</label>
-        <input type="password" id="login-password" placeholder="Enter password">
-      </div>
-
-      <button class="btn btn-primary" id="do-login" style="width: 100%; margin-bottom: 1rem;">Sign In</button>
-
-      <p style="text-align: center; color: #888;">
-        Don't have an account? 
-        <span class="text-link" id="switch-to-signup">Sign up here</span>
-      </p>
-    </div>
-  </div>
-
-  <!-- Signup Modal -->
-  <div id="signup-modal" class="modal hidden">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>Create Account</h2>
-        <button class="close-btn" data-modal="signup-modal">&times;</button>
-      </div>
-
-      <div class="form-group">
-        <label>Full Name</label>
-        <input type="text" id="signup-name" placeholder="John Doe">
-      </div>
-
-      <div class="form-group">
-        <label>Email Address</label>
-        <input type="email" id="signup-email" placeholder="your@email.com">
-      </div>
-
-      <div class="form-group">
-        <label>Password</label>
-        <input type="password" id="signup-password" placeholder="At least 6 characters">
-      </div>
-
-      <div class="form-group">
-        <label>Confirm Password</label>
-        <input type="password" id="signup-confirm" placeholder="Re-enter password">
-      </div>
-
-      <button class="btn btn-primary" id="do-signup" style="width: 100%; margin-bottom: 1rem;">Create Account</button>
-
-      <p style="text-align: center; color: #888;">
-        Already have an account? 
-        <span class="text-link" id="switch-to-login">Sign in here</span>
-      </p>
-    </div>
-  </div>
-
-  <!-- Profile Modal -->
-  <div id="profile-modal" class="modal hidden">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>Your Profile</h2>
-        <button class="close-btn" data-modal="profile-modal">&times;</button>
-      </div>
-
-      <div class="form-group">
-        <label>Full Name</label>
-        <input type="text" id="profile-name" disabled>
-      </div>
-
-      <div class="form-group">
-        <label>Email Address</label>
-        <input type="email" id="profile-email" disabled>
-      </div>
-
-      <div class="form-group">
-        <label>Member Since</label>
-        <input type="text" id="profile-created" disabled>
-      </div>
-
-      <button class="btn btn-primary" style="width: 100%;" onclick="document.getElementById('profile-modal').classList.add('hidden')">Close</button>
-    </div>
-  </div>
 
 </main>
 
