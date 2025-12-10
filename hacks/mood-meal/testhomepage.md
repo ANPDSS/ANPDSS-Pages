@@ -383,6 +383,17 @@ tags: [mood-tracking, meals, activities, music, wellness]
       border-color: #2196F3;
     }
 
+    /* Table Styling */
+    table {
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    table tbody tr:hover {
+      background: rgba(33, 150, 243, 0.1);
+    }
+
     @media (max-width: 768px) {
       .container {
         padding: 1rem;
@@ -400,6 +411,14 @@ tags: [mood-tracking, meals, activities, music, wellness]
       .results-grid {
         grid-template-columns: 1fr;
       }
+
+      table {
+        font-size: 0.9rem;
+      }
+
+      table th, table td {
+        padding: 0.5rem !important;
+      }
     }
   </style>
 </head>
@@ -410,6 +429,7 @@ tags: [mood-tracking, meals, activities, music, wellness]
     <div class="logo">🌟 MoodLife</div>
     <div class="nav-links">
       <button class="nav-btn active" data-section="home">🏠 Home</button>
+      <button class="nav-btn" data-section="history">📊 History</button>
       <button class="nav-btn" id="user-btn">👤 Guest Profile</button>
     </div>
   </nav>
@@ -597,6 +617,40 @@ tags: [mood-tracking, meals, activities, music, wellness]
       <div class="results-grid" id="activities-results"></div>
     </section>
 
+    <!-- Mood History Section -->
+    <section class="section" id="history-section">
+      <div class="card">
+        <h2>📊 Your Mood History</h2>
+        <p style="color: #bbb;">Track your mood entries over time</p>
+
+        <div id="history-loading" style="text-align: center; padding: 2rem; display: none;">
+          <div class="loading"></div> Loading...
+        </div>
+
+        <div id="history-error" style="color: #ff4a4a; padding: 1rem; display: none; text-align: center;">
+          Failed to load mood history. Please log in.
+        </div>
+
+        <div style="overflow-x: auto; margin-top: 1.5rem;">
+          <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+              <tr style="border-bottom: 2px solid #2196F3;">
+                <th style="padding: 0.75rem; text-align: left; color: #2196F3;">Date & Time</th>
+                <th style="padding: 0.75rem; text-align: center; color: #2196F3;">Score</th>
+                <th style="padding: 0.75rem; text-align: left; color: #2196F3;">Category</th>
+                <th style="padding: 0.75rem; text-align: left; color: #2196F3;">Tags</th>
+              </tr>
+            </thead>
+            <tbody id="history-tbody">
+              <tr>
+                <td colspan="4" style="padding: 2rem; text-align: center; color: #666;">No mood entries yet. Save your first mood!</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
     <!-- Music Section -->
     <section class="section" id="music-section">
       <div class="card">
@@ -726,9 +780,14 @@ tags: [mood-tracking, meals, activities, music, wellness]
     function showSection(sectionName) {
       document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-      
+
       document.getElementById(sectionName + '-section').classList.add('active');
       document.querySelector(`[data-section="${sectionName}"]`).classList.add('active');
+
+      // Load mood history when showing history section
+      if (sectionName === 'history') {
+        loadMoodHistory();
+      }
     }
 
     document.querySelectorAll('.nav-btn[data-section]').forEach(btn => {
@@ -833,19 +892,131 @@ tags: [mood-tracking, meals, activities, music, wellness]
       };
     }
 
+    function getMoodCategory(score) {
+      if (score <= 40) return 'Stressed/Anxious';
+      if (score <= 60) return 'Tired/Low Energy';
+      if (score <= 80) return 'Happy/Neutral';
+      return 'Energetic/Excited';
+    }
+
     async function saveMood() {
       if (state.currentMood.score < 40) {
         const joke = await getRandomJoke();
         showJokeModal(joke);
       }
 
+      // Save to local storage for immediate display
       localStorage.setItem('moodlife_mood', JSON.stringify(state.currentMood));
+
+      // Save to backend API
+      const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+        ? 'http://localhost:8587'
+        : 'https://flask.opencodingsociety.com';
+
+      const fetchOptions = {
+        method: 'POST',
+        mode: 'cors',
+        cache: 'default',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Origin': 'client'
+        }
+      };
+
+      try {
+        const allTags = state.currentMood.primaryTag
+          ? [state.currentMood.primaryTag, ...state.currentMood.tags].filter((v, i, a) => a.indexOf(v) === i)
+          : state.currentMood.tags;
+
+        const moodData = {
+          mood_score: state.currentMood.score,
+          mood_tags: allTags,
+          mood_category: getMoodCategory(state.currentMood.score)
+        };
+
+        const response = await fetch(`${pythonURI}/api/moodmeal/mood`, {
+          ...fetchOptions,
+          body: JSON.stringify(moodData)
+        });
+
+        if (response.ok) {
+          showToast('✓ Mood saved to database! Returning home...');
+          await loadMoodHistory(); // Reload history
+        } else {
+          showToast('✓ Mood saved locally! (Login to sync)');
+        }
+      } catch (error) {
+        console.error('Error saving mood:', error);
+        showToast('✓ Mood saved locally! (API unavailable)');
+      }
+
       updateStats();
-      showToast('✓ Mood saved successfully! Returning home...');
-      
       setTimeout(() => {
         showSection('home');
       }, 1500);
+    }
+
+    async function loadMoodHistory() {
+      const tbody = document.getElementById('history-tbody');
+      const loadingDiv = document.getElementById('history-loading');
+      const errorDiv = document.getElementById('history-error');
+
+      loadingDiv.style.display = 'block';
+      errorDiv.style.display = 'none';
+
+      const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+        ? 'http://localhost:8587'
+        : 'https://flask.opencodingsociety.com';
+
+      const fetchOptions = {
+        method: 'GET',
+        mode: 'cors',
+        cache: 'default',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Origin': 'client'
+        }
+      };
+
+      try {
+        const response = await fetch(`${pythonURI}/api/moodmeal/mood`, fetchOptions);
+
+        if (!response.ok) {
+          throw new Error('Failed to load mood history');
+        }
+
+        const moods = await response.json();
+        loadingDiv.style.display = 'none';
+
+        if (moods.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="4" style="padding: 2rem; text-align: center; color: #666;">No mood entries yet. Save your first mood!</td></tr>';
+          return;
+        }
+
+        // Populate table
+        tbody.innerHTML = moods.map(mood => {
+          const date = new Date(mood.timestamp);
+          const dateStr = date.toLocaleDateString();
+          const timeStr = date.toLocaleTimeString();
+          const tags = mood.mood_tags.join(', ') || 'None';
+
+          return `
+            <tr style="border-bottom: 1px solid #333;">
+              <td style="padding: 0.75rem;">${dateStr} ${timeStr}</td>
+              <td style="padding: 0.75rem; text-align: center; font-weight: bold; color: #2196F3;">${mood.mood_score}</td>
+              <td style="padding: 0.75rem;">${mood.mood_category}</td>
+              <td style="padding: 0.75rem;">${tags}</td>
+            </tr>
+          `;
+        }).join('');
+
+      } catch (error) {
+        console.error('Error loading mood history:', error);
+        loadingDiv.style.display = 'none';
+        errorDiv.style.display = 'block';
+      }
     }
 
     // Meal Recommendations
