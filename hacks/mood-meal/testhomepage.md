@@ -450,10 +450,7 @@ tags: [mood-tracking, meals, activities, music, wellness]
           Your complete wellness companion for mood tracking, meal planning, activities, and music
         </p>
         <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-          <button class="btn btn-primary" onclick="showSection('mood')">🎭 Check Your Mood</button>
-          <button class="btn btn-secondary" onclick="showSection('meals')">🍽️ Find Meals</button>
-          <button class="btn btn-secondary" onclick="showSection('activities')">🎯 Get Activities</button>
-          <button class="btn btn-secondary" onclick="showSection('music')">🎵 Discover Music</button>
+          <button class="btn btn-primary" onclick="showSection('mood')" style="min-width: 220px; font-size: 1.1rem;">🎭 Check Your Mood</button>
         </div>
       </div>
 
@@ -688,6 +685,31 @@ tags: [mood-tracking, meals, activities, music, wellness]
       <div class="results-grid" id="music-results"></div>
     </section>
 
+    <!-- Recommendations Section (Unified) -->
+    <section class="section" id="recommendations-section">
+      <div class="card">
+        <h2>✨ Personalized Recommendations</h2>
+        <p style="color: #bbb;">Based on your mood, here are some suggestions for food, activities, and music.</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-top: 1rem;">
+        <div class="card">
+          <h3 style="margin-top: 0;">🍽️ Food</h3>
+          <div id="rec-meals"></div>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-top: 0;">🎯 Activities</h3>
+          <div id="rec-activities"></div>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-top: 0;">🎵 Music</h3>
+          <div id="rec-music"></div>
+        </div>
+      </div>
+    </section>
+
   </div>
 
   <!-- User Modal -->
@@ -900,61 +922,96 @@ tags: [mood-tracking, meals, activities, music, wellness]
     }
 
     async function saveMood() {
+      // If low mood, show a joke first
       if (state.currentMood.score < 40) {
         const joke = await getRandomJoke();
         showJokeModal(joke);
       }
 
-      // Save to local storage for immediate display
+      // Save locally immediately
       localStorage.setItem('moodlife_mood', JSON.stringify(state.currentMood));
 
-      // Save to backend API
-      const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
-        ? 'http://localhost:8587'
-        : 'https://flask.opencodingsociety.com';
+      // Fire-and-forget save to backend (best-effort)
+      (async () => {
+        try {
+          const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+            ? 'http://localhost:8587'
+            : 'https://flask.opencodingsociety.com';
 
-      const fetchOptions = {
-        method: 'POST',
-        mode: 'cors',
-        cache: 'default',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Origin': 'client'
+          const allTags = state.currentMood.primaryTag
+            ? [state.currentMood.primaryTag, ...state.currentMood.tags].filter((v, i, a) => a.indexOf(v) === i)
+            : state.currentMood.tags;
+
+          const moodData = {
+            mood_score: state.currentMood.score,
+            mood_tags: allTags,
+            mood_category: getMoodCategory(state.currentMood.score),
+            timestamp: new Date().toISOString()
+          };
+
+          await fetch(`${pythonURI}/api/moodmeal/mood`, {
+            method: 'POST',
+            mode: 'cors',
+            cache: 'default',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json', 'X-Origin': 'client' },
+            body: JSON.stringify(moodData)
+          });
+        } catch (e) {
+          console.debug('Background mood save failed:', e);
         }
-      };
+      })();
 
-      try {
-        const allTags = state.currentMood.primaryTag
-          ? [state.currentMood.primaryTag, ...state.currentMood.tags].filter((v, i, a) => a.indexOf(v) === i)
-          : state.currentMood.tags;
+      // Render simplified unified recommendations immediately and show them
+      renderRecommendations(state.currentMood.score);
+      showSection('recommendations');
+      updateStats();
+    }
 
-        const moodData = {
-          mood_score: state.currentMood.score,
-          mood_tags: allTags,
-          mood_category: getMoodCategory(state.currentMood.score)
-        };
-
-        const response = await fetch(`${pythonURI}/api/moodmeal/mood`, {
-          ...fetchOptions,
-          body: JSON.stringify(moodData)
-        });
-
-        if (response.ok) {
-          showToast('✓ Mood saved to database! Returning home...');
-          await loadMoodHistory(); // Reload history
-        } else {
-          showToast('✓ Mood saved locally! (Login to sync)');
+    // Render recommendations (simple client-side selection)
+    function renderRecommendations(moodScore) {
+      // Simple heuristic: choose 3 items from each list. We'll bias selection slightly by moodScore.
+      function pickItems(list, count) {
+        // shuffle copy
+        const copy = list.slice();
+        for (let i = copy.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [copy[i], copy[j]] = [copy[j], copy[i]];
         }
-      } catch (error) {
-        console.error('Error saving mood:', error);
-        showToast('✓ Mood saved locally! (API unavailable)');
+        return copy.slice(0, Math.min(count, copy.length));
       }
 
-      updateStats();
-      setTimeout(() => {
-        showSection('home');
-      }, 1500);
+      const meals = pickItems(mockMeals, 3);
+      const activities = pickItems(mockActivities, 3);
+      const music = pickItems(mockMusic, 3);
+
+      const mealsDiv = document.getElementById('rec-meals');
+      const actsDiv = document.getElementById('rec-activities');
+      const musicDiv = document.getElementById('rec-music');
+
+      mealsDiv.innerHTML = meals.map(m => `
+        <div class="result-card" style="margin-bottom: 0.75rem;">
+          <div style="font-size: 2.2rem; text-align: center;">${m.img || '🍽️'}</div>
+          <h4 style="margin: 0.5rem 0;">${m.name}</h4>
+          <div style="color:#bbb;">⏱ ${m.time || m.duration || ''} • Energy: ${m.energy || '-'} </div>
+        </div>
+      `).join('');
+
+      actsDiv.innerHTML = activities.map(a => `
+        <div class="result-card" style="margin-bottom: 0.75rem;">
+          <div style="font-size: 2.2rem; text-align: center;">${a.emoji || '🎯'}</div>
+          <h4 style="margin: 0.5rem 0;">${a.name}</h4>
+          <div style="color:#bbb;">⏱ ${a.time} min • ${a.location}</div>
+        </div>
+      `).join('');
+
+      musicDiv.innerHTML = music.map(s => `
+        <div class="result-card" style="margin-bottom: 0.75rem;">
+          <div style="font-size: 2.2rem; text-align: center;">${s.emoji || '🎵'}</div>
+          <h4 style="margin: 0.5rem 0;">${s.title}</h4>
+          <div style="color:#bbb;">${s.artist} • ${s.genre}</div>
+        </div>
+      `).join('');
     }
 
     async function loadMoodHistory() {
