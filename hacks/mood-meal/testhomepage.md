@@ -957,62 +957,113 @@ tags: [mood-tracking, meals, activities, music, wellness]
             headers: { 'Content-Type': 'application/json', 'X-Origin': 'client' },
             body: JSON.stringify(moodData)
           });
+          const planResp = await fetch(`${pythonURI}/api/moodmeal/plan`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({}) // latest mood
+          });
+
+          const planData = await planResp.json();
+
         } catch (e) {
           console.debug('Background mood save failed:', e);
         }
       })();
 
-      // Render simplified unified recommendations immediately and show them
-      renderRecommendations(state.currentMood.score);
-      showSection('recommendations');
-      updateStats();
-    }
+      // Render unified recommendations using Gemini plan endpoint (falls back to mock if needed)
+      try {
+        const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+          ? 'http://localhost:8587'
+          : 'https://flask.opencodingsociety.com';
 
-    // Render recommendations (simple client-side selection)
-    function renderRecommendations(moodScore) {
-      // Simple heuristic: choose 3 items from each list. We'll bias selection slightly by moodScore.
-      function pickItems(list, count) {
-        // shuffle copy
-        const copy = list.slice();
-        for (let i = copy.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [copy[i], copy[j]] = [copy[j], copy[i]];
+        const planResp = await fetch(`${pythonURI}/api/moodmeal/plan`, {
+          method: 'POST',
+          mode: 'cors',
+          cache: 'no-store',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json', 'X-Origin': 'client' },
+          body: JSON.stringify({}) // uses latest mood in DB
+        });
+
+        if (!planResp.ok) {
+          const txt = await planResp.text().catch(() => '');
+          throw new Error(`Plan failed (${planResp.status}): ${txt}`);
         }
-        return copy.slice(0, Math.min(count, copy.length));
+
+        const planData = await planResp.json();
+
+        // IMPORTANT: This function must exist (the Gemini renderer)
+        renderRecommendationsFromPlan(planData.generated);
+
+      } catch (e) {
+        console.warn('Gemini plan failed, falling back to mock recommendations:', e);
+        renderRecommendations(state.currentMood.score);
       }
 
-      const meals = pickItems(mockMeals, 3);
-      const activities = pickItems(mockActivities, 3);
-      const music = pickItems(mockMusic, 3);
+      showSection('recommendations');
+      updateStats();
+
+    }
+
+    // Render recommendations from Gemini plan output (generated JSON)
+    function renderRecommendationsFromPlan(generated) {
+      const meals = generated?.meals ?? [];
+      const activities = generated?.activities ?? [];
+      const music = generated?.music ?? [];
 
       const mealsDiv = document.getElementById('rec-meals');
       const actsDiv = document.getElementById('rec-activities');
       const musicDiv = document.getElementById('rec-music');
 
-      mealsDiv.innerHTML = meals.map(m => `
+      // Safety: if containers missing, don’t crash
+      if (!mealsDiv || !actsDiv || !musicDiv) return;
+      // By default hide the "why" reasoning and provide a button to reveal it.
+      mealsDiv.innerHTML = meals.length ? meals.map(m => `
         <div class="result-card" style="margin-bottom: 0.75rem;">
-          <div style="font-size: 2.2rem; text-align: center;">${m.img || '🍽️'}</div>
-          <h4 style="margin: 0.5rem 0;">${m.name}</h4>
-          <div style="color:#bbb;">⏱ ${m.time || m.duration || ''} • Energy: ${m.energy || '-'} </div>
+          <div style="font-size: 2.2rem; text-align: center;">🍽️</div>
+          <h4 style="margin: 0.5rem 0;">${m.title ?? 'Meal idea'}</h4>
+          <div style="color:#bbb;">⏱ ${m.time_minutes ?? '-'} min • Difficulty: ${m.difficulty ?? '-'}</div>
+          <div class="why-text hidden" style="color:#ddd; margin-top: 0.35rem;">${m.why ?? ''}</div>
+          <div style="margin-top:0.5rem;"><button class="btn btn-secondary" onclick="toggleWhy(this)">Why?</button></div>
         </div>
-      `).join('');
+      `).join('') : `<div style="color:#bbb;">No meal ideas returned.</div>`;
 
-      actsDiv.innerHTML = activities.map(a => `
+      actsDiv.innerHTML = activities.length ? activities.map(a => `
         <div class="result-card" style="margin-bottom: 0.75rem;">
-          <div style="font-size: 2.2rem; text-align: center;">${a.emoji || '🎯'}</div>
-          <h4 style="margin: 0.5rem 0;">${a.name}</h4>
-          <div style="color:#bbb;">⏱ ${a.time} min • ${a.location}</div>
+          <div style="font-size: 2.2rem; text-align: center;">🎯</div>
+          <h4 style="margin: 0.5rem 0;">${a.name ?? 'Activity idea'}</h4>
+          <div style="color:#bbb;">Energy: ${a.energy ?? '-'}</div>
+          <div class="why-text hidden" style="color:#ddd; margin-top: 0.35rem;">${a.why ?? ''}</div>
+          <div style="margin-top:0.5rem;"><button class="btn btn-secondary" onclick="toggleWhy(this)">Why?</button></div>
         </div>
-      `).join('');
+      `).join('') : `<div style="color:#bbb;">No activities returned.</div>`;
 
-      musicDiv.innerHTML = music.map(s => `
+      musicDiv.innerHTML = music.length ? music.map(s => `
         <div class="result-card" style="margin-bottom: 0.75rem;">
-          <div style="font-size: 2.2rem; text-align: center;">${s.emoji || '🎵'}</div>
-          <h4 style="margin: 0.5rem 0;">${s.title}</h4>
-          <div style="color:#bbb;">${s.artist} • ${s.genre}</div>
+          <div style="font-size: 2.2rem; text-align: center;">🎵</div>
+          <h4 style="margin: 0.5rem 0;">${s.song ?? 'Song'}</h4>
+          <div style="color:#bbb;">${s.artist ?? ''}</div>
+          <div class="why-text hidden" style="color:#ddd; margin-top: 0.35rem;">${s.why ?? ''}</div>
+          <div style="margin-top:0.5rem;"><button class="btn btn-secondary" onclick="toggleWhy(this)">Why?</button></div>
         </div>
-      `).join('');
+      `).join('') : `<div style="color:#bbb;">No music returned.</div>`;
     }
+
+    // Toggle helper to show/hide reasoning text inside a recommendation card
+    function toggleWhy(btn) {
+      try {
+        const card = btn.closest('.result-card');
+        if (!card) return;
+        const why = card.querySelector('.why-text');
+        if (!why) return;
+        why.classList.toggle('hidden');
+        btn.textContent = why.classList.contains('hidden') ? 'Why?' : 'Hide';
+      } catch (e) {
+        console.warn('toggleWhy failed', e);
+      }
+    }
+
 
     async function loadMoodHistory() {
       const tbody = document.getElementById('history-tbody');
