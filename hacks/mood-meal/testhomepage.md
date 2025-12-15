@@ -1446,3 +1446,62 @@ tags: [mood-tracking, meals, activities, music, wellness]
   </script>
 </body>
 </html>
+
+{% include microblog_foundation.html %}
+
+<script>
+// Configure microblog as global chat
+(function() {
+  // Wait for microblog to initialize, then set it to global mode
+  const setGlobalChat = () => {
+    // Set filter mode to 'people' which shows all posts globally
+    if (window.__microblogFilterMode !== undefined) {
+      window.__microblogFilterMode = 'people';
+
+      // Update the UI to show global mode is active
+      const pageIcons = document.querySelectorAll('#page-icon');
+      const manyPagesIcons = document.querySelectorAll('#many-pages-icon');
+
+      pageIcons.forEach(icon => {
+        icon.style.opacity = '0.5';
+        icon.style.background = '#9333ea';
+      });
+
+      manyPagesIcons.forEach(icon => {
+        icon.style.opacity = '1';
+        icon.style.background = '#2563eb';
+      });
+
+      console.log('Microblog set to global chat mode');
+      return true;
+    }
+    return false;
+  };
+
+  // Try immediately and also after delays to catch microblog initialization
+  setTimeout(setGlobalChat, 100);
+  setTimeout(setGlobalChat, 500);
+  setTimeout(setGlobalChat, 1000);
+
+  // Also listen for when microblog panel opens
+  const microblogFab = document.getElementById('microblog-toggle-btn');
+  if (microblogFab) {
+    microblogFab.addEventListener('click', () => {
+      setTimeout(setGlobalChat, 200);
+    });
+  }
+})();
+</script>
+
+<style>
+/* Customize microblog button text for global chat */
+#microblog-toggle-btn::before {
+  content: '💬 Global Chat';
+}
+#microblog-toggle-btn {
+  font-size: 0;
+}
+#microblog-toggle-btn::before {
+  font-size: 1.2rem;
+}
+</style>
