@@ -18,7 +18,7 @@ footer:
 ---
 
 # MoodMeal – Mood Input & Emotion Analyzer
-
+ 
 <!-- Main container for the Mood Input page -->
 <main id="mood-input-page">
 
