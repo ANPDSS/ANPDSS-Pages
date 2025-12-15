@@ -803,8 +803,15 @@ tags: [mood-tracking, meals, activities, music, wellness]
       document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
 
-      document.getElementById(sectionName + '-section').classList.add('active');
-      document.querySelector(`[data-section="${sectionName}"]`).classList.add('active');
+      const section = document.getElementById(sectionName + '-section');
+      if (section) {
+        section.classList.add('active');
+      }
+
+      const navBtn = document.querySelector(`[data-section="${sectionName}"]`);
+      if (navBtn) {
+        navBtn.classList.add('active');
+      }
 
       // Load mood history when showing history section
       if (sectionName === 'history') {
@@ -998,7 +1005,22 @@ tags: [mood-tracking, meals, activities, music, wellness]
 
       } catch (e) {
         console.warn('Gemini plan failed, falling back to mock recommendations:', e);
-        renderRecommendations(state.currentMood.score);
+        // Create mock recommendations based on mood score
+        const mockPlan = {
+          meals: [
+            { title: 'Comfort Food Bowl', time_minutes: 20, difficulty: 'Easy', why: 'Perfect for your current mood' },
+            { title: 'Energy Smoothie', time_minutes: 5, difficulty: 'Easy', why: 'Quick boost to lift your spirits' }
+          ],
+          activities: [
+            { name: 'Take a Walk', energy: 'Low', why: 'Fresh air helps clear your mind' },
+            { name: 'Listen to Music', energy: 'Low', why: 'Music is therapeutic' }
+          ],
+          music: [
+            { song: 'Feel Good Hit', artist: 'Various Artists', why: 'Uplifting tune for your mood' },
+            { song: 'Calm Vibes', artist: 'Chill Collective', why: 'Relaxing melody' }
+          ]
+        };
+        renderRecommendationsFromPlan(mockPlan);
       }
 
       showSection('recommendations');
