@@ -375,8 +375,10 @@ tags: [outfit, weather, recommendations, daily-planning]
       <p style="color: #bbb;">We'll use your location to get accurate weather data</p>
 
       <div id="location-status" style="margin: 1.5rem 0;">
-        <div class="loading" style="margin-right: 0.5rem;"></div>
-        <span>Detecting your location...</span>
+        <p style="color: #bbb; margin-bottom: 1rem;">Click the button below to detect your location and get weather data.</p>
+        <button class="btn btn-primary" style="width: 100%;" onclick="getLocation()">
+          📍 Get My Location & Weather
+        </button>
       </div>
 
       <!-- Manual ZIP Code Input (hidden by default) -->
@@ -484,18 +486,40 @@ tags: [outfit, weather, recommendations, daily-planning]
       timeOfDay: null
     };
 
-    // OpenWeatherMap API Key
-    const WEATHER_API_KEY = '52a0174b5b6df56cf522ed2541f048ce';
+    // API Configuration - uses Flask backend to keep API key secure
+    const API_CONFIG = {
+      // Determine backend URL based on environment
+      baseURL: (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+        ? 'http://localhost:8587'
+        : 'https://flask.opencodingsociety.com'
+    };
 
     // Initialize app
     function init() {
       console.log('🚀 Outfit Generator initialized');
-      getLocation();
+      
+      // Reset state on page load
+      state.weather = null;
+      state.forecast = null;
+      state.location = null;
+      state.timeOfDay = null;
+      
+      console.log('🔄 State reset - ready for new weather data');
+      
+      // Don't auto-load location anymore - user clicks button instead
     }
 
     // Get user's location
     function getLocation() {
       console.log('📍 Attempting to get user location...');
+      
+      // Show loading state
+      document.getElementById('location-status').innerHTML = `
+        <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+          <div class="loading"></div>
+          <span>Detecting your location...</span>
+        </div>
+      `;
       
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -575,10 +599,17 @@ tags: [outfit, weather, recommendations, daily-planning]
       showToast('🔍 Looking up weather...');
 
       try {
-        const url = `https://api.openweathermap.org/data/2.5/weather?zip=${zip},us&appid=${WEATHER_API_KEY}&units=imperial`;
-        console.log('🌐 Making API request to:', url);
+        const url = `${API_CONFIG.baseURL}/api/moodmeal/weather/current?zip=${zip}`;
+        console.log('🌐 Making API request to backend:', url);
         
-        const response = await fetch(url);
+        const response = await fetch(url, {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Origin': 'client'
+          }
+        });
         
         if (!response.ok) {
           throw new Error(`Weather API returned ${response.status}`);
@@ -606,10 +637,17 @@ tags: [outfit, weather, recommendations, daily-planning]
       console.log('🌐 Fetching weather data for coordinates:', { lat, lon });
       
       try {
-        const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${WEATHER_API_KEY}&units=imperial`;
-        console.log('🌐 Making API request to:', url);
+        const url = `${API_CONFIG.baseURL}/api/moodmeal/weather/current?lat=${lat}&lon=${lon}`;
+        console.log('🌐 Making API request to backend:', url);
         
-        const response = await fetch(url);
+        const response = await fetch(url, {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Origin': 'client'
+          }
+        });
         
         if (!response.ok) {
           throw new Error(`Weather API returned ${response.status}`);
@@ -690,11 +728,17 @@ tags: [outfit, weather, recommendations, daily-planning]
       console.log('🔮 Fetching forecast data...');
       
       try {
-        // Using 5 day / 3 hour forecast API
-        const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${WEATHER_API_KEY}&units=imperial`;
-        console.log('🌐 Forecast API request:', url);
+        const url = `${API_CONFIG.baseURL}/api/moodmeal/weather/forecast?lat=${lat}&lon=${lon}`;
+        console.log('🌐 Forecast API request to backend:', url);
         
-        const response = await fetch(url);
+        const response = await fetch(url, {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Origin': 'client'
+          }
+        });
         
         if (!response.ok) {
           throw new Error(`Forecast API returned ${response.status}`);
@@ -956,13 +1000,28 @@ tags: [outfit, weather, recommendations, daily-planning]
     // Refresh weather
     function refreshWeather() {
       console.log('🔄 Refreshing weather data...');
+      
+      // Hide outfit recommendations
       document.getElementById('outfit-recommendations').classList.add('hidden');
       
-      if (state.location.lat && state.location.lon) {
-        getWeatherByCoords(state.location.lat, state.location.lon);
-      } else {
-        getLocation();
-      }
+      // Hide weather container
+      document.getElementById('weather-container').classList.add('hidden');
+      
+      // Reset location status to show button again
+      document.getElementById('location-status').innerHTML = `
+        <p style="color: #bbb; margin-bottom: 1rem;">Click the button below to detect your location and get weather data.</p>
+        <button class="btn btn-primary" style="width: 100%;" onclick="getLocation()">
+          📍 Get My Location & Weather
+        </button>
+      `;
+      document.getElementById('location-status').classList.remove('hidden');
+      
+      // Clear state
+      state.weather = null;
+      state.forecast = null;
+      state.location = null;
+      
+      console.log('✅ Ready for new weather data');
     }
 
     // Toast notification
