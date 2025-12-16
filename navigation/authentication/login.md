@@ -107,11 +107,7 @@ show_reading_time: false
             <div class="backend-status">
                 <div id="flaskStatus" class="status-item">
                     <span class="status-icon">⏳</span>
-                    <span class="status-text">Flask</span>
-                </div>
-                <div id="springStatus" class="status-item">
-                    <span class="status-icon">⏳</span>
-                    <span class="status-text">Spring</span>
+                    <span class="status-text">Backend</span>
                 </div>
             </div>
             <div id="overallStatus" class="overall-status hidden"></div>
@@ -226,33 +222,19 @@ show_reading_time: false
 
     function updateOverallStatus() {
         const flaskEl = document.getElementById('flaskStatus');
-        const springEl = document.getElementById('springStatus');
         const overallEl = document.getElementById('overallStatus');
-        const isLocalhost = location.hostname === "localhost" || location.hostname === "127.0.0.1";
 
         const flaskSuccess = flaskEl.classList.contains('success');
-        const springSuccess = springEl.classList.contains('success');
         const flaskError = flaskEl.classList.contains('error');
-        const springError = springEl.classList.contains('error');
 
-        overallEl.classList.remove('hidden', 'success', 'partial', 'error');
+        overallEl.classList.remove('hidden', 'success', 'error');
 
-        if (flaskSuccess && springSuccess) {
+        if (flaskSuccess) {
             overallEl.classList.add('success');
-            overallEl.textContent = '🎉 Account created on both backends! You can now login.';
-        } else if (flaskSuccess && springError) {
-            overallEl.classList.add(isLocalhost ? 'success' : 'partial');
-            if (isLocalhost) {
-                overallEl.textContent = '🎉 Account created successfully! You can now login. (Spring not running locally)';
-            } else {
-                overallEl.textContent = '⚠️ Flask account created successfully! Spring failed but you can still login.';
-            }
-        } else if (flaskError && springSuccess) {
-            overallEl.classList.add('partial');
-            overallEl.textContent = '⚠️ Spring account created! Flask failed - please try again.';
-        } else if (flaskError && springError) {
+            overallEl.textContent = '🎉 Account created successfully! You can now login.';
+        } else if (flaskError) {
             overallEl.classList.add('error');
-            overallEl.textContent = '💥 Both backends failed. Please check your information and try again.';
+            overallEl.textContent = '💥 Account creation failed. Please check your information and try again.';
         }
     }
 
@@ -362,9 +344,8 @@ show_reading_time: false
         }
     });
 
-    // Function to handle both Python and Java login simultaneously
+    // Function to handle Python login only (Spring backend removed)
     window.loginBoth = function () {
-    javaLogin();  // Call Java login
     pythonLogin();
 };
     // Function to handle Python login
@@ -383,100 +364,6 @@ show_reading_time: false
         };
         login(options);
     }
-    // Function to handle Java login
-    window.javaLogin = function () {
-    const loginURL = `${javaURI}/authenticate`;
-    const databaseURL = `${javaURI}/api/person/get`;
-    const signupURL = `${javaURI}/api/person/create`;
-    const userCredentials = JSON.stringify({
-        uid: document.getElementById("uid").value,
-        password: document.getElementById("password").value,
-    });
-    const loginOptions = {
-        ...fetchOptions,
-        method: "POST",
-        body: userCredentials,
-    };
-    console.log("Attempting Java login...");
-    fetch(loginURL, loginOptions)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Invalid login");
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log("Login successful!", data);
-            window.location.href = '{{site.baseurl}}/profile';
-            // Fetch database after login success using fetchOptions
-            return fetch(databaseURL, fetchOptions);
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Spring server response: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log("Java database response:", data);
-        })
-        .catch(error => {
-            console.error("Login failed:", error.message);
-            // If login fails, attempt account creation
-            if (error.message === "Invalid login") {
-                // alert("Login for Spring failed. Creating a new Java account...");
-                const signupData = JSON.stringify({
-                    uid: document.getElementById("uid").value,
-                    sid: "0000000",
-                    email: document.getElementById("uid").value + "@gmail.com",
-                    dob: "11-01-2024", // Static date, can be modified
-                    name: document.getElementById("uid").value,
-                    password: document.getElementById("password").value,
-                    kasmServerNeeded: false,
-                });
-                const signupOptions = {
-                    ...fetchOptions,
-                    method: "POST",
-                    body: signupData,
-                };
-                fetch(signupURL, signupOptions)
-                    .then(signupResponse => {
-                        if (!signupResponse.ok) {
-                            throw new Error("Account creation failed!");
-                        }
-                        return signupResponse.json();
-                    })
-                    .then(signupResult => {
-                        console.log("Account creation successful!", signupResult);
-                        // alert("Account Creation Successful. Logging you into Flask/Spring!");
-                        // Retry login after account creation
-                        return fetch(loginURL, loginOptions);
-                    })
-                    .then(newLoginResponse => {
-                        if (!newLoginResponse.ok) {
-                            throw new Error("Login failed after account creation");
-                        }
-                        console.log("Login successful after account creation!");
-                        // Fetch database after successful login
-                        return fetch(databaseURL, fetchOptions);
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`Spring server response: ${response.status}`);
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        console.log("Java database response:", data);
-                    })
-                    .catch(newLoginError => {
-                        console.error("Error after account creation:", newLoginError.message);
-                    });
-            } else {
-                console.log("Logged in!");
-            }
-        });
-};
     // Function for localhost - skip /api/id check and show success
     function pythonDatabaseLocalhost() {
         document.getElementById("message").textContent = "Login successful!";
@@ -518,7 +405,6 @@ show_reading_time: false
 
         // Reset status indicators
         updateBackendStatus('flask', 'pending');
-        updateBackendStatus('spring', 'pending');
         document.getElementById('overallStatus').classList.add('hidden');
 
         const data = signupFormData && Object.keys(signupFormData).length > 0 ? signupFormData : {
@@ -529,16 +415,6 @@ show_reading_time: false
             email: document.getElementById("signupEmail").value,
             password: document.getElementById("signupPassword").value,
             kasm_server_needed: document.getElementById("kasmNeeded").checked,
-        };
-
-        const signupDataJava = {
-            uid: data.uid,
-            sid: data.sid,
-            email: data.email,
-            dob: "11-01-2024",
-            name: data.name,
-            password: data.password,
-            kasmServerNeeded: data.kasm_server_needed,
         };
 
         if (verifiedSchoolEmail) {
@@ -552,7 +428,7 @@ show_reading_time: false
         console.log("Request URL:", flaskEndpoint);
 
         // Flask Backend Request
-        const flaskPromise = fetch(flaskEndpoint, {
+        fetch(flaskEndpoint, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -570,61 +446,20 @@ show_reading_time: false
                 });
             }
         })
+        .then(result => {
+            console.log("Flask result:", result);
+            // Update overall status
+            setTimeout(updateOverallStatus, 500);
+        })
         .catch(error => {
             console.error("Flask signup error:", error);
             updateBackendStatus('flask', 'error');
-            throw error;
-        });
-
-        // Spring Backend Request
-        const springPromise = fetch(`${javaURI}/api/person/create`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(signupDataJava)
+            setTimeout(updateOverallStatus, 500);
         })
-        .then(response => {
-            if (response.ok) {
-                updateBackendStatus('spring', 'success');
-                return response.json();
-            } else {
-                throw new Error(`Spring: ${response.status}`);
-            }
-        })
-        .catch(error => {
-            console.error("Spring signup error:", error);
-            updateBackendStatus('spring', 'error');
-            throw error;
+        .finally(() => {
+            // Re-enable button
+            signupButton.disabled = false;
+            signupButton.classList.remove("disabled");
         });
-
-        // Handle both requests
-        Promise.allSettled([flaskPromise, springPromise])
-            .then(results => {
-                const [flaskResult, springResult] = results;
-
-                console.log("Flask result:", flaskResult);
-                console.log("Spring result:", springResult);
-
-                // Update overall status after both complete
-                setTimeout(updateOverallStatus, 500);
-
-                // Re-enable button
-                signupButton.disabled = false;
-                signupButton.classList.remove("disabled");
-            });
-    }
-    function javaDatabase() {
-        const URL = `${javaURI}/api/person/get`;
-        fetch(URL, fetchOptions)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Spring server response: ${response.status}`);
-                }
-                return response.json();
-            })
-            .catch(error => {
-                console.error("Java Database Error:", error);
-            });
     }
 </script>
