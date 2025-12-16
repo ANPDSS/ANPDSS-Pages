@@ -7,8 +7,6 @@ show_reading_time: false
 ---
 <br>
 
-<script src="https://accounts.google.com/gsi/client" async defer></script>
-
 <div class="login-container">
     <!-- Python Login Form -->
     <div class="login-card">
@@ -30,35 +28,8 @@ show_reading_time: false
     <div class="signup-card">
         <h1 id="signupTitle">Sign Up</h1>
         <hr>
-        <!-- Google OAuth Section (initially hidden) -->
-        <div id="oauth-verification" style="display: none; text-align: center; margin-bottom: 2rem;">
-            <h3 style="color: #6366f1; margin-bottom: 1rem;">🎓 School Email Verification</h3>
-            <p style="margin-bottom: 1.5rem; color: #d1d5db;">
-                Please sign in with your school Google account to verify you're a Poway USD student or teacher.
-                <br><strong>You must use an email ending in @stu.powayusd.com or @powayusd.com</strong>
-            </p>
-            <div id="g_id_onload"
-                 data-client_id="65827797404-ccjleg7jg4g2an8ddpmhnlca4ii2gk8q.apps.googleusercontent.com"
-                 data-callback="handleGoogleSignIn"
-                 data-auto_prompt="false">
-            </div>
-            <div class="g_id_signin" 
-                 data-type="standard"
-                 data-size="large"
-                 data-theme="filled_blue"
-                 data-text="signin_with"
-                 data-shape="rectangular"
-                 data-logo_alignment="left"
-                 style="margin-bottom: 1rem;">
-            </div>
-            <button type="button" class="large secondary" onclick="showSignupForm()" 
-                    style="background-color: #6b7280;">
-                ← Back to Form
-            </button>
-            <div id="oauth-status" style="margin-top: 1rem;"></div>
-        </div>
         <!-- Signup Form -->
-        <form id="signupForm" onsubmit="handleSignupSubmit(event);">
+        <form id="signupForm" onsubmit="signup(); return false;">
             <div class="form-group">
                 <input type="text" id="name" placeholder="Name" required>
             </div>
@@ -118,10 +89,7 @@ show_reading_time: false
 <script type="module">
     import { login, pythonURI, javaURI, fetchOptions } from '{{site.baseurl}}/assets/js/api/config.js';
 
-    let signupFormData = {};
-    let verifiedSchoolEmail = null;
     let validationTimeout = null;
-    const GOOGLE_CLIENT_ID = "65827797404-ccjleg7jg4g2an8ddpmhnlca4ii2gk8q.apps.googleusercontent.com";
 
     // Password validation with debouncing (1.5 second delay)
     function validatePasswordsDebounced() {
@@ -238,93 +206,6 @@ show_reading_time: false
         }
     }
 
-    window.handleSignupSubmit = function(event) {
-        event.preventDefault();
-
-        // Validate form
-        const form = document.getElementById('signupForm');
-        if (!form.checkValidity()) {
-            form.reportValidity();
-            return;
-        }
-
-        // Check password confirmation
-        if (!validateSignupForm()) {
-            return;
-        }
-
-        // Store form data
-        signupFormData = {
-            name: document.getElementById("name").value,
-            uid: document.getElementById("signupUid").value,
-            sid: document.getElementById("signupSid").value,
-            school: document.getElementById("signupSchool").value,
-            email: document.getElementById("signupEmail").value,
-            password: document.getElementById("signupPassword").value,
-            kasm_server_needed: document.getElementById("kasmNeeded").checked,
-        };
-
-        // Show OAuth verification
-        showOAuthVerification();
-    }
-
-    function showOAuthVerification() {
-        document.getElementById('signupForm').style.display = 'none';
-        document.getElementById('oauth-verification').style.display = 'block';
-    }
-
-    window.showSignupForm = function() {
-        document.getElementById('oauth-verification').style.display = 'none';
-        document.getElementById('signupForm').style.display = 'block';
-        clearOAuthStatus();
-    }
-
-    function clearOAuthStatus() {
-        document.getElementById('oauth-status').innerHTML = '';
-    }
-
-    function showOAuthStatus(message, isError = false) {
-        const statusDiv = document.getElementById('oauth-status');
-        statusDiv.innerHTML = `<div class="${isError ? 'oauth-error' : 'oauth-success'}">${message}</div>`;
-    }
-
-    window.handleGoogleSignIn = function(response) {
-        try {
-            const userInfo = parseJwt(response.credential);
-            const email = userInfo.email;
-            if (!email.endsWith('@stu.powayusd.com') && !email.endsWith('@powayusd.com')) {
-                showOAuthStatus('❌ You must use your school email address ending with @stu.powayusd.com or @powayusd.com', true);
-                return;
-            }
-            verifiedSchoolEmail = email;
-            showOAuthStatus(`✅ School email verified: ${email}`);
-
-            setTimeout(() => {
-                document.getElementById('oauth-verification').style.display = 'none';
-                document.getElementById('signupForm').style.display = 'block';
-
-                console.log("About to call signup() with stored data:", signupFormData);
-                console.log("pythonURI:", pythonURI);
-
-
-                signup();
-            }, 1500);
-
-        } catch (error) {
-            console.error("Error handling Google Sign-In:", error);
-            showOAuthStatus('❌ Error processing Google Sign-In. Please try again.', true);
-        }
-    }
-
-    function parseJwt(token) {
-        const base64Url = token.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
-        return JSON.parse(jsonPayload);
-    }
-
     // Initialize password validation when page loads
     window.addEventListener('load', function() {
         const passwordField = document.getElementById('signupPassword');
@@ -334,13 +215,6 @@ show_reading_time: false
             // Add debounced validation listeners
             passwordField.addEventListener('input', validatePasswordsDebounced);
             confirmPasswordField.addEventListener('input', validatePasswordsDebounced);
-        }
-
-        if (window.google && window.google.accounts) {
-            window.google.accounts.id.initialize({
-                client_id: GOOGLE_CLIENT_ID,
-                callback: handleGoogleSignIn
-            });
         }
     });
 
@@ -395,6 +269,18 @@ show_reading_time: false
             });
     }  
     window.signup = function () {
+        // Validate form
+        const form = document.getElementById('signupForm');
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
+        // Check password confirmation
+        if (!validateSignupForm()) {
+            return;
+        }
+
         const signupButton = document.querySelector(".signup-card button");
         // Disable the button and change its color
         signupButton.disabled = true;
@@ -407,7 +293,7 @@ show_reading_time: false
         updateBackendStatus('flask', 'pending');
         document.getElementById('overallStatus').classList.add('hidden');
 
-        const data = signupFormData && Object.keys(signupFormData).length > 0 ? signupFormData : {
+        const data = {
             name: document.getElementById("name").value,
             uid: document.getElementById("signupUid").value,
             sid: document.getElementById("signupSid").value,
@@ -416,10 +302,6 @@ show_reading_time: false
             password: document.getElementById("signupPassword").value,
             kasm_server_needed: document.getElementById("kasmNeeded").checked,
         };
-
-        if (verifiedSchoolEmail) {
-            console.log("Account created with verified school email:", verifiedSchoolEmail);
-        }
 
         console.log("Sending this data to Flask:", JSON.stringify(data, null, 2));
 
