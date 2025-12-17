@@ -774,7 +774,7 @@ footer:
   .module-btn:hover {
     transform: translateY(-2px);
     background: rgba(255,255,255,0.2);
-    box-shadow: 0 0 20px rgba(255,255,255,0.5);
+    box-shadow: 0 0 20px rgba(254,255,255,0.5);
     border-color: rgba(255,255,255,0.6);
   }
 
