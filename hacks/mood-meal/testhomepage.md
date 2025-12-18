@@ -21,7 +21,7 @@ tags: [mood-tracking, meals, activities, music, wellness]
       box-sizing: border-box;
     }
 
-    body {
+  body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: linear-gradient(135deg, #000000 0%, #0a0a1a 100%);
       color: #ffffff;
@@ -440,8 +440,8 @@ tags: [mood-tracking, meals, activities, music, wellness]
   <!-- Main Container -->
   <div class="container">
 
-    <!-- Home Section -->
-    <section class="section active" id="home-section">
+  <!-- Home Section -->
+  <section class="section active" id="home-section">
       <div class="card" style="text-align: center; padding: 4rem 2rem;">
         <h1 style="font-size: 3rem; margin-bottom: 1rem; background: linear-gradient(45deg, #2196F3, #4eff9e); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
           Welcome to MoodLife
@@ -454,7 +454,7 @@ tags: [mood-tracking, meals, activities, music, wellness]
         </div>
       </div>
 
-      <div class="card">
+  <div class="card">
         <h2>Quick Stats</h2>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
           <div style="text-align: center; padding: 1rem; background: rgba(33, 150, 243, 0.1); border-radius: 8px; cursor: pointer;" onclick="showSection('mood')">
@@ -481,13 +481,13 @@ tags: [mood-tracking, meals, activities, music, wellness]
       </div>
     </section>
 
-    <!-- Mood Section -->
-    <section class="section" id="mood-section">
+  <!-- Mood Section -->
+  <section class="section" id="mood-section">
       <div class="card">
         <h2>🎭 How Are You Feeling?</h2>
         <p style="color: #bbb;">Select your mood to get personalized recommendations</p>
         
-        <div style="margin: 2rem 0;">
+  <div style="margin: 2rem 0;">
           <label style="font-size: 1.1rem; font-weight: bold;">Mood Level</label>
           <div style="display: flex; align-items: center; gap: 1rem; margin: 1rem 0;">
             <span>😔</span>
@@ -497,7 +497,7 @@ tags: [mood-tracking, meals, activities, music, wellness]
           </div>
         </div>
 
-        <h3>Quick Mood Selection</h3>
+  <h3>Quick Mood Selection</h3>
         <div class="emoji-grid">
           <button class="emoji-btn" data-mood="20" data-tag="stressed">
             <div style="font-size: 2rem;">😰</div>
@@ -525,7 +525,7 @@ tags: [mood-tracking, meals, activities, music, wellness]
           </button>
         </div>
 
-        <h3>Additional Tags (Optional)</h3>
+  <h3>Additional Tags (Optional)</h3>
         <div class="tags-container" id="mood-tags">
           <span class="tag" data-tag="overwhelmed">Overwhelmed</span>
           <span class="tag" data-tag="calm">Calm</span>
@@ -537,19 +537,19 @@ tags: [mood-tracking, meals, activities, music, wellness]
           <span class="tag" data-tag="frustrated">Frustrated</span>
         </div>
 
-        <button class="btn btn-primary" style="width: 100%; margin-top: 2rem;" onclick="saveMood()">
+  <button class="btn btn-primary" style="width: 100%; margin-top: 2rem;" onclick="saveMood()">
           💾 Save Mood & Get Recommendations
         </button>
       </div>
     </section>
 
-    <!-- Meals Section -->
-    <section class="section" id="meals-section">
+  <!-- Meals Section -->
+  <section class="section" id="meals-section">
       <div class="card">
         <h2>🍽️ Meal Recommendations</h2>
         <p style="color: #bbb;">Discover meals that match your mood and preferences</p>
 
-        <h3>Filters</h3>
+  <h3>Filters</h3>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
           <div>
             <label>Meal Type</label>
@@ -572,21 +572,21 @@ tags: [mood-tracking, meals, activities, music, wellness]
           </div>
         </div>
 
-        <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="getMealRecommendations()">
+  <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="getMealRecommendations()">
           Get Meal Recommendations
         </button>
       </div>
 
-      <div class="results-grid" id="meals-results"></div>
+  <div class="results-grid" id="meals-results"></div>
     </section>
 
-    <!-- Activities Section -->
-    <section class="section" id="activities-section">
+  <!-- Activities Section -->
+  <section class="section" id="activities-section">
       <div class="card">
         <h2>🎯 Activity Recommendations</h2>
         <p style="color: #bbb;">Find activities that match your energy and mood</p>
 
-        <h3>Preferences</h3>
+  <h3>Preferences</h3>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
           <div>
             <label>Time Available</label>
@@ -606,29 +606,29 @@ tags: [mood-tracking, meals, activities, music, wellness]
           </div>
         </div>
 
-        <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="getActivityRecommendations()">
+  <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="getActivityRecommendations()">
           Get Activity Ideas
         </button>
       </div>
 
-      <div class="results-grid" id="activities-results"></div>
+  <div class="results-grid" id="activities-results"></div>
     </section>
 
-    <!-- Mood History Section -->
-    <section class="section" id="history-section">
+  <!-- Mood History Section -->
+  <section class="section" id="history-section">
       <div class="card">
         <h2>📊 Your Mood History</h2>
         <p style="color: #bbb;">Track your mood entries over time</p>
 
-        <div id="history-loading" style="text-align: center; padding: 2rem; display: none;">
+  <div id="history-loading" style="text-align: center; padding: 2rem; display: none;">
           <div class="loading"></div> Loading...
         </div>
 
-        <div id="history-error" style="color: #ff4a4a; padding: 1rem; display: none; text-align: center;">
+  <div id="history-error" style="color: #ff4a4a; padding: 1rem; display: none; text-align: center;">
           Failed to load mood history. Please log in.
         </div>
 
-        <div style="overflow-x: auto; margin-top: 1.5rem;">
+  <div style="overflow-x: auto; margin-top: 1.5rem;">
           <table style="width: 100%; border-collapse: collapse;">
             <thead>
               <tr style="border-bottom: 2px solid #2196F3;">
@@ -648,13 +648,13 @@ tags: [mood-tracking, meals, activities, music, wellness]
       </div>
     </section>
 
-    <!-- Music Section -->
-    <section class="section" id="music-section">
+  <!-- Music Section -->
+  <section class="section" id="music-section">
       <div class="card">
         <h2>🎵 Music Recommendations</h2>
         <p style="color: #bbb;">Discover songs that match your current vibe</p>
 
-        <h3>Music Preferences</h3>
+  <h3>Music Preferences</h3>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
           <div>
             <label>Genre</label>
@@ -677,33 +677,33 @@ tags: [mood-tracking, meals, activities, music, wellness]
           </div>
         </div>
 
-        <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="getMusicRecommendations()">
+  <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="getMusicRecommendations()">
           Get Music Recommendations
         </button>
       </div>
 
-      <div class="results-grid" id="music-results"></div>
+  <div class="results-grid" id="music-results"></div>
     </section>
 
-    <!-- Recommendations Section (Unified) -->
-    <section class="section" id="recommendations-section">
+  <!-- Recommendations Section (Unified) -->
+  <section class="section" id="recommendations-section">
       <div class="card">
         <h2>✨ Personalized Recommendations</h2>
         <p style="color: #bbb;">Based on your mood, here are some suggestions for food, activities, and music.</p>
       </div>
 
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-top: 1rem;">
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-top: 1rem;">
         <div class="card">
           <h3 style="margin-top: 0;">🍽️ Food</h3>
           <div id="rec-meals"></div>
         </div>
 
-        <div class="card">
+  <div class="card">
           <h3 style="margin-top: 0;">🎯 Activities</h3>
           <div id="rec-activities"></div>
         </div>
 
-        <div class="card">
+  <div class="card">
           <h3 style="margin-top: 0;">🎵 Music</h3>
           <div id="rec-music"></div>
         </div>
@@ -720,7 +720,7 @@ tags: [mood-tracking, meals, activities, music, wellness]
         <button onclick="closeModal('user-modal')" style="background: none; border: none; color: #888; font-size: 2rem; cursor: pointer;">&times;</button>
       </div>
       
-      <div style="text-align: center; margin-bottom: 2rem;">
+  <div style="text-align: center; margin-bottom: 2rem;">
         <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #2196F3, #4eff9e); border-radius: 50%; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 2rem;">
           👤
         </div>
@@ -728,12 +728,12 @@ tags: [mood-tracking, meals, activities, music, wellness]
         <p style="color: #bbb;">MoodLife Member</p>
       </div>
 
-      <div style="background: rgba(33, 150, 243, 0.1); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+  <div style="background: rgba(33, 150, 243, 0.1); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
         <p><strong>Current Mood:</strong> <span id="profile-mood">Not set</span></p>
         <p><strong>Saved Items:</strong> <span id="profile-saved">0</span></p>
       </div>
 
-      <button class="btn btn-primary" style="width: 100%;" onclick="closeModal('user-modal')">Close</button>
+  <button class="btn btn-primary" style="width: 100%;" onclick="closeModal('user-modal')">Close</button>
     </div>
   </div>
 
@@ -745,16 +745,16 @@ tags: [mood-tracking, meals, activities, music, wellness]
         <button onclick="closeModal('saved-modal')" style="background: none; border: none; color: #888; font-size: 2rem; cursor: pointer;">&times;</button>
       </div>
       
-      <div id="saved-modal-content" style="max-height: 60vh; overflow-y: auto;">
+  <div id="saved-modal-content" style="max-height: 60vh; overflow-y: auto;">
         <!-- Saved items will be dynamically loaded here -->
       </div>
 
-      <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="closeModal('saved-modal')">Close</button>
+  <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="closeModal('saved-modal')">Close</button>
     </div>
   </div>
 
-    <!-- Joke Modal for Low Mood (added) -->
-    <div id="joke-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 1000; align-items: center; justify-content: center;">
+  <!-- Joke Modal for Low Mood (added) -->
+  <div id="joke-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 1000; align-items: center; justify-content: center;">
       <div style="background: #1a1a1a; padding: 2rem; border-radius: 12px; max-width: 600px; width: 90%; border: 2px solid #4a9eff; box-shadow: 0 8px 32px rgba(74, 158, 255, 0.3);">
         <h3 style="color: #4a9eff; margin-top: 0; font-size: 1.5rem; text-align: center;">Here's a joke to cheer you up! 😊</h3>
         <p id="joke-text" style="font-size: 1.1rem; line-height: 1.6; color: #fff; margin: 1.5rem 0; text-align: center; font-style: italic;"></p>
@@ -764,7 +764,7 @@ tags: [mood-tracking, meals, activities, music, wellness]
       </div>
     </div>
 
-    <script>
+  <script>
     // State Management
     const state = {
       currentMood: { score: 50, tags: [], primaryTag: null },
@@ -1446,62 +1446,3 @@ tags: [mood-tracking, meals, activities, music, wellness]
   </script>
 </body>
 </html>
-
-{% include microblog_foundation.html %}
-
-<script>
-// Configure microblog as global chat
-(function() {
-  // Wait for microblog to initialize, then set it to global mode
-  const setGlobalChat = () => {
-    // Set filter mode to 'people' which shows all posts globally
-    if (window.__microblogFilterMode !== undefined) {
-      window.__microblogFilterMode = 'people';
-
-      // Update the UI to show global mode is active
-      const pageIcons = document.querySelectorAll('#page-icon');
-      const manyPagesIcons = document.querySelectorAll('#many-pages-icon');
-
-      pageIcons.forEach(icon => {
-        icon.style.opacity = '0.5';
-        icon.style.background = '#9333ea';
-      });
-
-      manyPagesIcons.forEach(icon => {
-        icon.style.opacity = '1';
-        icon.style.background = '#2563eb';
-      });
-
-      console.log('Microblog set to global chat mode');
-      return true;
-    }
-    return false;
-  };
-
-  // Try immediately and also after delays to catch microblog initialization
-  setTimeout(setGlobalChat, 100);
-  setTimeout(setGlobalChat, 500);
-  setTimeout(setGlobalChat, 1000);
-
-  // Also listen for when microblog panel opens
-  const microblogFab = document.getElementById('microblog-toggle-btn');
-  if (microblogFab) {
-    microblogFab.addEventListener('click', () => {
-      setTimeout(setGlobalChat, 200);
-    });
-  }
-})();
-</script>
-
-<style>
-/* Customize microblog button text for global chat */
-#microblog-toggle-btn::before {
-  content: '💬 Global Chat';
-}
-#microblog-toggle-btn {
-  font-size: 0;
-}
-#microblog-toggle-btn::before {
-  font-size: 1.2rem;
-}
-</style>
