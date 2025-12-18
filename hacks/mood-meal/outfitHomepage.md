@@ -29,7 +29,6 @@ tags: [outfit, weather, recommendations, daily-planning]
       overflow-x: hidden;
     }
 
-    /* Navigation */
     .top-nav {
       position: fixed;
       top: 0;
@@ -76,14 +75,12 @@ tags: [outfit, weather, recommendations, daily-planning]
       transform: translateY(-2px);
     }
 
-    /* Main Container */
     .container {
       max-width: 1200px;
       margin: 80px auto 2rem;
       padding: 2rem;
     }
 
-    /* Cards */
     .card {
       background: rgba(17, 17, 17, 0.8);
       border: 1px solid #2a2a2a;
@@ -99,7 +96,6 @@ tags: [outfit, weather, recommendations, daily-planning]
       box-shadow: 0 15px 50px rgba(33, 150, 243, 0.2);
     }
 
-    /* Buttons */
     .btn {
       padding: 0.75rem 1.5rem;
       border: none;
@@ -130,7 +126,6 @@ tags: [outfit, weather, recommendations, daily-planning]
       background: rgba(33, 150, 243, 0.1);
     }
 
-    /* Input Fields */
     input, select {
       width: 100%;
       padding: 0.75rem;
@@ -148,7 +143,6 @@ tags: [outfit, weather, recommendations, daily-planning]
       box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.2);
     }
 
-    /* Weather Display */
     .weather-display {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -179,7 +173,6 @@ tags: [outfit, weather, recommendations, daily-planning]
       color: #2196F3;
     }
 
-    /* Forecast Cards */
     .forecast-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -224,7 +217,6 @@ tags: [outfit, weather, recommendations, daily-planning]
       margin-top: 0.3rem;
     }
 
-    /* Outfit Recommendations */
     .outfit-section {
       margin-top: 2rem;
     }
@@ -256,7 +248,6 @@ tags: [outfit, weather, recommendations, daily-planning]
       font-size: 0.9rem;
     }
 
-    /* Loading Animation */
     .loading {
       display: inline-block;
       width: 20px;
@@ -271,7 +262,6 @@ tags: [outfit, weather, recommendations, daily-planning]
       to { transform: rotate(360deg); }
     }
 
-    /* Toast Notification */
     .toast {
       position: fixed;
       bottom: 2rem;
@@ -345,7 +335,6 @@ tags: [outfit, weather, recommendations, daily-planning]
 </head>
 <body>
 
-  <!-- Top Navigation -->
   <nav class="top-nav">
     <div class="logo">👔 MoodLife Outfit</div>
     <div class="nav-links">
@@ -353,13 +342,10 @@ tags: [outfit, weather, recommendations, daily-planning]
     </div>
   </nav>
 
-  <!-- Toast Notification -->
   <div class="toast" id="toast"></div>
 
-  <!-- Main Container -->
   <div class="container">
 
-    <!-- Hero Section -->
     <section class="card" style="text-align: center; padding: 3rem 2rem;">
       <h1 style="font-size: 2.5rem; margin-bottom: 1rem; background: linear-gradient(45deg, #2196F3, #4eff9e); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
         👔 Outfit Generator
@@ -369,7 +355,6 @@ tags: [outfit, weather, recommendations, daily-planning]
       </p>
     </section>
 
-    <!-- Location & Weather Card -->
     <div class="card">
       <h2>📍 Your Location & Weather</h2>
       <p style="color: #bbb;">We'll use your location to get accurate weather data</p>
@@ -381,7 +366,6 @@ tags: [outfit, weather, recommendations, daily-planning]
         </button>
       </div>
 
-      <!-- Manual ZIP Code Input (hidden by default) -->
       <div id="manual-location" class="hidden">
         <h3>Enter Your ZIP Code</h3>
         <p style="color: #bbb; margin-bottom: 1rem;">We couldn't detect your location automatically. Please enter your ZIP code:</p>
@@ -391,7 +375,6 @@ tags: [outfit, weather, recommendations, daily-planning]
         </div>
       </div>
 
-      <!-- Weather Display -->
       <div id="weather-container" class="hidden">
         <div class="success-message" id="location-found">
           <strong>✓ Location Found:</strong> <span id="location-name"></span>
@@ -437,32 +420,27 @@ tags: [outfit, weather, recommendations, daily-planning]
       </div>
     </div>
 
-    <!-- Outfit Recommendations -->
     <div id="outfit-recommendations" class="hidden">
       <div class="card">
         <h2>👔 Your Personalized Outfit</h2>
         <p style="color: #bbb; margin-bottom: 1.5rem;">Based on current weather and time of day</p>
 
         <div class="outfit-section">
-          <!-- General Advice -->
           <div class="outfit-category">
             <h3>💡 General Advice</h3>
             <p id="general-advice" style="color: #ddd; line-height: 1.6;"></p>
           </div>
 
-          <!-- Clothing -->
           <div class="outfit-category">
             <h3>👕 Clothing</h3>
             <div class="outfit-items" id="clothing-items"></div>
           </div>
 
-          <!-- Accessories -->
           <div class="outfit-category">
             <h3>🎒 Accessories</h3>
             <div class="outfit-items" id="accessories-items"></div>
           </div>
 
-          <!-- Footwear -->
           <div class="outfit-category">
             <h3>👟 Footwear</h3>
             <div class="outfit-items" id="footwear-items"></div>
@@ -478,7 +456,6 @@ tags: [outfit, weather, recommendations, daily-planning]
   </div>
 
   <script>
-    // Global state
     const state = {
       weather: null,
       forecast: null,
@@ -486,34 +463,23 @@ tags: [outfit, weather, recommendations, daily-planning]
       timeOfDay: null
     };
 
-    // API Configuration - uses Flask backend to keep API key secure
     const API_CONFIG = {
-      // Determine backend URL based on environment
       baseURL: (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
         ? 'http://localhost:8587'
         : 'https://flask.opencodingsociety.com'
     };
 
-    // Initialize app
     function init() {
       console.log('🚀 Outfit Generator initialized');
-      
-      // Reset state on page load
       state.weather = null;
       state.forecast = null;
       state.location = null;
       state.timeOfDay = null;
-      
       console.log('🔄 State reset - ready for new weather data');
-      
-      // Don't auto-load location anymore - user clicks button instead
     }
 
-    // Get user's location
     function getLocation() {
       console.log('📍 Attempting to get user location...');
-      
-      // Show loading state
       document.getElementById('location-status').innerHTML = `
         <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
           <div class="loading"></div>
@@ -533,7 +499,6 @@ tags: [outfit, weather, recommendations, daily-planning]
       }
     }
 
-    // Handle successful location detection
     function handleLocationSuccess(position) {
       console.log('✅ Location Found!');
       console.log('📍 Coordinates:', {
@@ -549,10 +514,8 @@ tags: [outfit, weather, recommendations, daily-planning]
       getWeatherByCoords(state.location.lat, state.location.lon);
     }
 
-    // Handle location detection error
     function handleLocationError(error) {
       console.warn('⚠️ Location detection failed:', error.message);
-      
       let message = 'Could not detect your location. ';
       switch(error.code) {
         case error.PERMISSION_DENIED:
@@ -571,20 +534,15 @@ tags: [outfit, weather, recommendations, daily-planning]
           message += 'Unknown error occurred.';
           console.log('❌ Unknown location error');
       }
-      
       showManualInput(message);
     }
 
-    // Show manual ZIP code input
     function showManualInput(message) {
       console.log('📝 Showing manual ZIP code input');
-      document.getElementById('location-status').innerHTML = `
-        <div class="error-message">${message}</div>
-      `;
+      document.getElementById('location-status').innerHTML = `<div class="error-message">${message}</div>`;
       document.getElementById('manual-location').classList.remove('hidden');
     }
 
-    // Get weather by ZIP code
     async function getWeatherByZip() {
       const zipInput = document.getElementById('zip-input');
       const zip = zipInput.value.trim();
@@ -599,7 +557,7 @@ tags: [outfit, weather, recommendations, daily-planning]
       showToast('🔍 Looking up weather...');
 
       try {
-        const url = `${API_CONFIG.baseURL}/api/moodmeal/weather/current?zip=${zip}`;
+        const url = `${API_CONFIG.baseURL}/api/outfit/weather/current?zip=${zip}`;
         console.log('🌐 Making API request to backend:', url);
         
         const response = await fetch(url, {
@@ -632,12 +590,11 @@ tags: [outfit, weather, recommendations, daily-planning]
       }
     }
 
-    // Get weather by coordinates
     async function getWeatherByCoords(lat, lon) {
       console.log('🌐 Fetching weather data for coordinates:', { lat, lon });
       
       try {
-        const url = `${API_CONFIG.baseURL}/api/moodmeal/weather/current?lat=${lat}&lon=${lon}`;
+        const url = `${API_CONFIG.baseURL}/api/outfit/weather/current?lat=${lat}&lon=${lon}`;
         console.log('🌐 Making API request to backend:', url);
         
         const response = await fetch(url, {
@@ -665,7 +622,6 @@ tags: [outfit, weather, recommendations, daily-planning]
       }
     }
 
-    // Display weather information
     function displayWeather(data) {
       console.log('📊 Displaying weather data...');
       
@@ -679,27 +635,18 @@ tags: [outfit, weather, recommendations, daily-planning]
         icon: data.weather[0].icon
       };
 
-      // Hide loading/manual input
       document.getElementById('location-status').classList.add('hidden');
       document.getElementById('manual-location').classList.add('hidden');
-      
-      // Show weather container
       document.getElementById('weather-container').classList.remove('hidden');
-
-      // Update location name
       document.getElementById('location-name').textContent = state.location.name || 'Your Location';
-
-      // Update weather stats
       document.getElementById('weather-condition').textContent = state.weather.condition;
       document.getElementById('temperature').textContent = `${state.weather.temp}°F`;
       document.getElementById('humidity').textContent = `${state.weather.humidity}%`;
       document.getElementById('wind-speed').textContent = `${state.weather.windSpeed} mph`;
 
-      // Set weather icon
       const weatherIcon = getWeatherEmoji(state.weather.condition.toLowerCase());
       document.getElementById('weather-icon').textContent = weatherIcon;
 
-      // Determine time of day
       const hour = new Date().getHours();
       let timeOfDay;
       if (hour >= 6 && hour < 12) {
@@ -716,19 +663,15 @@ tags: [outfit, weather, recommendations, daily-planning]
 
       console.log('✅ Weather display complete!');
       console.log('🕐 Current time of day:', timeOfDay);
-      
-      // Fetch forecast data
       getForecast(state.location.lat, state.location.lon);
-      
       showToast('✅ Weather data loaded!');
     }
 
-    // Get forecast data for the day
     async function getForecast(lat, lon) {
       console.log('🔮 Fetching forecast data...');
       
       try {
-        const url = `${API_CONFIG.baseURL}/api/moodmeal/weather/forecast?lat=${lat}&lon=${lon}`;
+        const url = `${API_CONFIG.baseURL}/api/outfit/weather/forecast?lat=${lat}&lon=${lon}`;
         console.log('🌐 Forecast API request to backend:', url);
         
         const response = await fetch(url, {
@@ -748,9 +691,7 @@ tags: [outfit, weather, recommendations, daily-planning]
         console.log('✅ Forecast data received!');
         console.log('🔮 Forecast Data:', data);
 
-        // Filter forecast for today only (next 24 hours / 8 time slots)
         const todayForecasts = data.list.slice(0, 8);
-        
         state.forecast = todayForecasts.map(item => ({
           time: new Date(item.dt * 1000),
           temp: Math.round(item.main.temp),
@@ -760,7 +701,7 @@ tags: [outfit, weather, recommendations, daily-planning]
           icon: item.weather[0].icon,
           humidity: item.main.humidity,
           windSpeed: Math.round(item.wind.speed),
-          pop: Math.round(item.pop * 100) // Probability of precipitation
+          pop: Math.round(item.pop * 100)
         }));
 
         console.log('📊 Processed forecast for today:', state.forecast.length, 'time slots');
@@ -768,12 +709,10 @@ tags: [outfit, weather, recommendations, daily-planning]
         
       } catch (error) {
         console.error('❌ Error fetching forecast:', error);
-        document.getElementById('forecast-container').innerHTML = 
-          '<div style="color: #ff4a4a;">Could not load forecast data</div>';
+        document.getElementById('forecast-container').innerHTML = '<div style="color: #ff4a4a;">Could not load forecast data</div>';
       }
     }
 
-    // Display forecast cards
     function displayForecast() {
       console.log('📊 Displaying forecast cards...');
       const container = document.getElementById('forecast-container');
@@ -806,7 +745,6 @@ tags: [outfit, weather, recommendations, daily-planning]
       console.log('✅ Forecast display complete!');
     }
 
-    // Get weather emoji
     function getWeatherEmoji(condition) {
       const emojiMap = {
         'clear': '☀️',
@@ -827,7 +765,6 @@ tags: [outfit, weather, recommendations, daily-planning]
       return '🌤️';
     }
 
-    // Generate outfit recommendations (hardcoded for now)
     function generateOutfit() {
       console.log('👔 Generating outfit recommendations...');
       console.log('📊 Based on temperature:', state.weather.temp + '°F');
@@ -843,7 +780,6 @@ tags: [outfit, weather, recommendations, daily-planning]
       let accessories = [];
       let footwear = [];
 
-      // Analyze forecast for the rest of the day
       let willRainLater = false;
       let willGetColder = false;
       let willGetWarmer = false;
@@ -870,37 +806,31 @@ tags: [outfit, weather, recommendations, daily-planning]
         });
       }
 
-      // Temperature-based recommendations
       if (temp <= 40) {
-        // Very Cold
         console.log('🥶 Very cold weather detected');
         advice = "It's very cold outside! Layer up with warm clothing to stay comfortable. Make sure to cover exposed skin and wear insulated items.";
         clothing = ['Heavy winter coat', 'Thermal underwear', 'Thick sweater', 'Long pants', 'Warm socks'];
         accessories = ['Winter hat', 'Scarf', 'Insulated gloves', 'Hand warmers'];
         footwear = ['Insulated boots', 'Winter boots'];
       } else if (temp <= 55) {
-        // Cool
         console.log('🍂 Cool weather detected');
         advice = "It's cool outside. Wear layers so you can adjust if you warm up. A light jacket or sweater should keep you comfortable.";
         clothing = ['Light jacket', 'Long-sleeve shirt', 'Jeans or long pants', 'Sweater or hoodie'];
         accessories = ['Light scarf', 'Baseball cap'];
         footwear = ['Sneakers', 'Casual shoes', 'Boots'];
       } else if (temp <= 70) {
-        // Mild
         console.log('😊 Mild weather detected');
         advice = "The weather is pleasant! Dress comfortably with light layers. You might want something you can take off if it gets warmer.";
         clothing = ['T-shirt', 'Light cardigan', 'Jeans or casual pants', 'Long-sleeve shirt (optional)'];
         accessories = ['Sunglasses'];
         footwear = ['Sneakers', 'Loafers', 'Casual shoes'];
       } else if (temp <= 85) {
-        // Warm
         console.log('☀️ Warm weather detected');
         advice = "It's warm out! Dress in light, breathable fabrics to stay cool. Don't forget sun protection!";
         clothing = ['T-shirt', 'Shorts or light pants', 'Tank top', 'Light dress', 'Breathable fabrics'];
         accessories = ['Sunglasses', 'Sunscreen (SPF 30+)', 'Hat or cap'];
         footwear = ['Sandals', 'Sneakers', 'Flip-flops'];
       } else {
-        // Hot
         console.log('🔥 Hot weather detected');
         advice = "It's hot outside! Wear minimal, light clothing and stay hydrated. Protect yourself from the sun with sunscreen and shade.";
         clothing = ['Tank top', 'Shorts', 'Light dress', 'Moisture-wicking fabrics'];
@@ -908,7 +838,6 @@ tags: [outfit, weather, recommendations, daily-planning]
         footwear = ['Sandals', 'Flip-flops', 'Breathable shoes'];
       }
 
-      // Weather condition adjustments
       if (condition.includes('rain') || condition.includes('drizzle')) {
         console.log('🌧️ Rain detected - adding rain gear');
         advice += " It's rainy, so bring rain gear and wear waterproof items.";
@@ -939,7 +868,6 @@ tags: [outfit, weather, recommendations, daily-planning]
         }
       }
 
-      // Forecast-based recommendations
       if (willRainLater && !condition.includes('rain')) {
         console.log('🌧️ Rain expected later in the day');
         advice += " Rain is expected later today - bring an umbrella or rain jacket just in case.";
@@ -961,7 +889,6 @@ tags: [outfit, weather, recommendations, daily-planning]
         advice += ` It will warm up later (up to ${maxTemp}°F), so dress in layers you can remove.`;
       }
 
-      // Time of day adjustments
       if (timeOfDay === 'evening' || timeOfDay === 'night') {
         console.log('🌙 Evening/Night time detected');
         advice += " Since it's " + timeOfDay + ", consider bringing a light jacket as temperatures may drop.";
@@ -970,44 +897,21 @@ tags: [outfit, weather, recommendations, daily-planning]
         }
       }
 
-      // Display recommendations
       document.getElementById('general-advice').textContent = advice;
-      
-      document.getElementById('clothing-items').innerHTML = clothing
-        .map(item => `<span class="outfit-item">${item}</span>`)
-        .join('');
-      
-      document.getElementById('accessories-items').innerHTML = accessories
-        .map(item => `<span class="outfit-item">${item}</span>`)
-        .join('');
-      
-      document.getElementById('footwear-items').innerHTML = footwear
-        .map(item => `<span class="outfit-item">${item}</span>`)
-        .join('');
-
+      document.getElementById('clothing-items').innerHTML = clothing.map(item => `<span class="outfit-item">${item}</span>`).join('');
+      document.getElementById('accessories-items').innerHTML = accessories.map(item => `<span class="outfit-item">${item}</span>`).join('');
+      document.getElementById('footwear-items').innerHTML = footwear.map(item => `<span class="outfit-item">${item}</span>`).join('');
       document.getElementById('outfit-recommendations').classList.remove('hidden');
       
       console.log('✅ Outfit recommendations generated!');
       showToast('✨ Outfit generated!');
-
-      // Smooth scroll to recommendations
-      document.getElementById('outfit-recommendations').scrollIntoView({ 
-        behavior: 'smooth',
-        block: 'start'
-      });
+      document.getElementById('outfit-recommendations').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    // Refresh weather
     function refreshWeather() {
       console.log('🔄 Refreshing weather data...');
-      
-      // Hide outfit recommendations
       document.getElementById('outfit-recommendations').classList.add('hidden');
-      
-      // Hide weather container
       document.getElementById('weather-container').classList.add('hidden');
-      
-      // Reset location status to show button again
       document.getElementById('location-status').innerHTML = `
         <p style="color: #bbb; margin-bottom: 1rem;">Click the button below to detect your location and get weather data.</p>
         <button class="btn btn-primary" style="width: 100%;" onclick="getLocation()">
@@ -1015,16 +919,12 @@ tags: [outfit, weather, recommendations, daily-planning]
         </button>
       `;
       document.getElementById('location-status').classList.remove('hidden');
-      
-      // Clear state
       state.weather = null;
       state.forecast = null;
       state.location = null;
-      
       console.log('✅ Ready for new weather data');
     }
 
-    // Toast notification
     function showToast(message) {
       const toast = document.getElementById('toast');
       toast.textContent = message;
@@ -1034,7 +934,6 @@ tags: [outfit, weather, recommendations, daily-planning]
       }, 3000);
     }
 
-    // Initialize on page load
     window.addEventListener('load', init);
   </script>
 </body>
