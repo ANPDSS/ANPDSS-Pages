@@ -450,7 +450,7 @@ tags: [mood-tracking, meals, activities, music, wellness]
           Your complete wellness companion for mood tracking, meal planning, activities, and music
         </p>
         <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-          <button class="btn btn-primary" onclick="showSection('mood')" style="min-width: 220px; font-size: 1.1rem;">🎭 Check Your Mood</button>
+          <button class="btn btn-primary" onclick="showSection('mood'); getLocationForOutfit();" style="min-width: 220px; font-size: 1.1rem;">🎭 Check Your Mood</button>
         </div>
       </div>
 
@@ -540,7 +540,96 @@ tags: [mood-tracking, meals, activities, music, wellness]
   <button class="btn btn-primary" style="width: 100%; margin-top: 2rem;" onclick="saveMood()">
           💾 Save Mood & Get Recommendations
         </button>
+
       </div>
+
+    <!-- Weather & Outfit (added) -->
+    <div class="card">
+      <h2>📍 Weather & Outfit</h2>
+      <p style="color: #bbb;">We’ll detect your location to get local weather and outfit suggestions.</p>
+
+      <div id="location-status" style="margin: 1.5rem 0;">
+        <p style="color: #bbb; margin-bottom: 1rem;">Click the button below to detect your location and get weather data.</p>
+        <button class="btn btn-primary" style="width: 100%;" onclick="getLocation()">
+          📍 Get My Location & Weather
+        </button>
+      </div>
+
+      <div id="manual-location" class="hidden">
+        <h3>Enter Your ZIP Code</h3>
+        <p style="color: #bbb; margin-bottom: 1rem;">We couldn't detect your location automatically. Please enter your ZIP code:</p>
+        <div style="display: flex; gap: 1rem;">
+          <input type="text" id="zip-input" placeholder="Enter ZIP code (e.g., 92067)" maxlength="5">
+          <button class="btn btn-primary" onclick="getWeatherByZip()">Get Weather</button>
+        </div>
+      </div>
+
+      <div id="weather-container" class="hidden">
+        <div class="success-message" id="location-found">
+          <strong>✓ Location Found:</strong> <span id="location-name"></span>
+        </div>
+
+        <h3 style="margin-top: 1.5rem;">Current Weather</h3>
+        <div class="weather-display">
+          <div class="weather-stat">
+            <div class="icon" id="weather-icon">🌤️</div>
+            <div class="label">Condition</div>
+            <div class="value" id="weather-condition">Clear</div>
+          </div>
+          <div class="weather-stat">
+            <div class="icon">🌡️</div>
+            <div class="label">Temperature</div>
+            <div class="value" id="temperature">--°F</div>
+          </div>
+          <div class="weather-stat">
+            <div class="icon">💧</div>
+            <div class="label">Humidity</div>
+            <div class="value" id="humidity">--%</div>
+          </div>
+          <div class="weather-stat">
+            <div class="icon">💨</div>
+            <div class="label">Wind Speed</div>
+            <div class="value" id="wind-speed">-- mph</div>
+          </div>
+          <div class="weather-stat">
+            <div class="icon">🕐</div>
+            <div class="label">Time of Day</div>
+            <div class="value" id="time-of-day">--</div>
+          </div>
+        </div>
+
+        <h3 style="margin-top: 1.5rem;">Today's Forecast</h3>
+        <div id="forecast-container" style="margin-top: 1rem;">
+          <div class="loading"></div> Loading forecast...
+        </div>
+
+      </div>
+
+      <div id="outfit-recommendations" class="hidden">
+        <div class="outfit-section">
+          <div class="outfit-category">
+            <h3>💡 General Advice</h3>
+            <p id="general-advice" style="color: #ddd; line-height: 1.6;"></p>
+          </div>
+
+          <div class="outfit-category">
+            <h3>👕 Clothing</h3>
+            <div class="outfit-items" id="clothing-items"></div>
+          </div>
+
+          <div class="outfit-category">
+            <h3>🎒 Accessories</h3>
+            <div class="outfit-items" id="accessories-items"></div>
+          </div>
+
+          <div class="outfit-category">
+            <h3>👟 Footwear</h3>
+            <div class="outfit-items" id="footwear-items"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     </section>
 
   <!-- Meals Section -->
@@ -1002,6 +1091,8 @@ tags: [mood-tracking, meals, activities, music, wellness]
 
         // IMPORTANT: This function must exist (the Gemini renderer)
         renderRecommendationsFromPlan(planData.generated);
+        // Also generate outfit suggestions based on fetched weather
+        try { generateOutfit(); } catch(e){ console.warn('generateOutfit failed', e); }
 
       } catch (e) {
         console.warn('Gemini plan failed, falling back to mock recommendations:', e);
@@ -1021,6 +1112,7 @@ tags: [mood-tracking, meals, activities, music, wellness]
           ]
         };
         renderRecommendationsFromPlan(mockPlan);
+        try { generateOutfit(); } catch(e){ console.warn('generateOutfit failed', e); }
       }
 
       showSection('recommendations');
@@ -1442,6 +1534,251 @@ tags: [mood-tracking, meals, activities, music, wellness]
       updateStats();
     }
 
+    // --- Weather & Outfit functionality (new) ---
+    const weatherState = {
+      weather: null,
+      forecast: null,
+      location: null,
+      timeOfDay: null
+    };
+
+    function getLocationForOutfit(){
+      try {
+        console.log('[getLocationForOutfit] triggered');
+        showToast('📍 Detecting location for weather...');
+        getLocation();
+      } catch (e) {
+        console.warn('getLocationForOutfit failed', e);
+      }
+    }
+
+    function getLocation() {
+      document.getElementById('location-status').innerHTML = `
+        <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+          <div class="loading"></div>
+          <span>Detecting your location...</span>
+        </div>
+      `;
+      console.log('[getLocation] requesting geolocation');
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          pos => handleLocationSuccess(pos),
+          err => handleLocationError(err),
+          { timeout: 30000, enableHighAccuracy: true }
+        );
+      } else {
+        console.log('[getLocation] navigator.geolocation not available');
+        showManualInput('Geolocation not supported by your browser');
+      }
+    }
+
+    function handleLocationSuccess(position){
+      console.log('[handleLocationSuccess] position=', position);
+      weatherState.location = { lat: position.coords.latitude, lon: position.coords.longitude };
+      showToast('✅ Location detected');
+      getWeatherByCoords(weatherState.location.lat, weatherState.location.lon);
+    }
+
+    function handleLocationError(error){
+      console.log('[handleLocationError] error=', error);
+      let message = 'Could not detect your location. ';
+      switch(error.code){
+        case error.PERMISSION_DENIED: message += 'Permission denied.'; break;
+        case error.POSITION_UNAVAILABLE: message += 'Location unavailable.'; break;
+        case error.TIMEOUT: message += 'Location request timed out.'; break;
+        default: message += 'Unknown error.';
+      }
+      showManualInput(message);
+    }
+
+    function showManualInput(message){
+      console.log('[showManualInput] message=', message);
+      document.getElementById('location-status').innerHTML = `<div class="error-message">${message}</div>`;
+      document.getElementById('manual-location').classList.remove('hidden');
+    }
+
+    async function getWeatherByZip(){
+      const zip = (document.getElementById('zip-input')||{}).value || '';
+      if (!/^\d{5}$/.test(zip)) { showToast('❌ Please enter a valid 5-digit ZIP code'); return; }
+      const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? 'http://localhost:8587' : 'https://flask.opencodingsociety.com';
+      try {
+        const url = `${pythonURI}/api/outfit/weather/current?zip=${zip}`;
+        console.log('[getWeatherByZip] zip=', zip, 'url=', url);
+        const resp = await fetch(url, { method: 'GET', credentials: 'include', headers: {'Content-Type':'application/json','X-Origin':'client'} });
+        console.log('[getWeatherByZip] status=', resp.status, 'ok=', resp.ok);
+        if (!resp.ok) throw new Error(`Weather API ${resp.status}`);
+        const data = await resp.json();
+        console.log('[getWeatherByZip] data=', data);
+        weatherState.location = { lat: data.coord.lat, lon: data.coord.lon, name: data.name };
+        displayWeather(data);
+      } catch (e) {
+        console.error('Error getting weather by zip', e);
+        showToast('❌ Could not get weather data.');
+      }
+    }
+
+    async function getWeatherByCoords(lat, lon){
+      const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? 'http://localhost:8587' : 'https://flask.opencodingsociety.com';
+      try {
+        const url = `${pythonURI}/api/outfit/weather/current?lat=${lat}&lon=${lon}`;
+        console.log('[getWeatherByCoords] url=', url);
+        const resp = await fetch(url, { method: 'GET', credentials: 'include', headers: {'Content-Type':'application/json','X-Origin':'client'} });
+        console.log('[getWeatherByCoords] status=', resp.status);
+        if (!resp.ok) throw new Error(`Weather API ${resp.status}`);
+        const data = await resp.json();
+        console.log('[getWeatherByCoords] data=', data);
+        weatherState.location.name = data.name;
+        displayWeather(data);
+      } catch (e) {
+        console.error('Error fetching weather', e);
+        showManualInput('Failed to get weather data. Please try entering your ZIP code.');
+      }
+    }
+
+    function displayWeather(data){
+      console.log('[displayWeather] data=', data);
+      weatherState.weather = {
+        temp: Math.round(data.main.temp),
+        feelsLike: Math.round(data.main.feels_like),
+        condition: data.weather[0].main,
+        description: data.weather[0].description,
+        humidity: data.main.humidity,
+        windSpeed: Math.round(data.wind.speed),
+        icon: data.weather[0].icon
+      };
+
+      document.getElementById('location-status').classList.add('hidden');
+      document.getElementById('manual-location').classList.add('hidden');
+      document.getElementById('weather-container').classList.remove('hidden');
+      document.getElementById('location-name').textContent = weatherState.location.name || 'Your Location';
+      document.getElementById('weather-condition').textContent = weatherState.weather.condition;
+      document.getElementById('temperature').textContent = `${weatherState.weather.temp}°F`;
+      document.getElementById('humidity').textContent = `${weatherState.weather.humidity}%`;
+      document.getElementById('wind-speed').textContent = `${weatherState.weather.windSpeed} mph`;
+      document.getElementById('weather-icon').textContent = getWeatherEmoji(weatherState.weather.condition.toLowerCase());
+
+      const hour = new Date().getHours();
+      let timeOfDay;
+      if (hour >= 6 && hour < 12) timeOfDay = 'Morning';
+      else if (hour >= 12 && hour < 17) timeOfDay = 'Afternoon';
+      else if (hour >= 17 && hour < 21) timeOfDay = 'Evening';
+      else timeOfDay = 'Night';
+
+      weatherState.timeOfDay = timeOfDay;
+      document.getElementById('time-of-day').textContent = timeOfDay;
+
+      showToast('✅ Weather data loaded!');
+      getForecast(weatherState.location.lat, weatherState.location.lon);
+    }
+
+    async function getForecast(lat, lon){
+      const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? 'http://localhost:8587' : 'https://flask.opencodingsociety.com';
+      try {
+        const url = `${pythonURI}/api/outfit/weather/forecast?lat=${lat}&lon=${lon}`;
+        const resp = await fetch(url, { method: 'GET', credentials: 'include', headers: {'Content-Type':'application/json','X-Origin':'client'} });
+        if (!resp.ok) throw new Error(`Forecast API ${resp.status}`);
+        const data = await resp.json();
+        const todayForecasts = data.list.slice(0,8);
+        weatherState.forecast = todayForecasts.map(item => ({ time: new Date(item.dt*1000), temp: Math.round(item.main.temp), condition: item.weather[0].main, description: item.weather[0].description, pop: Math.round(item.pop*100) }));
+        displayForecast();
+      } catch (e) {
+        console.error('Error fetching forecast', e);
+        document.getElementById('forecast-container').innerHTML = '<div style="color: #ff4a4a;">Could not load forecast data</div>';
+      }
+    }
+
+    function displayForecast(){
+      const container = document.getElementById('forecast-container');
+      if (!weatherState.forecast || !weatherState.forecast.length) { container.innerHTML = '<div style="color: #bbb;">No forecast data available</div>'; return; }
+      const html = weatherState.forecast.map(f => {
+        const timeStr = f.time.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true});
+        const icon = getWeatherEmoji(f.condition.toLowerCase());
+        return `
+          <div class="forecast-card">
+            <div class="time">${timeStr}</div>
+            <div class="icon">${icon}</div>
+            <div class="temp">${f.temp}°F</div>
+            <div class="desc">${f.description}</div>
+            ${f.pop>20?`<div style="color:#4a9eff;font-size:0.8rem;margin-top:0.3rem;">💧 ${f.pop}%</div>`:''}
+          </div>
+        `;
+      }).join('');
+      container.innerHTML = `<div class="forecast-grid">${html}</div>`;
+    }
+
+    function getWeatherEmoji(condition){
+      const map = { 'clear':'☀️','clouds':'☁️','rain':'🌧️','drizzle':'🌦️','thunderstorm':'⛈️','snow':'❄️','mist':'🌫️','fog':'🌫️' };
+      for (let k in map) if (condition.includes(k)) return map[k];
+      return '🌤️';
+    }
+
+    function generateOutfit(){
+      if (!weatherState.weather) {
+        console.warn('No weather data yet; cannot generate outfit');
+        showToast('⚠️ Weather not ready for outfit recommendations');
+        return;
+      }
+
+      const temp = weatherState.weather.temp;
+      const condition = weatherState.weather.condition.toLowerCase();
+      const timeOfDay = (weatherState.timeOfDay||'').toLowerCase();
+
+      let advice=''; let clothing=[]; let accessories=[]; let footwear=[];
+
+      if (temp <= 40) {
+        advice = "It's very cold outside! Layer up with warm clothing to stay comfortable.";
+        clothing = ['Heavy winter coat','Thermal underwear','Thick sweater','Long pants','Warm socks'];
+        accessories = ['Winter hat','Scarf','Insulated gloves'];
+        footwear = ['Insulated boots'];
+      } else if (temp <= 55) {
+        advice = "It's cool outside. Wear layers so you can adjust if you warm up.";
+        clothing = ['Light jacket','Long-sleeve shirt','Jeans or long pants'];
+        accessories = ['Light scarf'];
+        footwear = ['Sneakers','Casual shoes'];
+      } else if (temp <= 70) {
+        advice = "The weather is pleasant! Dress comfortably with light layers.";
+        clothing = ['T-shirt','Light cardigan','Jeans or casual pants'];
+        accessories = ['Sunglasses'];
+        footwear = ['Sneakers','Loafers'];
+      } else if (temp <= 85) {
+        advice = "It's warm out! Dress in light, breathable fabrics to stay cool.";
+        clothing = ['T-shirt','Shorts or light pants','Light dress'];
+        accessories = ['Sunglasses','Sunscreen'];
+        footwear = ['Sandals','Sneakers'];
+      } else {
+        advice = "It's hot outside! Wear minimal, light clothing and stay hydrated.";
+        clothing = ['Tank top','Shorts','Light dress'];
+        accessories = ['Sunscreen','Wide-brimmed hat'];
+        footwear = ['Sandals','Flip-flops'];
+      }
+
+      if (condition.includes('rain')||condition.includes('drizzle')) {
+        advice += ' It might rain—bring an umbrella or rain jacket.';
+        accessories.push('Umbrella','Rain jacket');
+        footwear = ['Waterproof boots','Rain boots'];
+      }
+
+      if (condition.includes('snow')) {
+        advice += ' Snow expected—wear waterproof, insulated gear.';
+        accessories.push('Waterproof gloves');
+        footwear = ['Snow boots'];
+      }
+
+      if (weatherState.weather.windSpeed > 15) {
+        advice += ' It is windy—consider a windbreaker.';
+        if (temp > 60) clothing.push('Light windbreaker');
+      }
+
+      document.getElementById('general-advice').textContent = advice;
+      document.getElementById('clothing-items').innerHTML = clothing.map(i=>`<span class="outfit-item">${i}</span>`).join('');
+      document.getElementById('accessories-items').innerHTML = accessories.map(i=>`<span class="outfit-item">${i}</span>`).join('');
+      document.getElementById('footwear-items').innerHTML = footwear.map(i=>`<span class="outfit-item">${i}</span>`).join('');
+      document.getElementById('outfit-recommendations').classList.remove('hidden');
+      document.getElementById('outfit-recommendations').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      showToast('✨ Outfit generated!');
+    }
+
+    // Ensure existing init still runs after enhancements
     init();
   </script>
 </body>
