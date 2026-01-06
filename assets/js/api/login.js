@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     : ''
                             }
                             <a href="${baseurl}/profile">Profile</a>
+                            <a href="${baseurl}/friends">Friends</a>
                             <a href="${baseurl}/logout">Logout</a>
                         </div>
                     </div>
