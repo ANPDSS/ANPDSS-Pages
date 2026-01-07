@@ -796,6 +796,11 @@ tags: [mood-tracking, meals, activities, music, wellness]
           <h3 style="margin-top: 0;">🎵 Music</h3>
           <div id="rec-music"></div>
         </div>
+  
+  <div class="card">
+          <h3 style="margin-top: 0;">👕 Clothing</h3>
+          <div id="rec-clothing"></div>
+        </div>
       </div>
     </section>
 
@@ -1053,11 +1058,12 @@ tags: [mood-tracking, meals, activities, music, wellness]
             headers: { 'Content-Type': 'application/json', 'X-Origin': 'client' },
             body: JSON.stringify(moodData)
           });
+          const planPayload = { mood_id: state.currentMood.id || null, weather: weatherState.raw || null };
           const planResp = await fetch(`${pythonURI}/api/moodmeal/plan`, {
             method: 'POST',
             credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({}) // latest mood
+            body: JSON.stringify(planPayload)
           });
 
           const planData = await planResp.json();
@@ -1073,13 +1079,14 @@ tags: [mood-tracking, meals, activities, music, wellness]
           ? 'http://localhost:8587'
           : 'https://flask.opencodingsociety.com';
 
+        const planPayload = { mood_id: state.currentMood.id || null, weather: weatherState.raw || null };
         const planResp = await fetch(`${pythonURI}/api/moodmeal/plan`, {
           method: 'POST',
           mode: 'cors',
           cache: 'no-store',
           credentials: 'include',
           headers: { 'Content-Type': 'application/json', 'X-Origin': 'client' },
-          body: JSON.stringify({}) // uses latest mood in DB
+          body: JSON.stringify(planPayload)
         });
 
         if (!planResp.ok) {
@@ -1125,10 +1132,15 @@ tags: [mood-tracking, meals, activities, music, wellness]
       const meals = generated?.meals ?? [];
       const activities = generated?.activities ?? [];
       const music = generated?.music ?? [];
+      const clothing = generated?.clothing ?? [];
+
+      // debug: log clothing for visibility
+      console.log('[renderRecommendationsFromPlan] clothing=', clothing);
 
       const mealsDiv = document.getElementById('rec-meals');
       const actsDiv = document.getElementById('rec-activities');
       const musicDiv = document.getElementById('rec-music');
+      const clothingDiv = document.getElementById('clothing-items');
 
       // Safety: if containers missing, don’t crash
       if (!mealsDiv || !actsDiv || !musicDiv) return;
@@ -1162,6 +1174,33 @@ tags: [mood-tracking, meals, activities, music, wellness]
           <div style="margin-top:0.5rem;"><button class="btn btn-secondary" onclick="toggleWhy(this)">Why?</button></div>
         </div>
       `).join('') : `<div style="color:#bbb;">No music returned.</div>`;
+
+      // Clothing recommendations (from Gemini schema)
+      if (clothingDiv) {
+        clothingDiv.innerHTML = clothing.length ? clothing.map(c => `
+          <div class="result-card" style="margin-bottom: 0.75rem;">
+            <div style="font-size: 2.2rem; text-align: center;">👕</div>
+            <h4 style="margin: 0.5rem 0;">${c.item ?? 'Clothing item'}</h4>
+            <div style="color:#bbb;">Layers: ${c.layers ?? '-'}</div>
+            <div class="why-text hidden" style="color:#ddd; margin-top: 0.35rem;">${c.why ?? ''}</div>
+            <div style="margin-top:0.5rem;"><button class="btn btn-secondary" onclick="toggleWhy(this)">Why?</button></div>
+          </div>
+        `).join('') : `<div style="color:#bbb;">No clothing recommendations returned.</div>`;
+      }
+
+      // Also populate unified recommendations clothing container (if present on recommendations page)
+      const recClothing = document.getElementById('rec-clothing');
+      if (recClothing) {
+        recClothing.innerHTML = clothing.length ? clothing.map(c => `
+          <div class="result-card" style="margin-bottom: 0.75rem;">
+            <div style="font-size: 2.2rem; text-align: center;">👕</div>
+            <h4 style="margin: 0.5rem 0;">${c.item ?? 'Clothing item'}</h4>
+            <div style="color:#bbb;">Layers: ${c.layers ?? '-'}</div>
+            <div class="why-text hidden" style="color:#ddd; margin-top: 0.35rem;">${c.why ?? ''}</div>
+            <div style="margin-top:0.5rem;"><button class="btn btn-secondary" onclick="toggleWhy(this)">Why?</button></div>
+          </div>
+        `).join('') : `<div style="color:#bbb;">No clothing recommendations returned.</div>`;
+      }
     }
 
     // Toggle helper to show/hide reasoning text inside a recommendation card
@@ -1637,6 +1676,8 @@ tags: [mood-tracking, meals, activities, music, wellness]
 
     function displayWeather(data){
       console.log('[displayWeather] data=', data);
+      // keep full API response for sending to Gemini and debugging
+      weatherState.raw = data;
       weatherState.weather = {
         temp: Math.round(data.main.temp),
         feelsLike: Math.round(data.main.feels_like),
