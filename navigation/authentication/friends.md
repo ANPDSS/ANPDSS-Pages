@@ -19,7 +19,8 @@ search_exclude: true
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #000000 0%, #0a0a1a 100%);
+            color: #ffffff;
             min-height: 100vh;
             padding: 20px;
         }
@@ -27,17 +28,19 @@ search_exclude: true
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: white;
+            background: rgba(17, 17, 17, 0.8);
+            border: 1px solid #2a2a2a;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             overflow: hidden;
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: #111111;
+            color: #ffffff;
             padding: 30px;
             text-align: center;
+            border-bottom: 2px solid #2196F3;
         }
 
         .header h1 {
@@ -52,8 +55,8 @@ search_exclude: true
 
         .tabs {
             display: flex;
-            background: #f5f5f5;
-            border-bottom: 2px solid #ddd;
+            background: rgba(17, 17, 17, 0.8);
+            border-bottom: 2px solid #2a2a2a;
         }
 
         .tab {
@@ -61,23 +64,24 @@ search_exclude: true
             padding: 15px;
             text-align: center;
             cursor: pointer;
-            background: #f5f5f5;
+            background: transparent;
             border: none;
             font-size: 1em;
             font-weight: 600;
-            color: #666;
+            color: #bbb;
             transition: all 0.3s;
             position: relative;
         }
 
         .tab:hover {
-            background: #e0e0e0;
+            background: rgba(33, 150, 243, 0.1);
+            color: #2196F3;
         }
 
         .tab.active {
-            background: white;
-            color: #667eea;
-            border-bottom: 3px solid #667eea;
+            background: #2196F3;
+            color: white;
+            border-bottom: 3px solid #2196F3;
         }
 
         .tab .badge {
@@ -105,15 +109,18 @@ search_exclude: true
             width: 100%;
             padding: 15px;
             font-size: 1.1em;
-            border: 2px solid #ddd;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #333;
             border-radius: 10px;
+            color: white;
             margin-bottom: 20px;
             transition: border-color 0.3s;
         }
 
         .search-box:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #2196F3;
+            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.2);
         }
 
         .user-grid {
@@ -124,16 +131,18 @@ search_exclude: true
         }
 
         .user-card {
-            background: #f9f9f9;
+            background: rgba(11, 11, 11, 0.9);
+            border: 1px solid #2a2a2a;
             border-radius: 10px;
             padding: 20px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
         }
 
         .user-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            border-color: #2196F3;
+            box-shadow: 0 8px 25px rgba(33, 150, 243, 0.3);
         }
 
         .user-header {
@@ -146,7 +155,7 @@ search_exclude: true
             width: 60px;
             height: 60px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #2196F3, #4eff9e);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -157,17 +166,17 @@ search_exclude: true
         }
 
         .user-info h3 {
-            color: #333;
+            color: #ffffff;
             margin-bottom: 5px;
         }
 
         .user-info p {
-            color: #666;
+            color: #bbb;
             font-size: 0.9em;
         }
 
         .similarity-score {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #2196F3, #4eff9e);
             color: white;
             padding: 5px 10px;
             border-radius: 20px;
@@ -182,12 +191,19 @@ search_exclude: true
 
         .interest-tag {
             display: inline-block;
-            background: #e0e7ff;
-            color: #667eea;
+            background: rgba(33, 150, 243, 0.1);
+            border: 1px solid #333;
+            color: #2196F3;
             padding: 4px 10px;
             border-radius: 15px;
             font-size: 0.85em;
             margin: 3px;
+            transition: all 0.3s;
+        }
+
+        .interest-tag:hover {
+            border-color: #2196F3;
+            background: rgba(33, 150, 243, 0.2);
         }
 
         .btn {
@@ -202,22 +218,23 @@ search_exclude: true
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #2196F3, #1976D2);
             color: white;
         }
 
         .btn-primary:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(33, 150, 243, 0.4);
         }
 
         .btn-secondary {
-            background: #6c757d;
-            color: white;
+            background: transparent;
+            color: #2196F3;
+            border: 2px solid #2196F3;
         }
 
         .btn-secondary:hover {
-            background: #5a6268;
+            background: rgba(33, 150, 243, 0.1);
         }
 
         .btn-success {
@@ -244,7 +261,7 @@ search_exclude: true
         }
 
         .message-button {
-            background: #28a745;
+            background: linear-gradient(135deg, #2196F3, #1976D2);
             color: white;
             padding: 8px 16px;
             border-radius: 6px;
@@ -255,8 +272,8 @@ search_exclude: true
         }
 
         .message-button:hover {
-            background: #218838;
-            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.4);
+            transform: translateY(-2px);
         }
 
         .empty-state {
@@ -272,20 +289,20 @@ search_exclude: true
         }
 
         .empty-state h3 {
-            color: #666;
+            color: #bbb;
             margin-bottom: 10px;
         }
 
         .loading {
             text-align: center;
             padding: 40px;
-            color: #667eea;
+            color: #2196F3;
             font-size: 1.2em;
         }
 
         .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
+            border: 4px solid rgba(33, 150, 243, 0.3);
+            border-top: 4px solid #2196F3;
             border-radius: 50%;
             width: 40px;
             height: 40px;
@@ -299,8 +316,9 @@ search_exclude: true
         }
 
         .request-card {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
+            background: rgba(33, 150, 243, 0.1);
+            border: 1px solid #2a2a2a;
+            border-left: 4px solid #2196F3;
             padding: 15px;
             margin-bottom: 15px;
             border-radius: 8px;
@@ -311,8 +329,9 @@ search_exclude: true
         }
 
         .back-button {
-            background: #6c757d;
-            color: white;
+            background: transparent;
+            color: #2196F3;
+            border: 2px solid #2196F3;
             padding: 10px 20px;
             border-radius: 8px;
             text-decoration: none;
@@ -322,7 +341,7 @@ search_exclude: true
         }
 
         .back-button:hover {
-            background: #5a6268;
+            background: rgba(33, 150, 243, 0.1);
             transform: translateX(-5px);
         }
     </style>
