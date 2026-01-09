@@ -19,15 +19,18 @@ search_exclude: true
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #000000 0%, #0a0a1a 100%);
             min-height: 100vh;
             padding: 20px;
+            padding-top: 100px; /* Account for fixed navigation bar */
+            color: #ffffff;
         }
 
         .container {
             max-width: 900px;
             margin: 0 auto;
-            background: white;
+            background: rgba(17, 17, 17, 0.8);
+            border: 1px solid #2a2a2a;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             overflow: hidden;
@@ -37,12 +40,13 @@ search_exclude: true
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: #111111;
+            color: #ffffff;
             padding: 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            border-bottom: 2px solid #2196F3;
         }
 
         .header h1 {
@@ -50,8 +54,9 @@ search_exclude: true
         }
 
         .back-button {
-            background: rgba(255,255,255,0.2);
-            color: white;
+            background: transparent;
+            color: #2196F3;
+            border: 2px solid #2196F3;
             padding: 8px 16px;
             border-radius: 8px;
             text-decoration: none;
@@ -59,14 +64,14 @@ search_exclude: true
         }
 
         .back-button:hover {
-            background: rgba(255,255,255,0.3);
+            background: rgba(33, 150, 243, 0.1);
         }
 
         .messages-container {
             flex: 1;
             overflow-y: auto;
             padding: 20px;
-            background: #f5f5f5;
+            background: rgba(11, 11, 11, 0.5);
         }
 
         .message {
@@ -91,16 +96,17 @@ search_exclude: true
         }
 
         .message.sent .message-bubble {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #2196F3, #1976D2);
             color: white;
             border-bottom-right-radius: 4px;
         }
 
         .message.received .message-bubble {
-            background: white;
-            color: #333;
+            background: rgba(42, 42, 42, 0.8);
+            color: #ffffff;
+            border: 1px solid #333;
             border-bottom-left-radius: 4px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
         }
 
         .message-time {
@@ -114,9 +120,9 @@ search_exclude: true
         }
 
         .input-container {
-            background: white;
+            background: #111111;
             padding: 20px;
-            border-top: 1px solid #ddd;
+            border-top: 2px solid #2a2a2a;
             display: flex;
             gap: 10px;
         }
@@ -124,7 +130,9 @@ search_exclude: true
         .message-input {
             flex: 1;
             padding: 12px;
-            border: 2px solid #ddd;
+            border: 2px solid #333;
+            background: rgba(0, 0, 0, 0.5);
+            color: #ffffff;
             border-radius: 25px;
             font-size: 1em;
             outline: none;
@@ -132,11 +140,12 @@ search_exclude: true
         }
 
         .message-input:focus {
-            border-color: #667eea;
+            border-color: #2196F3;
+            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.2);
         }
 
         .send-button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #2196F3, #1976D2);
             color: white;
             border: none;
             padding: 12px 24px;
@@ -149,7 +158,7 @@ search_exclude: true
 
         .send-button:hover {
             transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.4);
         }
 
         .send-button:disabled {
@@ -160,18 +169,18 @@ search_exclude: true
         .loading {
             text-align: center;
             padding: 40px;
-            color: #667eea;
+            color: #2196F3;
         }
 
         .empty-state {
             text-align: center;
             padding: 60px 20px;
-            color: #999;
+            color: #bbb;
         }
 
         .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
+            border: 4px solid rgba(33, 150, 243, 0.3);
+            border-top: 4px solid #2196F3;
             border-radius: 50%;
             width: 40px;
             height: 40px;
@@ -187,8 +196,12 @@ search_exclude: true
         .date-divider {
             text-align: center;
             margin: 20px 0;
-            color: #999;
+            color: #666;
             font-size: 0.85em;
+        }
+
+        .message-input::placeholder {
+            color: #888;
         }
     </style>
 </head>

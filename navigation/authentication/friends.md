@@ -23,6 +23,7 @@ search_exclude: true
             color: #ffffff;
             min-height: 100vh;
             padding: 20px;
+            padding-top: 100px; /* Account for fixed navigation bar */
         }
 
         .container {
@@ -350,7 +351,7 @@ search_exclude: true
     <div class="container">
         <div class="header">
             <h1>Friends & Connections</h1>
-            <p>Connect with people who share your interests</p>
+            <p>Connect with people who share similar moods and feelings</p>
         </div>
 
         <div class="tabs">
@@ -377,7 +378,7 @@ search_exclude: true
             <!-- Recommendations Tab -->
             <div id="recommendations" class="tab-content active">
                 <h2>Friend Recommendations</h2>
-                <p style="color: #666; margin-bottom: 20px;">Based on your shared interests</p>
+                <p style="color: #666; margin-bottom: 20px;">Based on your mood patterns and emotional compatibility</p>
                 <div id="recommendationsGrid" class="user-grid">
                     <div class="loading">
                         <div class="spinner"></div>
@@ -502,7 +503,7 @@ search_exclude: true
                     grid.innerHTML = `
                         <div class="empty-state">
                             <h3>No recommendations available</h3>
-                            <p>Complete your interests in the MoodLife app to get personalized friend recommendations!</p>
+                            <p>Track your moods in the MoodLife app to get personalized friend recommendations based on mood compatibility!</p>
                         </div>
                     `;
                     return;
@@ -510,11 +511,17 @@ search_exclude: true
 
                 grid.innerHTML = data.recommendations.map(user => {
                     const initial = user.name.charAt(0).toUpperCase();
-                    const allInterests = [
-                        ...user.shared_interests.cuisines,
-                        ...user.shared_interests.music,
-                        ...user.shared_interests.activities
-                    ];
+                    const moodCategories = user.mood_compatibility?.shared_mood_categories || [];
+                    const avgMood = user.mood_compatibility?.avg_mood_score;
+
+                    // Get mood emoji based on average mood score
+                    let moodEmoji = '😊';
+                    if (avgMood) {
+                        if (avgMood <= 40) moodEmoji = '😰';
+                        else if (avgMood <= 60) moodEmoji = '😴';
+                        else if (avgMood <= 80) moodEmoji = '😊';
+                        else moodEmoji = '😄';
+                    }
 
                     return `
                         <div class="user-card">
@@ -527,15 +534,15 @@ search_exclude: true
                                 </div>
                             </div>
                             <div class="similarity-score">
-                                ${user.similarity_score}% Match
+                                ${user.similarity_score}% Mood Match
                             </div>
-                            ${allInterests.length > 0 ? `
+                            ${avgMood ? `
                                 <div class="shared-interests">
-                                    <strong>Shared interests:</strong><br>
-                                    ${allInterests.slice(0, 5).map(interest =>
-                                        `<span class="interest-tag">${interest}</span>`
-                                    ).join('')}
-                                    ${allInterests.length > 5 ? `<span class="interest-tag">+${allInterests.length - 5} more</span>` : ''}
+                                    <strong>Mood Compatibility:</strong><br>
+                                    <span class="interest-tag">${moodEmoji} Avg Mood: ${avgMood}/100</span>
+                                    ${moodCategories.length > 0 ? moodCategories.map(cat =>
+                                        `<span class="interest-tag">${cat}</span>`
+                                    ).join('') : ''}
                                 </div>
                             ` : ''}
                             <button class="btn btn-primary" onclick="sendRequest(${user.id})">
