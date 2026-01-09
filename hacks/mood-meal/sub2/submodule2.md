@@ -18,7 +18,9 @@ footer:
 ---
 
 # MoodMeal – Mood Input & Emotion Analyzer
- 
+
+<script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+
 <!-- Main container for the Mood Input page -->
 <main id="mood-input-page">
 
@@ -26,6 +28,23 @@ footer:
   <section id="mood-selection" aria-label="Mood selection" style="margin-bottom: 1.5rem;">
     <h2>1. How Are You Feeling?</h2>
     <p>Select your current mood or use the slider to rate how you're feeling today:</p>
+
+    <!-- AI Face Detection -->
+    <div style="margin: 1.5rem 0; padding: 1.5rem; background: rgba(33, 150, 243, 0.1); border-radius: 12px; border: 2px solid #2196F3;">
+      <h3 style="margin-top: 0;">📸 Try AI Mood Detection!</h3>
+      <p style="margin-bottom: 1rem;">Let AI detect your mood from your facial expression</p>
+
+      <div style="padding: 0.75rem; background: rgba(78, 255, 158, 0.1); border-left: 3px solid #4eff9e; margin-bottom: 1rem;">
+        <strong>🔒 Privacy:</strong> Facial analysis happens entirely in your browser.
+        No images are uploaded. Only your mood score and tags are saved.
+      </div>
+
+      <button id="start-camera-btn" class="mood-emoji-btn" onclick="startFaceDetection()" style="width: 100%; font-size: 1rem; padding: 1rem;">
+        📸 Detect Mood from Camera
+      </button>
+    </div>
+
+    <div style="text-align: center; margin: 1.5rem 0; color: #666; font-weight: bold;">OR USE MANUAL SELECTION</div>
 
     <!-- Mood Slider -->
     <div style="margin: 1.5rem 0;">
@@ -385,6 +404,439 @@ import { pythonURI, fetchOptions } from '{{ site.baseurl }}/assets/js/api/config
 
   console.log('MoodMeal Mood Input & Emotion Analyzer - Submodule 2 Loaded');
 })();
+</script>
+
+<!-- Camera Modal for Face Detection -->
+<div id="camera-modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.95); z-index: 10000; overflow-y: auto;">
+  <div style="max-width: 800px; margin: 2rem auto; padding: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+      <h2 style="margin: 0;">📸 AI Mood Detection</h2>
+      <button onclick="closeCameraModal()" style="background: transparent; border: none; color: #fff; font-size: 2rem; cursor: pointer; padding: 0.5rem;">&times;</button>
+    </div>
+
+    <!-- Step 1: Loading -->
+    <div id="modal-step-loading" class="modal-step">
+      <div style="text-align: center; padding: 3rem;">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">⏳</div>
+        <h3 id="loading-message">Loading AI models...</h3>
+        <p style="color: #bbb; margin-top: 1rem;" id="loading-progress">Preparing face detection...</p>
+        <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 1.5rem; overflow: hidden;">
+          <div id="loading-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #2196F3, #4eff9e); transition: width 0.3s ease;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Permission -->
+    <div id="modal-step-permission" class="modal-step" style="display: none;">
+      <div style="text-align: center; padding: 3rem;">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">📷</div>
+        <h3>Camera Access Required</h3>
+        <p style="color: #bbb; margin: 1.5rem 0;">We need access to your camera to detect your facial expression and determine your mood.</p>
+        <div style="padding: 1rem; background: rgba(78, 255, 158, 0.1); border-left: 3px solid #4eff9e; margin: 1.5rem 0; text-align: left;">
+          <strong>🔒 Your Privacy is Protected:</strong>
+          <ul style="margin-top: 0.5rem; padding-left: 1.5rem; color: #bbb;">
+            <li>All processing happens in your browser</li>
+            <li>No images are uploaded to any server</li>
+            <li>Only mood scores are saved locally</li>
+            <li>Camera access ends when you close this window</li>
+          </ul>
+        </div>
+        <button class="mood-emoji-btn" onclick="requestCameraAccess()" style="width: 100%; margin-top: 1rem; font-size: 1rem; padding: 1rem;">
+          ✓ Allow Camera Access
+        </button>
+        <button class="mood-emoji-btn" onclick="showSliderMode()" style="width: 100%; margin-top: 1rem; background: transparent; border: 1px solid #666; font-size: 1rem; padding: 1rem;">
+          Use Manual Slider Instead
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 3: Detection -->
+    <div id="modal-step-detection" class="modal-step" style="display: none;">
+      <div style="text-align: center;">
+        <h3 style="margin-bottom: 1rem;">Position Your Face</h3>
+        <p id="detection-status" style="color: #4eff9e; margin-bottom: 1rem;">Looking for your face...</p>
+
+        <div style="position: relative; display: inline-block; border-radius: 12px; overflow: hidden;">
+          <video id="face-video" autoplay playsinline style="width: 100%; max-width: 640px; border-radius: 12px; background: #000;"></video>
+          <canvas id="face-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></canvas>
+        </div>
+
+        <div style="margin-top: 1.5rem;">
+          <button id="capture-btn" class="mood-emoji-btn" onclick="captureMood()" style="width: 100%; display: none; font-size: 1rem; padding: 1rem;">
+            📸 Capture My Mood
+          </button>
+          <button class="mood-emoji-btn" onclick="showSliderMode()" style="width: 100%; margin-top: 1rem; background: transparent; border: 1px solid #666; font-size: 1rem; padding: 1rem;">
+            Use Manual Slider Instead
+          </button>
+        </div>
+
+        <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 8px; text-align: left;">
+          <strong>Tips for best results:</strong>
+          <ul style="margin-top: 0.5rem; padding-left: 1.5rem; color: #bbb;">
+            <li>Face the camera directly</li>
+            <li>Ensure good lighting</li>
+            <li>Remove any obstructions (hat, mask, etc.)</li>
+            <li>Stay still when capturing</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 4: Review -->
+    <div id="modal-step-review" class="modal-step" style="display: none;">
+      <div style="text-align: center;">
+        <h3 style="margin-bottom: 1rem;">Review Your Mood</h3>
+
+        <img id="captured-preview" style="width: 100%; max-width: 640px; border-radius: 12px; margin-bottom: 1.5rem; border: 3px solid #4eff9e;" alt="Captured face">
+
+        <div style="background: rgba(33, 150, 243, 0.1); border: 2px solid #2196F3; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+          <h4 style="margin-top: 0;">Detected Mood</h4>
+          <div style="font-size: 3rem; margin: 1rem 0;" id="review-score">75</div>
+          <div style="font-size: 1.5rem; color: #4eff9e; margin-bottom: 1rem;" id="review-expression">Happy</div>
+          <div style="color: #bbb; margin-bottom: 0.5rem;" id="review-category">Happy/Neutral</div>
+          <div id="review-tags" style="display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center;">
+            <span style="padding: 0.25rem 0.75rem; background: rgba(74, 158, 255, 0.2); border-radius: 12px;">happy</span>
+            <span style="padding: 0.25rem 0.75rem; background: rgba(74, 158, 255, 0.2); border-radius: 12px;">energetic</span>
+          </div>
+          <div style="color: #888; font-size: 0.9rem; margin-top: 1rem;">
+            Confidence: <span id="review-confidence">85%</span>
+          </div>
+        </div>
+
+        <button class="mood-emoji-btn" onclick="confirmDetectedMood()" style="width: 100%; margin-bottom: 1rem; font-size: 1rem; padding: 1rem;">
+          ✓ Confirm & Use This Mood
+        </button>
+        <button class="mood-emoji-btn" onclick="retryDetection()" style="width: 100%; background: transparent; border: 1px solid #2196F3; font-size: 1rem; padding: 1rem;">
+          🔄 Retake
+        </button>
+      </div>
+    </div>
+
+    <!-- Error Display -->
+    <div id="modal-step-error" class="modal-step" style="display: none;">
+      <div style="text-align: center; padding: 3rem;">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
+        <h3 id="error-title">Something Went Wrong</h3>
+        <p style="color: #bbb; margin: 1.5rem 0;" id="error-message">Please try again or use the manual slider.</p>
+        <button class="mood-emoji-btn" onclick="retryDetection()" style="width: 100%; margin-bottom: 1rem; font-size: 1rem; padding: 1rem;">
+          🔄 Try Again
+        </button>
+        <button class="mood-emoji-btn" onclick="showSliderMode()" style="width: 100%; background: transparent; border: 1px solid #666; font-size: 1rem; padding: 1rem;">
+          Use Manual Slider Instead
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  // Import face detection modules
+  import { calculateMoodScore, getMoodCategory } from '{{ site.baseurl }}/assets/js/face-detection/expression-mapper.js';
+  import { FaceMoodDetector, ERROR_CODES } from '{{ site.baseurl }}/assets/js/face-detection/face-mood-detector.js';
+
+  // Make functions globally available
+  window.calculateMoodScore = calculateMoodScore;
+  window.getMoodCategoryFromMapper = getMoodCategory;
+  window.FaceMoodDetector = FaceMoodDetector;
+  window.ERROR_CODES = ERROR_CODES;
+
+  // Global variables for face detection - store on window to ensure persistence
+  window.faceDetectionState = {
+    faceDetector: null,
+    detectedMoodData: null,
+    capturedImageData: null,
+    detectionLoop: null,
+    failureCount: 0,
+    MAX_FAILURES: 3
+  };
+
+  // Start face detection flow
+  window.startFaceDetection = async function() {
+    // Check browser support
+    const browserSupport = FaceMoodDetector.checkBrowserSupport();
+    if (!browserSupport.supported) {
+      alert('⚠️ Camera access is not supported in your browser. Please use a modern browser like Chrome, Firefox, or Safari.');
+      return;
+    }
+
+    // Open modal and show loading step
+    document.getElementById('camera-modal').style.display = 'block';
+    showModalStep('loading');
+
+    // Initialize detector
+    const videoElement = document.getElementById('face-video');
+    const canvasElement = document.getElementById('face-canvas');
+    window.faceDetectionState.faceDetector = new FaceMoodDetector(videoElement, canvasElement);
+
+    // Load models with progress
+    const initResult = await window.faceDetectionState.faceDetector.initialize((message, progress) => {
+      document.getElementById('loading-message').textContent = message;
+      document.getElementById('loading-bar').style.width = progress + '%';
+    });
+
+    if (!initResult.success) {
+      showCameraError('Model Loading Failed', initResult.message);
+      return;
+    }
+
+    // Show permission step
+    setTimeout(() => showModalStep('permission'), 500);
+  };
+
+  // Request camera access
+  window.requestCameraAccess = async function() {
+    showModalStep('loading');
+    document.getElementById('loading-message').textContent = 'Starting camera...';
+    document.getElementById('loading-bar').style.width = '50%';
+
+    const cameraResult = await window.faceDetectionState.faceDetector.startCamera();
+
+    if (!cameraResult.success) {
+      if (cameraResult.error === ERROR_CODES.PERMISSION_DENIED) {
+        showCameraError(
+          'Camera Access Denied',
+          'To use AI mood detection, please enable camera access in your browser settings. Or use the manual slider below.'
+        );
+      } else {
+        showCameraError('Camera Error', cameraResult.message);
+      }
+      return;
+    }
+
+    // Show detection step and start continuous detection
+    showModalStep('detection');
+    startContinuousDetection();
+  };
+
+  // Start continuous detection loop
+  window.startContinuousDetection = function() {
+    let noFaceCount = 0;
+    const NO_FACE_THRESHOLD = 50; // ~10 seconds at 150ms intervals
+
+    window.faceDetectionState.detectionLoop = setInterval(async () => {
+      const result = await window.faceDetectionState.faceDetector.detectExpression();
+
+      if (result.success) {
+        noFaceCount = 0;
+        window.faceDetectionState.failureCount = 0;
+
+        // Update status
+        if (result.warning === ERROR_CODES.MULTIPLE_FACES) {
+          document.getElementById('detection-status').textContent = '⚠️ Multiple faces detected. Using the closest one.';
+          document.getElementById('detection-status').style.color = '#ff9800';
+        } else {
+          document.getElementById('detection-status').textContent = '✓ Face detected! Click capture when ready.';
+          document.getElementById('detection-status').style.color = '#4eff9e';
+        }
+
+        // Show capture button
+        document.getElementById('capture-btn').style.display = 'block';
+
+        // Store detection result
+        window.faceDetectionState.detectedMoodData = {
+          detection: result.detection,
+          expressions: result.expressions
+        };
+      } else {
+        // Handle detection failure
+        document.getElementById('capture-btn').style.display = 'none';
+
+        if (result.error === ERROR_CODES.NO_FACE_DETECTED) {
+          noFaceCount++;
+          document.getElementById('detection-status').textContent = 'Looking for your face...';
+          document.getElementById('detection-status').style.color = '#2196F3';
+
+          // Timeout after 10 seconds
+          if (noFaceCount >= NO_FACE_THRESHOLD) {
+            clearInterval(window.faceDetectionState.detectionLoop);
+            showCameraError(
+              'No Face Detected',
+              'Please ensure you\'re in a well-lit area facing the camera directly.'
+            );
+          }
+        } else if (result.error === ERROR_CODES.FACE_TOO_SMALL) {
+          document.getElementById('detection-status').textContent = '↔️ Move closer to the camera';
+          document.getElementById('detection-status').style.color = '#ff9800';
+        } else if (result.error === ERROR_CODES.POOR_LIGHTING) {
+          document.getElementById('detection-status').textContent = '💡 Try improving lighting';
+          document.getElementById('detection-status').style.color = '#ff9800';
+        } else {
+          window.faceDetectionState.failureCount++;
+          if (window.faceDetectionState.failureCount >= window.faceDetectionState.MAX_FAILURES) {
+            clearInterval(window.faceDetectionState.detectionLoop);
+            showCameraError(
+              'Detection Not Working',
+              'We\'re having trouble detecting your face. Would you like to use the manual slider instead?'
+            );
+          }
+        }
+      }
+    }, 150);
+  };
+
+  // Capture mood
+  window.captureMood = function() {
+    if (!window.faceDetectionState.detectedMoodData) {
+      alert('No face detected yet. Please wait...');
+      return;
+    }
+
+    // Stop detection loop
+    clearInterval(window.faceDetectionState.detectionLoop);
+
+    // Capture frame
+    window.faceDetectionState.capturedImageData = window.faceDetectionState.faceDetector.captureFrame();
+
+    // Stop camera
+    window.faceDetectionState.faceDetector.stopCamera();
+
+    // Calculate mood score from expressions
+    const moodResult = calculateMoodScore(window.faceDetectionState.detectedMoodData.expressions);
+
+    // Show review screen
+    document.getElementById('captured-preview').src = window.faceDetectionState.capturedImageData;
+    document.getElementById('review-score').textContent = moodResult.score;
+    document.getElementById('review-expression').textContent = moodResult.primaryExpression.charAt(0).toUpperCase() + moodResult.primaryExpression.slice(1);
+    document.getElementById('review-category').textContent = moodResult.category;
+    document.getElementById('review-confidence').textContent = Math.round(moodResult.confidence * 100) + '%';
+
+    // Display tags
+    const tagsHtml = moodResult.tags.map(tag =>
+      `<span style="padding: 0.25rem 0.75rem; background: rgba(74, 158, 255, 0.2); border-radius: 12px;">${tag}</span>`
+    ).join('');
+    document.getElementById('review-tags').innerHTML = tagsHtml;
+
+    // Store mood result
+    window.faceDetectionState.detectedMoodData.moodResult = moodResult;
+
+    showModalStep('review');
+  };
+
+  // Confirm detected mood
+  window.confirmDetectedMood = function() {
+    if (!window.faceDetectionState.detectedMoodData || !window.faceDetectionState.window.faceDetectionState.detectedMoodData.moodResult) {
+      alert('No mood data available');
+      return;
+    }
+
+    const moodResult = window.faceDetectionState.detectedMoodData.moodResult;
+
+    // Update mood slider
+    const moodSlider = document.getElementById('mood-slider');
+    const moodSliderValue = document.getElementById('mood-slider-value');
+    if (moodSlider && moodSliderValue) {
+      moodSlider.value = moodResult.score;
+      moodSliderValue.textContent = moodResult.score;
+    }
+
+    // Trigger change event to update the IIFE state
+    const event = new Event('input', { bubbles: true });
+    moodSlider.dispatchEvent(event);
+
+    // Update display summary
+    const displayMoodScore = document.getElementById('display-mood-score');
+    const displayMoodCategory = document.getElementById('display-mood-category');
+    const displayMoodTags = document.getElementById('display-mood-tags');
+
+    if (displayMoodScore) displayMoodScore.textContent = moodResult.score;
+    if (displayMoodCategory) displayMoodCategory.textContent = moodResult.category;
+    if (displayMoodTags) displayMoodTags.textContent = moodResult.tags.join(', ');
+
+    // Close modal and cleanup
+    closeCameraModal();
+
+    // Show success message
+    alert(`✓ Mood detected: ${moodResult.category} (${moodResult.score})`);
+
+    // Scroll to summary
+    const summary = document.getElementById('mood-summary');
+    if (summary) {
+      summary.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  };
+
+  // Retry detection
+  window.retryDetection = function() {
+    // Reset state
+    window.faceDetectionState.detectedMoodData = null;
+    window.faceDetectionState.capturedImageData = null;
+    window.faceDetectionState.failureCount = 0;
+
+    // Restart camera and detection
+    showModalStep('loading');
+    document.getElementById('loading-message').textContent = 'Restarting camera...';
+    document.getElementById('loading-bar').style.width = '50%';
+
+    setTimeout(async () => {
+      const cameraResult = await window.faceDetectionState.faceDetector.startCamera();
+      if (cameraResult.success) {
+        showModalStep('detection');
+        startContinuousDetection();
+      } else {
+        showCameraError('Camera Error', cameraResult.message);
+      }
+    }, 500);
+  };
+
+  // Show slider mode (fallback)
+  window.showSliderMode = function() {
+    closeCameraModal();
+
+    // Scroll to slider
+    document.getElementById('mood-slider').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    alert('Use the slider below to set your mood');
+  };
+
+  // Close camera modal
+  window.closeCameraModal = function() {
+    // Stop detection loop
+    if (window.faceDetectionState.detectionLoop) {
+      clearInterval(window.faceDetectionState.detectionLoop);
+      window.faceDetectionState.detectionLoop = null;
+    }
+
+    // Cleanup detector
+    if (window.faceDetectionState.faceDetector) {
+      window.faceDetectionState.faceDetector.cleanup();
+    }
+
+    // Hide modal
+    document.getElementById('camera-modal').style.display = 'none';
+
+    // Reset state
+    window.faceDetectionState.detectedMoodData = null;
+    window.faceDetectionState.capturedImageData = null;
+    window.faceDetectionState.failureCount = 0;
+  };
+
+  // Show modal step
+  function showModalStep(step) {
+    const steps = ['loading', 'permission', 'detection', 'review', 'error'];
+    steps.forEach(s => {
+      const element = document.getElementById('modal-step-' + s);
+      if (element) {
+        element.style.display = s === step ? 'block' : 'none';
+      }
+    });
+  }
+
+  // Show camera error
+  function showCameraError(title, message) {
+    // Stop detection loop
+    if (window.faceDetectionState.detectionLoop) {
+      clearInterval(window.faceDetectionState.detectionLoop);
+    }
+
+    // Stop camera
+    if (window.faceDetectionState.faceDetector) {
+      window.faceDetectionState.faceDetector.stopCamera();
+    }
+
+    // Show error step
+    document.getElementById('error-title').textContent = title;
+    document.getElementById('error-message').textContent = message;
+    showModalStep('error');
+  }
 </script>
 
 <style>
