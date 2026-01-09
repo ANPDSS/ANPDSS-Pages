@@ -465,7 +465,7 @@ tags: [outfit, weather, recommendations, daily-planning]
 
     const API_CONFIG = {
       baseURL: (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
-        ? 'http://localhost:8587'
+        ? 'http://localhost:8302'
         : 'https://flask.opencodingsociety.com'
     };
 
