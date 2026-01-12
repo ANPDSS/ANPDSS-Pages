@@ -6,6 +6,8 @@
   <div class="microblog-panel-header">
     <button id="microblog-close-btn" class="microblog-close-btn" aria-label="Close Microblog">&times;</button>
     <h2 class="microblog-panel-title">Microblog</h2>
+    <button id="microblog-friends-btn" class="microblog-action-btn">👥 Friends</button>
+    <button id="microblog-messages-btn" class="microblog-action-btn">✉️ Messages</button>
     <button id="guest-signup-toggle" class="guest-signup-toggle-btn">Guest Signup</button>
   </div>
 
@@ -32,6 +34,8 @@
       <em>Loading microblog posts...</em>
     </div>
   </div>
+  <!-- Resize bar (placed on left edge of panel) -->
+  <div id="microblog-resize-bar" aria-hidden="true" style="position:absolute;left:-8px;top:0;bottom:0;width:16px;cursor:ew-resize;z-index:1200;"></div>
 </aside>
 
 <script type="module">
@@ -146,6 +150,34 @@ window.handleGuestSignup = async function(event) {
     submitButton.textContent = 'Sign Up & Login';
   }
 };
+
+// Load a page into an isolated iframe inside the playground (keeps host page styles intact)
+async function loadPageInIframe(path) {
+  const container = document.getElementById('microblog-playground');
+  // Create header with back button
+  container.innerHTML = `<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><button id="microblog-back-btn" style="background:transparent;color:#2196F3;border:0;cursor:pointer;padding:6px 8px;border-radius:6px;">← Back</button><div style="flex:1;color:#ccc;">Loading ${path}…</div></div><div id="microblog-iframe-wrap" style="height:70vh;border-radius:8px;overflow:hidden;border:1px solid #222;background:#000;"></div>`;
+  const wrap = document.getElementById('microblog-iframe-wrap');
+  const iframe = document.createElement('iframe');
+  iframe.src = `{{ site.baseurl }}${path}`;
+  iframe.style.width = '100%';
+  iframe.style.height = '100%';
+  iframe.style.border = '0';
+  iframe.sandbox = 'allow-same-origin allow-scripts allow-forms allow-popups';
+  wrap.appendChild(iframe);
+
+  document.getElementById('microblog-back-btn').onclick = () => {
+    // Restore microblog table if available
+    if (window.renderMicroblogTable) return window.renderMicroblogTable();
+    // Fallback: re-render by calling function if in scope
+    try { renderMicroblogTable(); } catch (e) { console.warn('renderMicroblogTable not available'); }
+  };
+}
+
+// Bind header buttons
+const friendsBtn = document.getElementById('microblog-friends-btn');
+const messagesBtn = document.getElementById('microblog-messages-btn');
+if (friendsBtn) friendsBtn.onclick = () => { openMicroblogPanel(); loadPageInIframe('/friends'); };
+if (messagesBtn) messagesBtn.onclick = () => { openMicroblogPanel(); loadPageInIframe('/messages'); };
 </script>
 
 <!-- Create/Edit Modal Overlay using Tailwind -->
@@ -196,7 +228,7 @@ window.handleGuestSignup = async function(event) {
 <!--JavaScript Logic for MicroBlog -->
 <script type="module">
 // Imports for APIs used on this page
-import { fetchPosts, createPost, updatePost, createReply, fetchReplies } from '/assets/js/api/microblog.js';
+import { fetchPosts, createPost, updatePost, createReply, fetchReplies } from '{{ site.baseurl }}/assets/js/api/microblog.js';
 
 // Default Key for New MicroBlog Posts
 const pagePermalink = '{{page.permalink}}';
@@ -508,8 +540,76 @@ async function renderMicroblogTable() {
         }
         }, 0);
     } catch (error) {
-        container.innerHTML = `<div style="color:red;">Failed to load microblog posts: ${error.message}</div>`;
+      container.innerHTML = `<div style="color:red;">Failed to load microblog posts: ${error.message}</div>`;
     }
-}
-renderMicroblogTable();
+  }
+
+  // Expose render function so external header controls (Back button) can restore the microblog view
+  window.renderMicroblogTable = renderMicroblogTable;
+  renderMicroblogTable();
 </script>
+
+  <script>
+  // Resizing support for microblog panel
+  (function(){
+    const panel = document.getElementById('microblog-panel');
+    const bar = document.getElementById('microblog-resize-bar');
+    if (!panel || !bar) return;
+
+    const STORAGE_KEY = 'microblog:width';
+    const DEFAULT_WIDTH = 400;
+    const MIN_WIDTH = 260;
+
+    // Apply saved width
+    try {
+      const saved = parseInt(localStorage.getItem(STORAGE_KEY), 10);
+      if (!isNaN(saved) && saved > 0) panel.style.width = Math.min(window.innerWidth * 0.9, Math.max(MIN_WIDTH, saved)) + 'px';
+    } catch(e){}
+
+    let isResizing = false;
+    let startX = 0;
+    let startWidth = 0;
+
+    function pointerDown(e){
+      isResizing = true;
+      startX = e.clientX || (e.touches && e.touches[0] && e.touches[0].clientX) || 0;
+      startWidth = panel.getBoundingClientRect().width;
+      document.documentElement.style.cursor = 'ew-resize';
+      document.body.style.userSelect = 'none';
+      e.preventDefault();
+    }
+
+    function pointerMove(e){
+      if (!isResizing) return;
+      const clientX = e.clientX || (e.touches && e.touches[0] && e.touches[0].clientX) || 0;
+      const delta = startX - clientX; // dragging left -> positive
+      let newWidth = Math.round(startWidth + delta);
+      const maxWidth = Math.round(window.innerWidth * 0.9);
+      if (newWidth < MIN_WIDTH) newWidth = MIN_WIDTH;
+      if (newWidth > maxWidth) newWidth = maxWidth;
+      panel.style.width = newWidth + 'px';
+    }
+
+    function pointerUp(){
+      if (!isResizing) return;
+      isResizing = false;
+      document.documentElement.style.cursor = '';
+      document.body.style.userSelect = '';
+      try { localStorage.setItem(STORAGE_KEY, parseInt(panel.getBoundingClientRect().width,10)); } catch(e){}
+    }
+
+    bar.addEventListener('pointerdown', pointerDown, {passive:false});
+    window.addEventListener('pointermove', pointerMove, {passive:false});
+    window.addEventListener('pointerup', pointerUp);
+    // Touch fallback
+    bar.addEventListener('touchstart', pointerDown, {passive:false});
+    window.addEventListener('touchmove', pointerMove, {passive:false});
+    window.addEventListener('touchend', pointerUp);
+
+    // Double-click to reset
+    bar.addEventListener('dblclick', ()=>{
+      panel.style.width = DEFAULT_WIDTH + 'px';
+      try { localStorage.removeItem(STORAGE_KEY); } catch(e){}
+    });
+  })();
+  </script>
