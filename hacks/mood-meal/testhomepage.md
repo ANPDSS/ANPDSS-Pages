@@ -439,6 +439,15 @@ tags: [mood-tracking, meals, activities, music, wellness]
   <!-- Toast Notification -->
   <div class="toast" id="toast"></div>
 
+  <!-- Global Loader (shown while Gemini / plan is generating recommendations) -->
+  <div class="modal" id="global-loader" aria-hidden="true" style="z-index:4000;">
+    <div class="modal-content" style="max-width:420px; text-align:center;">
+      <div class="loading" style="width:36px; height:36px; border-width:4px; border-top-color: #4eff9e; margin: 0 auto;"></div>
+      <h3 id="global-loader-msg" style="color:#fff; margin-top:1rem;">Generating recommendations...</h3>
+      <p style="color:#bbb; margin-top:0.5rem; font-size:0.95rem;">This may take a few seconds while the AI responds.</p>
+    </div>
+  </div>
+
   <!-- Main Container -->
   <div class="container">
 
@@ -1094,6 +1103,9 @@ tags: [mood-tracking, meals, activities, music, wellness]
 
       // Render unified recommendations using Gemini plan endpoint (falls back to mock if needed)
       try {
+        // Show a global loading overlay while the Gemini/plan request completes
+        showGlobalLoader('Generating personalized recommendations...');
+
         const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
           ? 'http://localhost:8307'
           : 'https://flask.opencodingsociety.com';
@@ -1120,8 +1132,14 @@ tags: [mood-tracking, meals, activities, music, wellness]
         // Also generate outfit suggestions based on fetched weather
         try { generateOutfit(); } catch(e){ console.warn('generateOutfit failed', e); }
 
+        // Hide loader after successful render
+        hideGlobalLoader();
+
       } catch (e) {
         console.warn('Gemini plan failed, falling back to mock recommendations:', e);
+        // Ensure loader is hidden before fallback UI updates
+        hideGlobalLoader();
+
         // Create mock recommendations based on mood score
         const mockPlan = {
           meals: [
@@ -1141,6 +1159,8 @@ tags: [mood-tracking, meals, activities, music, wellness]
         try { generateOutfit(); } catch(e){ console.warn('generateOutfit failed', e); }
       }
 
+      // Ensure loader is hidden (safety) and show recommendations
+      hideGlobalLoader();
       showSection('recommendations');
       updateStats();
 
@@ -1560,6 +1580,21 @@ tags: [mood-tracking, meals, activities, music, wellness]
       setTimeout(() => {
         toast.classList.remove('show');
       }, 3000);
+    }
+
+    // Global loader for long-running AI requests
+    function showGlobalLoader(message) {
+      const el = document.getElementById('global-loader');
+      if (!el) return;
+      const msgEl = document.getElementById('global-loader-msg');
+      if (msgEl && message) msgEl.textContent = message;
+      el.classList.add('show');
+    }
+
+    function hideGlobalLoader() {
+      const el = document.getElementById('global-loader');
+      if (!el) return;
+      el.classList.remove('show');
     }
 
     // Update Stats
