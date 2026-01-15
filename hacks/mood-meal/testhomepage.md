@@ -1101,7 +1101,7 @@ tags: [mood-tracking, meals, activities, music, wellness]
         }
       })();
 
-      // Render unified recommendations using Gemini plan endpoint (falls back to mock if needed)
+      // Render unified recommendations using Gemini plan endpoint (falls back to mock if needed) .
       try {
         // Show a global loading overlay while the Gemini/plan request completes
         showGlobalLoader('Generating personalized recommendations...');
