@@ -432,6 +432,7 @@ tags: [mood-tracking, meals, activities, music, wellness]
     <div class="nav-links">
       <button class="nav-btn active" data-section="home">🏠 Home</button>
       <button class="nav-btn" data-section="history">📊 History</button>
+      <button class="nav-btn" id="friends-btn">👥 Friends</button>
       <button class="nav-btn" id="user-btn">👤 Guest Profile</button>
     </div>
   </nav>
@@ -874,6 +875,29 @@ tags: [mood-tracking, meals, activities, music, wellness]
   <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="closeModal('saved-modal')">Close</button>
     </div>
   </div>
+
+    <!-- Friends Modal (loads friends/messages in an iframe like microblog) -->
+    <div class="modal" id="friends-modal">
+      <div class="modal-content" style="max-width:900px; width:95%;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+          <h2>👥 Friends</h2>
+          <button id="friends-modal-close" onclick="closeFriendsModal()" style="background:none; border:none; color:#888; font-size:2rem; cursor:pointer;">&times;</button>
+        </div>
+
+        <div style="display:flex; gap:0.5rem; margin-bottom:1rem;">
+          <button class="btn btn-secondary" id="friends-tab-btn" onclick="loadFriendsTab()">Friends List</button>
+          <button class="btn btn-secondary" id="messages-tab-btn" onclick="loadMessagesTab()">Messages</button>
+        </div>
+
+        <div id="friends-iframe-wrap" style="height:60vh; border-radius:8px; overflow:hidden; border:1px solid #222; background:#000;">
+          <div style="color:#bbb; text-align:center; padding:2rem;">Click a tab to load content.</div>
+        </div>
+
+        <div style="margin-top:1rem; display:flex; gap:0.5rem;">
+          <button class="btn btn-primary" onclick="closeFriendsModal()" style="flex:1;">Close</button>
+        </div>
+      </div>
+    </div>
 
   <!-- Joke Modal for Low Mood (added) -->
   <div id="joke-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 1000; align-items: center; justify-content: center;">
@@ -1561,10 +1585,77 @@ tags: [mood-tracking, meals, activities, music, wellness]
       document.getElementById(modalId).classList.remove('show');
     }
 
+    // Friends modal controls (use iframe to load existing /friends and /messages pages)
+    function showFriendsModal() {
+      const el = document.getElementById('friends-modal');
+      if (!el) return;
+      el.classList.add('show');
+      // focus the close button for accessibility
+      document.getElementById('friends-modal-close')?.focus();
+      // default: load friends tab
+      loadFriendsTab();
+    }
+
+    function closeFriendsModal() {
+      const el = document.getElementById('friends-modal');
+      if (!el) return;
+      el.classList.remove('show');
+      // remove iframe to stop any running scripts
+      const wrap = document.getElementById('friends-iframe-wrap');
+      if (wrap) wrap.innerHTML = '<div style="color:#bbb; text-align:center; padding:2rem;">Click a tab to load content.</div>';
+    }
+
+    function makeIframeFor(path) {
+      const wrap = document.getElementById('friends-iframe-wrap');
+      if (!wrap) return;
+      wrap.innerHTML = '';
+      const iframe = document.createElement('iframe');
+      iframe.src = path;
+      iframe.style.width = '100%';
+      iframe.style.height = '100%';
+      iframe.style.border = '0';
+      // Keep scripts/forms/popups but avoid allow-same-origin unless you need cookies/access
+      iframe.sandbox = 'allow-scripts allow-forms allow-popups';
+      iframe.title = 'Friends panel';
+      // show a simple loading state while iframe loads
+      const loader = document.createElement('div');
+      loader.style.color = '#bbb';
+      loader.style.textAlign = 'center';
+      loader.style.padding = '2rem';
+      loader.textContent = 'Loading...';
+      wrap.appendChild(loader);
+      iframe.onload = () => { try { loader.remove(); } catch(e){} };
+      iframe.onerror = () => {
+        loader.textContent = 'Failed to load. Open in new tab.';
+      };
+      wrap.appendChild(iframe);
+    }
+
+    function loadFriendsTab() {
+      document.getElementById('friends-tab-btn')?.classList.add('active');
+      document.getElementById('messages-tab-btn')?.classList.remove('active');
+      // Build permalink using top-level site segment (e.g. /ANPDSS-Pages)
+      const siteBase = '/' + (location.pathname.split('/')[1] || '');
+      const url = `${location.origin}${siteBase}/friends`;
+      makeIframeFor(url);
+    }
+
+    function loadMessagesTab() {
+      document.getElementById('messages-tab-btn')?.classList.add('active');
+      document.getElementById('friends-tab-btn')?.classList.remove('active');
+      // Build permalink using top-level site segment (e.g. /ANPDSS-Pages)
+      const siteBase = '/' + (location.pathname.split('/')[1] || '');
+      const url = `${location.origin}${siteBase}/messages`;
+      makeIframeFor(url);
+    }
+
     document.getElementById('user-btn').addEventListener('click', () => {
       showModal('user-modal');
       updateProfile();
     });
+    // Friends button opens the friends modal
+    const friendsBtnEl = document.getElementById('friends-btn');
+    if (friendsBtnEl) friendsBtnEl.addEventListener('click', () => showFriendsModal());
 
     function updateProfile() {
       const totalSaved = state.savedMeals.length + state.savedActivities.length + state.savedMusic.length;
