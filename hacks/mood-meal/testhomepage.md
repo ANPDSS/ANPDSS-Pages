@@ -1614,8 +1614,10 @@ tags: [mood-tracking, meals, activities, music, wellness]
       iframe.style.width = '100%';
       iframe.style.height = '100%';
       iframe.style.border = '0';
-      // Keep scripts/forms/popups but avoid allow-same-origin unless you need cookies/access
-      iframe.sandbox = 'allow-scripts allow-forms allow-popups';
+      // Keep scripts/forms/popups and allow same-origin so iframe keeps its real origin
+      // (without allow-same-origin the iframe gets an opaque 'null' origin which can
+      // cause CORS failures when the framed page requests resources from the server)
+      iframe.sandbox = 'allow-scripts allow-forms allow-popups allow-same-origin';
       iframe.title = 'Friends panel';
       // show a simple loading state while iframe loads
       const loader = document.createElement('div');
