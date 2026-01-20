@@ -43,51 +43,44 @@ export function calculateMoodScore(expressions) {
     .map(([expression, confidence]) => ({ expression, confidence }))
     .sort((a, b) => b.confidence - a.confidence);
 
-  // Get primary expression (highest confidence)
   const primary = expressionArray[0];
 
-  // Check if there's a significant secondary expression (>25% confidence)
-  const secondary = expressionArray[1];
-  const hasSecondary = secondary && secondary.confidence > 0.25;
+  // Compute a continuous score using all expressions (confidence-weighted)
+  // For each expression, map confidence into the expression's min..max range,
+  // then compute a weighted average using the confidences.
+  let totalConf = 0;
+  let weightedSum = 0;
+  const tagScores = {};
 
-  let finalScore;
-  let combinedTags = [];
+  expressionArray.forEach(({ expression, confidence }) => {
+    const mapping = EXPRESSION_SCORE_MAP[expression];
+    const conf = Number(confidence) || 0;
+    totalConf += conf;
 
-  if (hasSecondary) {
-    // Weighted average between primary and secondary expressions
-    const primaryMapping = EXPRESSION_SCORE_MAP[primary.expression];
-    const secondaryMapping = EXPRESSION_SCORE_MAP[secondary.expression];
-
-    if (primaryMapping && secondaryMapping) {
-      // Calculate mid-point score for each expression
-      const primaryScore = (primaryMapping.min + primaryMapping.max) / 2;
-      const secondaryScore = (secondaryMapping.min + secondaryMapping.max) / 2;
-
-      // Weighted average
-      const weight = primary.confidence / (primary.confidence + secondary.confidence);
-      finalScore = Math.round(primaryScore * weight + secondaryScore * (1 - weight));
-
-      // Combine tags (avoid duplicates)
-      combinedTags = [...new Set([...primaryMapping.tags, ...secondaryMapping.tags])];
-    } else {
-      // Fallback to primary only
-      finalScore = calculateSingleScore(primary.expression);
-      combinedTags = EXPRESSION_SCORE_MAP[primary.expression]?.tags || ['neutral'];
+    let exprScore = 50; // default neutral
+    if (mapping) {
+      // Interpolate inside the mapping range based on confidence (0..1)
+      exprScore = mapping.min + (mapping.max - mapping.min) * conf;
+      // accumulate tag weights
+      (mapping.tags || []).forEach(tag => { tagScores[tag] = (tagScores[tag] || 0) + conf; });
     }
-  } else {
-    // Use primary expression only
-    finalScore = calculateSingleScore(primary.expression);
-    combinedTags = EXPRESSION_SCORE_MAP[primary.expression]?.tags || ['neutral'];
-  }
 
-  // Ensure score is within bounds
-  finalScore = Math.max(0, Math.min(100, finalScore));
+    weightedSum += exprScore * conf;
+  });
+
+  const finalScore = Math.round((totalConf > 0 ? weightedSum / totalConf : 50));
+
+  // Build tag list ordered by aggregated confidence weight
+  const tags = Object.entries(tagScores)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 4)
+    .map(([t]) => t);
 
   return {
-    score: finalScore,
+    score: Math.max(0, Math.min(100, finalScore)),
     primaryExpression: primary.expression,
     confidence: primary.confidence,
-    tags: combinedTags,
+    tags: tags.length ? tags : (EXPRESSION_SCORE_MAP[primary.expression]?.tags || ['neutral']),
     category: getMoodCategory(finalScore)
   };
 }
