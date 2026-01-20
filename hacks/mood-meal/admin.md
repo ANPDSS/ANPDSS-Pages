@@ -435,7 +435,7 @@ search_exclude: true
 <script type="module">
 // Determine API URL
 const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
-  ? 'http://localhost:8307'
+  ? 'http://localhost:8309'
   : 'https://moodlife.opencodingsociety.com';
 
 const fetchOptions = {
