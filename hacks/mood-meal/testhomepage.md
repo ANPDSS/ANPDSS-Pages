@@ -82,6 +82,16 @@ tags: [mood-tracking, meals, activities, music, wellness]
       color: white;
     }
 
+    .admin-nav-btn {
+      background: linear-gradient(135deg, #2196F3, #4eff9e) !important;
+      color: white !important;
+      border: none !important;
+    }
+
+    .admin-nav-btn:hover {
+      box-shadow: 0 0 15px rgba(33, 150, 243, 0.5), 0 0 20px rgba(78, 255, 158, 0.3);
+    }
+
     /* Main Container */
     .container {
       max-width: 1200px;
@@ -434,6 +444,7 @@ tags: [mood-tracking, meals, activities, music, wellness]
       <button class="nav-btn" data-section="history">📊 History</button>
       <button class="nav-btn" id="friends-btn">👥 Friends</button>
       <button class="nav-btn" id="user-btn">👤 Guest Profile</button>
+      <a href="{{ site.baseurl }}/mood-meal/admin/" class="nav-btn admin-nav-btn" id="admin-nav-btn" style="display: none; text-decoration: none;">⚙️ Admin</a>
     </div>
   </nav>
 
@@ -918,6 +929,33 @@ tags: [mood-tracking, meals, activities, music, wellness]
       savedActivities: [],
       savedMusic: []
     };
+
+    // Admin Check - Show admin button if user is admin
+    (async function checkAdminStatus() {
+      try {
+        const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+          ? 'http://localhost:8307'
+          : 'https://moodlife.opencodingsociety.com';
+
+        const response = await fetch(`${pythonURI}/api/admin/check`, {
+          method: 'GET',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.is_admin) {
+            const adminBtn = document.getElementById('admin-nav-btn');
+            if (adminBtn) {
+              adminBtn.style.display = 'inline-block';
+            }
+          }
+        }
+      } catch (error) {
+        // Silently fail - user just won't see admin button
+      }
+    })();
 
     // Mock Data
     const mockMeals = [
