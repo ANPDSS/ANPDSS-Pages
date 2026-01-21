@@ -466,7 +466,7 @@ tags: [outfit, weather, recommendations, daily-planning]
     const API_CONFIG = {
       baseURL: (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
         ? 'http://localhost:7'
-        : 'https://flask.opencodingsociety.com'
+        : 'https://moodlife.opencodingsociety.com'
     };
 
     function init() {

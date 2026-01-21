@@ -290,7 +290,7 @@ if (location.hostname === "localhost") {
 } else if (location.hostname === "127.0.0.1") {
         pythonURI = "http://127.0.0.1:8587";
 } else {
-        pythonURI =  "https://flask.opencodingsociety.com";
+        pythonURI =  "https://moodlife.opencodingsociety.com";
 }
 export var javaURI;
 if (location.hostname === "localhost") {

@@ -1051,7 +1051,7 @@ tags: [mood-tracking, meals, activities, music, wellness]
       // Determine pythonURI similar to the shared config
       const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
         ? 'http://localhost:7'
-        : 'https://flask.opencodingsociety.com';
+        : 'https://moodlife.opencodingsociety.com';
 
       const fetchOptions = {
         method: 'GET',
@@ -1127,7 +1127,7 @@ tags: [mood-tracking, meals, activities, music, wellness]
         try {
           const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
             ? 'http://localhost:8309'
-            : 'https://flask.opencodingsociety.com';
+            : 'https://moodlife.opencodingsociety.com';
 
           const allTags = state.currentMood.primaryTag
             ? [state.currentMood.primaryTag, ...state.currentMood.tags].filter((v, i, a) => a.indexOf(v) === i)
@@ -1170,7 +1170,7 @@ tags: [mood-tracking, meals, activities, music, wellness]
 
         const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
           ? 'http://localhost:8309'
-          : 'https://flask.opencodingsociety.com';
+          : 'https://moodlife.opencodingsociety.com';
 
         const planPayload = { mood_id: state.currentMood.id || null, weather: weatherState.raw || null };
         const planResp = await fetch(`${pythonURI}/api/moodmeal/plan`, {
@@ -1329,7 +1329,7 @@ tags: [mood-tracking, meals, activities, music, wellness]
 
       const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
         ? 'http://localhost:8309'
-        : 'https://flask.opencodingsociety.com';
+        : 'https://moodlife.opencodingsociety.com';
 
       const fetchOptions = {
         method: 'GET',
@@ -1824,7 +1824,7 @@ tags: [mood-tracking, meals, activities, music, wellness]
     async function getWeatherByZip(){
       const zip = (document.getElementById('zip-input')||{}).value || '';
       if (!/^\d{5}$/.test(zip)) { showToast('❌ Please enter a valid 5-digit ZIP code'); return; }
-      const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? 'http://localhost:8309' : 'https://flask.opencodingsociety.com';
+      const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? 'http://localhost:8309' : 'https://moodlife.opencodingsociety.com';
       try {
         const url = `${pythonURI}/api/outfit/weather/current?zip=${zip}`;
         console.log('[getWeatherByZip] zip=', zip, 'url=', url);
@@ -1842,7 +1842,7 @@ tags: [mood-tracking, meals, activities, music, wellness]
     }
 
     async function getWeatherByCoords(lat, lon){
-      const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? 'http://localhost:8309' : 'https://flask.opencodingsociety.com';
+      const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? 'http://localhost:8309' : 'https://moodlife.opencodingsociety.com';
       try {
         const url = `${pythonURI}/api/outfit/weather/current?lat=${lat}&lon=${lon}`;
         console.log('[getWeatherByCoords] url=', url);
@@ -1898,7 +1898,7 @@ tags: [mood-tracking, meals, activities, music, wellness]
     }
 
     async function getForecast(lat, lon){
-      const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? 'http://localhost:8309' : 'https://flask.opencodingsociety.com';
+      const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? 'http://localhost:8309' : 'https://moodlife.opencodingsociety.com';
       try {
         const url = `${pythonURI}/api/outfit/weather/forecast?lat=${lat}&lon=${lon}`;
         const resp = await fetch(url, { method: 'GET', credentials: 'include', headers: {'Content-Type':'application/json','X-Origin':'client'} });
