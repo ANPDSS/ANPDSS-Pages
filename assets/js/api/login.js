@@ -2,13 +2,73 @@ import { baseurl, pythonURI, fetchOptions } from './config.js';
 
 console.log("login.js loaded");
 
+// Helper: try to retrieve JWT from localStorage or (non-HttpOnly) cookies
+function getStoredToken() {
+    try {
+        const t = localStorage.getItem('jwt') || localStorage.getItem('token') || localStorage.getItem('access_token');
+        if (t) return t;
+    } catch (e) {
+        // ignore storage errors
+    }
+
+    // Fallback: parse cookies for common token names (only works if cookie is not HttpOnly)
+    const names = ['jwt', 'jwt_python_flask', 'token', 'access_token'];
+    if (document.cookie) {
+        const parts = document.cookie.split(';').map(s => s.trim());
+        for (const p of parts) {
+            const eq = p.indexOf('=');
+            if (eq > -1) {
+                const key = p.substring(0, eq);
+                const val = p.substring(eq + 1);
+                if (names.includes(key)) return decodeURIComponent(val);
+            }
+        }
+    }
+    return null;
+}
+
+// Function to fetch and display Python data (for production)
+function pythonDatabase() {
+    const URL = `${pythonURI}/api/id`;
+    const token = getStoredToken();
+
+    const requestOptions = {
+        ...fetchOptions,
+        headers: {
+            ...fetchOptions.headers,
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        }
+    };
+
+    fetch(URL, requestOptions)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Flask server response: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            window.location.href = '/ANPDSS-Pages/profile';
+        })
+        .catch(error => {
+            const el = document.getElementById("message");
+            if (el) el.textContent = `Error: ${error.message}`;
+        });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log("Base URL:", baseurl); // Debugging line
-    getCredentials(baseurl) // Call the function to get credentials
+    getCredentials() // Call the function to get credentials
         .then(data => {
             console.log("Credentials data:", data); // Debugging line
             window.user = data;
+
             const loginArea = document.getElementById('loginArea');
+            if (!loginArea) {
+                console.warn('loginArea element not found on this page; skipping login UI update');
+                return;
+            }
+
             if (data) { // Update the login area based on the data
                 loginArea.innerHTML = `
                     <div class="dropdown">
@@ -29,25 +89,27 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 `;
 
-                // Add click event listener for dropdown toggle
+                // Add click event listener for dropdown toggle (only if elements exist)
                 const dropdownButton = loginArea.querySelector('.dropbtn');
                 const dropdownContent = loginArea.querySelector('.dropdown-content');
 
-                dropdownButton.addEventListener('click', (event) => {
-                    event.preventDefault(); // Prevent redirection
-                    if (dropdownContent.classList.contains('hidden')) {
-                        dropdownContent.classList.remove('hidden');
-                    } else {
-                        dropdownContent.classList.add('hidden');
-                    }
-                });
+                if (dropdownButton && dropdownContent) {
+                    dropdownButton.addEventListener('click', (event) => {
+                        event.preventDefault(); // Prevent redirection
+                        if (dropdownContent.classList.contains('hidden')) {
+                            dropdownContent.classList.remove('hidden');
+                        } else {
+                            dropdownContent.classList.add('hidden');
+                        }
+                    });
 
-                // Add event listener to hide dropdown when clicking outside
-                document.addEventListener('click', (event) => {
-                    if (!dropdownButton.contains(event.target) && !dropdownContent.contains(event.target)) {
-                        dropdownContent.classList.add('hidden'); // Hide dropdown
-                    }
-                });
+                    // Add event listener to hide dropdown when clicking outside
+                    document.addEventListener('click', (event) => {
+                        if (!dropdownButton.contains(event.target) && !dropdownContent.contains(event.target)) {
+                            dropdownContent.classList.add('hidden'); // Hide dropdown
+                        }
+                    });
+                }
             } else {
                 // User is not authenticated, then "Login" link is shown
                 loginArea.innerHTML = `<a href="${baseurl}/login">Login</a>`;
@@ -61,15 +123,16 @@ document.addEventListener('DOMContentLoaded', function() {
             const loginArea = document.getElementById('loginArea');
             if (loginArea) {
                 loginArea.innerHTML = `<a href="${baseurl}/login">Login</a>`;
+                loginArea.style.opacity = "1";
             }
         });
 });
 
-function getCredentials(baseurl) {
+function getCredentials() {
     const URL = pythonURI + '/api/id';
     return fetch(URL, {
         ...fetchOptions,
-        credentials: 'include' // Add this to include cookies
+        credentials: 'include' // Include cookies
     })
     .then(response => {
         if (!response.ok) {
