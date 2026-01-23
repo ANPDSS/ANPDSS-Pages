@@ -53,7 +53,15 @@ export async function createPost(postData) {
     try {
         const response = await fetch(apiUrl, options);
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            let errMsg = `HTTP ${response.status}`;
+            try {
+                const errData = await response.json();
+                errMsg = errData.message || errMsg;
+            } catch (e) { /* ignore parse errors */ }
+            if (response.status === 401) {
+                errMsg = 'You must be logged in to post. Please log in first.';
+            }
+            throw new Error(errMsg);
         }
         return await response.json();
     } catch (error) {
@@ -77,7 +85,15 @@ export async function updatePost(postData) {
     try {
         const response = await fetch(apiUrl, options);
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            let errMsg = `HTTP ${response.status}`;
+            try {
+                const errData = await response.json();
+                errMsg = errData.message || errMsg;
+            } catch (e) { /* ignore parse errors */ }
+            if (response.status === 401) {
+                errMsg = 'You must be logged in to edit. Please log in first.';
+            }
+            throw new Error(errMsg);
         }
         return await response.json();
     } catch (error) {
@@ -100,7 +116,15 @@ export async function createReply(replyData) {
     try {
         const response = await fetch(apiUrl, options);
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            let errMsg = `HTTP ${response.status}`;
+            try {
+                const errData = await response.json();
+                errMsg = errData.message || errMsg;
+            } catch (e) { /* ignore parse errors */ }
+            if (response.status === 401) {
+                errMsg = 'You must be logged in to reply. Please log in first.';
+            }
+            throw new Error(errMsg);
         }
         return await response.json();
     } catch (error) {
