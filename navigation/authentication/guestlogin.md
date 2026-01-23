@@ -395,6 +395,7 @@ show_reading_time: false
         // Flask Backend Request - GUEST endpoint
         const flaskPromise = fetch(`${pythonURI}/api/user/guest`, {
             method: "POST",
+            credentials: 'include',
             headers: {
                 "Content-Type": "application/json"
             },

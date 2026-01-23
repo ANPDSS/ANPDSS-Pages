@@ -333,6 +333,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Call ML API for grade prediction
       const mlResponse = await fetch(`${pythonURI}/api/grade/predict`, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -429,10 +430,10 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         const response = await fetch(`${pythonURI}/api/user`, {
           method: 'PUT',
+          credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
           },
-          credentials: "include",
           body: JSON.stringify(updatedUser)
         });
         const result = await response.json();

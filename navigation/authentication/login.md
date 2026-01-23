@@ -312,6 +312,7 @@ show_reading_time: false
         // Flask Backend Request
         fetch(flaskEndpoint, {
             method: "POST",
+            credentials: 'include',
             headers: {
                 "Content-Type": "application/json"
             },

@@ -8,7 +8,8 @@ export async function handleLogout() {
     try {
         await fetch(pythonURI + '/api/authenticate', {
             ...fetchOptions,
-            method: 'DELETE'
+            method: 'DELETE',
+            credentials: 'include'
         });
     } catch (e) {
         // log error but continue
