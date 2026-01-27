@@ -842,6 +842,14 @@ tags: [mood-tracking, meals, activities, music, wellness]
           <div id="rec-clothing"></div>
         </div>
       </div>
+
+      <!-- Get New Recommendations Button -->
+      <div style="text-align: center; margin-top: 1.5rem;">
+        <button class="btn btn-secondary" onclick="getNewRecommendations()" style="padding: 0.75rem 2rem; font-size: 1rem;">
+          🔄 Get New Recommendations
+        </button>
+        <p style="color: #888; font-size: 0.85rem; margin-top: 0.5rem;">Not satisfied? Click to get different suggestions!</p>
+      </div>
     </section>
 
   </div>
@@ -1226,6 +1234,62 @@ tags: [mood-tracking, meals, activities, music, wellness]
       showSection('recommendations');
       updateStats();
 
+    }
+
+    // Get new/different recommendations if user doesn't like current ones
+    async function getNewRecommendations() {
+      try {
+        showGlobalLoader('Getting new recommendations...');
+
+        const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+          ? 'http://localhost:8309'
+          : 'https://moodlife.opencodingsociety.com';
+
+        // Pass refresh: true to get different recommendations
+        const planPayload = {
+          mood_id: state.currentMood.id || null,
+          weather: weatherState.raw || null,
+          refresh: true
+        };
+
+        console.log('[getNewRecommendations] Sending request with payload:', planPayload);
+
+        const planResp = await fetch(`${pythonURI}/api/moodmeal/plan`, {
+          method: 'POST',
+          mode: 'cors',
+          cache: 'no-store',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json', 'X-Origin': 'client' },
+          body: JSON.stringify(planPayload)
+        });
+
+        if (!planResp.ok) {
+          const txt = await planResp.text().catch(() => '');
+          console.error('[getNewRecommendations] Request failed:', planResp.status, txt);
+          throw new Error(`Plan failed (${planResp.status}): ${txt}`);
+        }
+
+        const planData = await planResp.json();
+        console.log('[getNewRecommendations] Received response:', planData);
+
+        // Check if we got valid generated data
+        if (!planData.generated) {
+          console.error('[getNewRecommendations] No generated data in response:', planData);
+          throw new Error(planData.message || 'No recommendations returned');
+        }
+
+        // Render the new recommendations
+        renderRecommendationsFromPlan(planData.generated);
+        try { generateOutfit(); } catch(e){ console.warn('generateOutfit failed', e); }
+
+        hideGlobalLoader();
+        showToast('New recommendations loaded!');
+
+      } catch (e) {
+        console.error('[getNewRecommendations] Error:', e);
+        hideGlobalLoader();
+        showToast('Failed to get new recommendations. Please try again.');
+      }
     }
 
     // Render recommendations from Gemini plan output (generated JSON)
