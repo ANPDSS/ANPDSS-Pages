@@ -843,12 +843,24 @@ tags: [mood-tracking, meals, activities, music, wellness]
         </div>
       </div>
 
-      <!-- Get New Recommendations Button -->
-      <div style="text-align: center; margin-top: 1.5rem;">
-        <button class="btn btn-secondary" onclick="getNewRecommendations()" style="padding: 0.75rem 2rem; font-size: 1rem;">
-          🔄 Get New Recommendations
-        </button>
-        <p style="color: #888; font-size: 0.85rem; margin-top: 0.5rem;">Not satisfied? Click to get different suggestions!</p>
+      <!-- Get New Recommendations Section -->
+      <div class="card" style="margin-top: 1.5rem; padding: 1.5rem;">
+        <h3 style="margin-top: 0; margin-bottom: 1rem; color: #2196F3;">🔄 Want Different Recommendations?</h3>
+        <p style="color: #bbb; margin-bottom: 1rem; font-size: 0.9rem;">Tell us what you'd like to change and we'll generate new suggestions tailored to your feedback.</p>
+        <div style="margin-bottom: 1rem;">
+          <label for="recommendation-feedback" style="display: block; color: #fff; margin-bottom: 0.5rem; font-weight: 500;">Your Feedback (optional):</label>
+          <textarea
+            id="recommendation-feedback"
+            rows="3"
+            placeholder="Examples: 'I want vegetarian meals only', 'Suggest more relaxing activities', 'I prefer upbeat pop music', 'Give me quick 10-minute recipes'"
+            style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 2px solid #444; background: rgba(0, 0, 0, 0.5); color: #fff; font-size: 1rem; resize: vertical; min-height: 80px; box-sizing: border-box;"
+          ></textarea>
+        </div>
+        <div style="text-align: center;">
+          <button class="btn btn-primary" onclick="getNewRecommendations()" style="padding: 0.75rem 2rem; font-size: 1rem;">
+            🔄 Get New Recommendations
+          </button>
+        </div>
       </div>
     </section>
 
@@ -1239,20 +1251,31 @@ tags: [mood-tracking, meals, activities, music, wellness]
     // Get new/different recommendations if user doesn't like current ones
     async function getNewRecommendations() {
       try {
-        showGlobalLoader('Getting new recommendations...');
-
         const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
           ? 'http://localhost:8309'
           : 'https://moodlife.opencodingsociety.com';
 
-        // Pass refresh: true to get different recommendations
+        // Get user feedback from the textarea
+        const feedbackInput = document.getElementById('recommendation-feedback');
+        const feedback = feedbackInput ? feedbackInput.value.trim() : '';
+
+        // Show appropriate loading message based on whether feedback was provided
+        if (feedback) {
+          showGlobalLoader('Generating recommendations based on your feedback...');
+        } else {
+          showGlobalLoader('Getting new recommendations...');
+        }
+
+        // Pass refresh: true to get different recommendations, plus user feedback
         const planPayload = {
           mood_id: state.currentMood.id || null,
           weather: weatherState.raw || null,
-          refresh: true
+          refresh: true,
+          feedback: feedback || null
         };
 
         console.log('[getNewRecommendations] Sending request with payload:', planPayload);
+        console.log('[getNewRecommendations] User feedback:', feedback || '(none provided)');
 
         const planResp = await fetch(`${pythonURI}/api/moodmeal/plan`, {
           method: 'POST',
@@ -1282,8 +1305,17 @@ tags: [mood-tracking, meals, activities, music, wellness]
         renderRecommendationsFromPlan(planData.generated);
         try { generateOutfit(); } catch(e){ console.warn('generateOutfit failed', e); }
 
+        // Clear the feedback input after successful refresh
+        if (feedbackInput) {
+          feedbackInput.value = '';
+        }
+
         hideGlobalLoader();
-        showToast('New recommendations loaded!');
+        if (feedback) {
+          showToast('Recommendations updated based on your feedback!');
+        } else {
+          showToast('New recommendations loaded!');
+        }
 
       } catch (e) {
         console.error('[getNewRecommendations] Error:', e);
