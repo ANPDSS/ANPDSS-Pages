@@ -1142,25 +1142,31 @@ tags: [mood-tracking, meals, activities, music, wellness]
       // Save locally immediately
       localStorage.setItem('moodlife_mood', JSON.stringify(state.currentMood));
 
-      // Fire-and-forget save to backend (best-effort)
-      (async () => {
+      const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+        ? 'http://localhost:8309'
+        : 'https://moodlife.opencodingsociety.com';
+
+      // Build mood data for backend
+      const allTags = state.currentMood.primaryTag
+        ? [state.currentMood.primaryTag, ...state.currentMood.tags].filter((v, i, a) => a.indexOf(v) === i)
+        : state.currentMood.tags;
+
+      const moodData = {
+        mood_score: state.currentMood.score,
+        mood_tags: allTags,
+        mood_category: getMoodCategory(state.currentMood.score),
+        timestamp: new Date().toISOString()
+      };
+
+      // Render unified recommendations using Gemini plan endpoint (falls back to mock if needed)
+      try {
+        // Show a global loading overlay while saving mood and getting recommendations
+        showGlobalLoader('Saving mood and generating personalized recommendations...');
+
+        // IMPORTANT: Save mood to backend FIRST and wait for response to get mood_id
+        let savedMoodId = null;
         try {
-          const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
-            ? 'http://localhost:8309'
-            : 'https://moodlife.opencodingsociety.com';
-
-          const allTags = state.currentMood.primaryTag
-            ? [state.currentMood.primaryTag, ...state.currentMood.tags].filter((v, i, a) => a.indexOf(v) === i)
-            : state.currentMood.tags;
-
-          const moodData = {
-            mood_score: state.currentMood.score,
-            mood_tags: allTags,
-            mood_category: getMoodCategory(state.currentMood.score),
-            timestamp: new Date().toISOString()
-          };
-
-          await fetch(`${pythonURI}/api/moodmeal/mood`, {
+          const moodResp = await fetch(`${pythonURI}/api/moodmeal/mood`, {
             method: 'POST',
             mode: 'cors',
             cache: 'default',
@@ -1168,31 +1174,19 @@ tags: [mood-tracking, meals, activities, music, wellness]
             headers: { 'Content-Type': 'application/json', 'X-Origin': 'client' },
             body: JSON.stringify(moodData)
           });
-          const planPayload = { mood_id: state.currentMood.id || null, weather: weatherState.raw || null };
-          const planResp = await fetch(`${pythonURI}/api/moodmeal/plan`, {
-            method: 'POST',
-            credentials: 'include',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(planPayload)
-          });
-
-          const planData = await planResp.json();
-
-        } catch (e) {
-          console.debug('Background mood save failed:', e);
+          if (moodResp.ok) {
+            const savedMood = await moodResp.json();
+            savedMoodId = savedMood.id || null;
+            console.log('[saveMood] Mood saved successfully with id:', savedMoodId);
+          } else {
+            console.warn('[saveMood] Mood save failed:', moodResp.status);
+          }
+        } catch (moodErr) {
+          console.warn('[saveMood] Mood save error:', moodErr);
         }
-      })();
 
-      // Render unified recommendations using Gemini plan endpoint (falls back to mock if needed) .
-      try {
-        // Show a global loading overlay while the Gemini/plan request completes
-        showGlobalLoader('Generating personalized recommendations...');
-
-        const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
-          ? 'http://localhost:8309'
-          : 'https://moodlife.opencodingsociety.com';
-
-        const planPayload = { mood_id: state.currentMood.id || null, weather: weatherState.raw || null };
+        // Now call plan endpoint with the actual mood_id from the saved mood
+        const planPayload = { mood_id: savedMoodId, weather: weatherState.raw || null };
         const planResp = await fetch(`${pythonURI}/api/moodmeal/plan`, {
           method: 'POST',
           mode: 'cors',
