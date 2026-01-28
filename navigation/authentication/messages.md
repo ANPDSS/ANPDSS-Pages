@@ -203,6 +203,38 @@ search_exclude: true
         .message-input::placeholder {
             color: #888;
         }
+
+        .message-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            max-width: 70%;
+        }
+
+        .message.received .message-wrapper {
+            align-items: flex-start;
+        }
+
+        .delete-button {
+            background: transparent;
+            color: #ff4444;
+            border: none;
+            font-size: 0.75em;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s;
+            padding: 4px 8px;
+            margin-top: 4px;
+        }
+
+        .message.sent:hover .delete-button {
+            opacity: 0.7;
+        }
+
+        .delete-button:hover {
+            opacity: 1 !important;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -233,7 +265,7 @@ search_exclude: true
     </div>
 
     <script type="module">
-        import { getConversation, sendMessage as sendMessageAPI } from '{{ site.baseurl }}/assets/js/api/friends.js';
+        import { getConversation, sendMessage as sendMessageAPI, deleteMessage as deleteMessageAPI } from '{{ site.baseurl }}/assets/js/api/friends.js';
         import { pythonURI } from '{{ site.baseurl }}/assets/js/api/config.js';
 
         let friendId = null;
@@ -285,11 +317,15 @@ search_exclude: true
                 } else {
                     container.innerHTML = data.messages.map(msg => {
                         const isSent = msg.sender_id === currentUserId;
+                        const deleteBtn = isSent ? `<button class="delete-button" onclick="deleteMessage(${msg.id})">Delete</button>` : '';
                         return `
                             <div class="message ${isSent ? 'sent' : 'received'}">
-                                <div class="message-bubble">
-                                    ${escapeHtml(msg.content)}
-                                    <div class="message-time">${msg.created_at}</div>
+                                <div class="message-wrapper">
+                                    <div class="message-bubble">
+                                        ${escapeHtml(msg.content)}
+                                        <div class="message-time">${msg.created_at}</div>
+                                    </div>
+                                    ${deleteBtn}
                                 </div>
                             </div>
                         `;
@@ -341,6 +377,20 @@ search_exclude: true
                 sendButton.disabled = false;
                 input.disabled = false;
                 input.focus();
+            }
+        };
+
+        // Delete message
+        window.deleteMessage = async function(messageId) {
+            if (!confirm('Delete this message?')) {
+                return;
+            }
+
+            try {
+                await deleteMessageAPI(messageId);
+                await loadConversation();
+            } catch (error) {
+                alert('Error deleting message: ' + error.message);
             }
         };
 
