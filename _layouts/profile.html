@@ -13,7 +13,7 @@ active_tab: profile
 <div id="change-pfp" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" style="visibility: hidden;">
     <div class="bg-neutral-800 rounded-lg p-6 w-96 border border-neutral-700">
         <h3 class="text-xl font-semibold mb-4">Change Profile Picture</h3>
-        <form id="pfpChangeForm" onsubmit="changeProfilePicture(event)">
+        <form id="pfpChangeForm">
             <div class="mb-4">
                 <label for="profilePictureInput" class="block text-sm font-medium text-gray-300 mb-2">
                     Select an image file
@@ -25,11 +25,11 @@ active_tab: profile
                 <!-- Preview will appear here -->
             </div>
             <div class="flex justify-end space-x-3">
-                <button type="button" onclick="document.getElementById('change-pfp').style.visibility='hidden'"
+                <button type="button" id="pfpCancelBtn"
                     class="px-4 py-2 bg-neutral-600 text-white rounded-lg hover:bg-neutral-500">
                     Cancel
                 </button>
-                <button type="submit"
+                <button type="submit" id="pfpUploadBtn"
                     class="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600">
                     Upload
                 </button>
@@ -298,33 +298,47 @@ active_tab: profile
 
     window.changeProfilePicture = async function (event) {
         event.preventDefault(); // Prevent the form from refreshing the page
+        console.log('changeProfilePicture called');
 
         // select the file
         const fileInput = document.getElementById('profilePictureInput');
         const file = fileInput.files[0];
 
-        // all this does is update the image in the sidebar (doesnt actually send img to backend)
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function () {
-                const profileImageBox = document.getElementById('headerPfp');
-                profileImageBox.innerHTML = `<img src="${reader.result}" alt="Profile Picture">`;
-            };
-            reader.readAsDataURL(file);
+        if (!file) {
+            console.log('No file selected');
+            alert('Please select an image file first');
+            return;
         }
-        if (!file) return;
+
+        console.log('File selected:', file.name, file.type, file.size);
 
         // this is the code that ACTUALLY sends the file to the backend
         try {
+            console.log('Converting to base64...');
             const base64String = await convertToBase64(file);
+            console.log('Base64 length:', base64String.length);
+
+            console.log('Sending to backend...');
             await sendProfilePicture(base64String);
             console.log('Profile picture uploaded successfully!');
-        } catch (error) {
-            console.error('Error uploading profile picture:', error.message);
-        }
 
-        await new Promise(resolve => setTimeout(resolve, 250));
-        window.location.reload();
+            // Update the current PFP display
+            const pfpImage = document.getElementById('currentPfpImage');
+            const pfpPlaceholder = document.getElementById('currentPfpPlaceholder');
+            if (pfpImage) {
+                pfpImage.src = 'data:image/png;base64,' + base64String;
+                pfpImage.style.display = 'block';
+                if (pfpPlaceholder) pfpPlaceholder.style.display = 'none';
+            }
+
+            // Close modal and reload after short delay
+            document.getElementById('change-pfp').style.visibility = 'hidden';
+            await new Promise(resolve => setTimeout(resolve, 500));
+            window.location.reload();
+        } catch (error) {
+            console.error('Error uploading profile picture:', error);
+            alert('Error uploading profile picture: ' + error.message);
+        }
     }
 
     // helper function to convert a file to base64 for payload
@@ -391,19 +405,51 @@ active_tab: profile
         }
     }
 
-    // Load PFP when page loads
-    document.addEventListener("DOMContentLoaded", loadCurrentPfp);
+    // Load PFP when page loads and set up all event handlers
+    document.addEventListener("DOMContentLoaded", function() {
+        console.log('DOM loaded, setting up PFP handlers');
 
-    // Preview selected image before upload
-    document.getElementById('profilePictureInput')?.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function() {
-                const preview = document.getElementById('pfpPreview');
-                preview.innerHTML = `<img src="${reader.result}" alt="Preview" class="w-24 h-24 rounded-full object-cover">`;
-            };
-            reader.readAsDataURL(file);
+        // Load current PFP
+        loadCurrentPfp();
+
+        // Set up file input preview
+        const fileInput = document.getElementById('profilePictureInput');
+        if (fileInput) {
+            console.log('File input found, attaching change listener');
+            fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                console.log('File selected for preview:', file?.name);
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function() {
+                        const preview = document.getElementById('pfpPreview');
+                        preview.innerHTML = `<img src="${reader.result}" alt="Preview" class="w-24 h-24 rounded-full object-cover">`;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        } else {
+            console.log('File input not found');
+        }
+
+        // Set up form submit handler
+        const pfpForm = document.getElementById('pfpChangeForm');
+        if (pfpForm) {
+            console.log('PFP form found, attaching submit listener');
+            pfpForm.addEventListener('submit', function(e) {
+                console.log('Form submit triggered');
+                window.changeProfilePicture(e);
+            });
+        } else {
+            console.log('PFP form not found');
+        }
+
+        // Set up cancel button
+        const cancelBtn = document.getElementById('pfpCancelBtn');
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', function() {
+                document.getElementById('change-pfp').style.visibility = 'hidden';
+            });
         }
     });
 </script>
