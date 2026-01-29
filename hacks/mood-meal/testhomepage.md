@@ -92,6 +92,24 @@ tags: [mood-tracking, meals, activities, music, wellness]
       box-shadow: 0 0 15px rgba(33, 150, 243, 0.5), 0 0 20px rgba(78, 255, 158, 0.3);
     }
 
+    .nav-btn-accent {
+      padding: 0.5rem 1rem;
+      background: linear-gradient(135deg, #2196F3, #1976D2);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .nav-btn-accent:hover {
+      background: linear-gradient(135deg, #1976D2, #1565C0);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
+    }
+
     /* Main Container */
     .container {
       max-width: 1200px;
@@ -406,6 +424,107 @@ tags: [mood-tracking, meals, activities, music, wellness]
       background: rgba(33, 150, 243, 0.1);
     }
 
+    /* Weather Display Styles */
+    .weather-display {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .weather-stat {
+      background: rgba(17, 17, 17, 0.9);
+      border: 1px solid #333;
+      padding: 1.25rem 1.5rem;
+      border-radius: 12px;
+      text-align: center;
+      min-width: 130px;
+      flex: 1;
+      max-width: 180px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .weather-stat:hover {
+      border-color: #2196F3;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(33, 150, 243, 0.2);
+    }
+
+    .weather-stat .icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .weather-stat .label {
+      color: #888;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.25rem;
+    }
+
+    .weather-stat .value {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #2196F3;
+    }
+
+    /* Forecast Grid Styles */
+    .forecast-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .forecast-card {
+      background: rgba(17, 17, 17, 0.9);
+      border: 1px solid #333;
+      border-radius: 12px;
+      padding: 1rem;
+      text-align: center;
+      transition: all 0.3s ease;
+      min-width: 110px;
+      flex: 1;
+      max-width: 140px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .forecast-card:hover {
+      border-color: #2196F3;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(33, 150, 243, 0.2);
+    }
+
+    .forecast-card .time {
+      color: #2196F3;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .forecast-card .icon {
+      font-size: 1.75rem;
+      margin: 0.4rem 0;
+    }
+
+    .forecast-card .temp {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .forecast-card .desc {
+      color: #888;
+      font-size: 0.75rem;
+      margin-top: 0.3rem;
+      text-transform: capitalize;
+    }
+
     @media (max-width: 768px) {
       .container {
         padding: 1rem;
@@ -420,8 +539,32 @@ tags: [mood-tracking, meals, activities, music, wellness]
         flex-wrap: wrap;
       }
 
+      .nav-btn-accent {
+        padding: 0.4rem 0.75rem;
+        font-size: 0.85rem;
+      }
+
       .results-grid {
         grid-template-columns: 1fr;
+      }
+
+      .weather-display {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+
+      .weather-stat {
+        min-width: calc(50% - 0.5rem);
+        max-width: calc(50% - 0.5rem);
+        padding: 1rem;
+      }
+
+      .weather-stat .icon {
+        font-size: 1.5rem;
+      }
+
+      .weather-stat .value {
+        font-size: 1.1rem;
       }
 
       table {
@@ -444,6 +587,7 @@ tags: [mood-tracking, meals, activities, music, wellness]
       <button class="nav-btn" data-section="history">📊 History</button>
       <button class="nav-btn" id="friends-btn">👥 Friends</button>
       <button class="nav-btn" id="user-btn">👤 Guest Profile</button>
+      <a href="#weather-section" class="nav-btn-accent" onclick="scrollToWeather(event)">Weather & Outfit Below</a>
       <a href="{{ site.baseurl }}/mood-meal/admin/" class="nav-btn admin-nav-btn" id="admin-nav-btn" style="display: none; text-decoration: none;">⚙️ Admin</a>
     </div>
   </nav>
@@ -584,7 +728,7 @@ tags: [mood-tracking, meals, activities, music, wellness]
       </div>
 
     <!-- Weather & Outfit (added) -->
-    <div class="card">
+    <div class="card" id="weather-section">
       <h2>📍 Weather & Outfit</h2>
       <p style="color: #bbb;">We’ll detect your location to get local weather and outfit suggestions.</p>
 
@@ -1791,6 +1935,15 @@ tags: [mood-tracking, meals, activities, music, wellness]
       const totalSaved = state.savedMeals.length + state.savedActivities.length + state.savedMusic.length;
       document.getElementById('profile-mood').textContent = state.currentMood.score + '/100';
       document.getElementById('profile-saved').textContent = totalSaved;
+    }
+
+    // Scroll to Weather Section
+    function scrollToWeather(event) {
+      event.preventDefault();
+      const weatherSection = document.getElementById('weather-section');
+      if (weatherSection) {
+        weatherSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     }
 
     // Toast Notifications
