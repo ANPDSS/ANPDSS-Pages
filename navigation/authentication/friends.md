@@ -164,6 +164,29 @@ search_exclude: true
             font-size: 1.5em;
             font-weight: bold;
             margin-right: 15px;
+            overflow: hidden;
+            object-fit: cover;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .user-avatar-initial {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2196F3, #4eff9e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-right: 15px;
         }
 
         .user-info h3 {
@@ -464,6 +487,14 @@ search_exclude: true
             getUnreadCount
         } from '{{ site.baseurl }}/assets/js/api/friends.js';
 
+        // Backend API URL for profile pictures
+        let pythonURI;
+        if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+            pythonURI = "http://localhost:8309";
+        } else {
+            pythonURI = "https://moodlife.opencodingsociety.com";
+        }
+
         // Global state
         window.currentTab = 'recommendations';
 
@@ -526,7 +557,11 @@ search_exclude: true
                     return `
                         <div class="user-card">
                             <div class="user-header">
-                                <div class="user-avatar">${initial}</div>
+                                <div class="user-avatar">
+                                    <img src="${pythonURI}/api/id/pfp/image/${user.uid}"
+                                         alt="${user.name}"
+                                         onerror="this.style.display='none'; this.parentElement.textContent='${initial}';">
+                                </div>
                                 <div class="user-info">
                                     <h3>${user.name}</h3>
                                     <p>@${user.uid}</p>
@@ -622,7 +657,11 @@ search_exclude: true
                         return `
                             <div class="user-card">
                                 <div class="user-header">
-                                    <div class="user-avatar">${initial}</div>
+                                    <div class="user-avatar">
+                                        <img src="${pythonURI}/api/id/pfp/image/${user.uid}"
+                                             alt="${user.name}"
+                                             onerror="this.style.display='none'; this.parentElement.textContent='${initial}';">
+                                    </div>
                                     <div class="user-info">
                                         <h3>${user.name}</h3>
                                         <p>@${user.uid}</p>
@@ -667,7 +706,11 @@ search_exclude: true
                     return `
                         <div class="user-card">
                             <div class="user-header">
-                                <div class="user-avatar">${initial}</div>
+                                <div class="user-avatar">
+                                    <img src="${pythonURI}/api/id/pfp/image/${friend.uid}"
+                                         alt="${friend.name}"
+                                         onerror="this.style.display='none'; this.parentElement.textContent='${initial}';">
+                                </div>
                                 <div class="user-info">
                                     <h3>${friend.name}</h3>
                                     <p>@${friend.uid}</p>
@@ -726,32 +769,53 @@ search_exclude: true
                 if (data.received.length === 0) {
                     receivedDiv.innerHTML = '<p style="color: #999;">No pending requests</p>';
                 } else {
-                    receivedDiv.innerHTML = data.received.map(req => `
-                        <div class="request-card">
-                            <strong>${req.sender_name}</strong> (@${req.sender_uid}) wants to be your friend
-                            <div class="request-actions">
-                                <button class="btn btn-success" onclick="acceptRequest(${req.id})">Accept</button>
-                                <button class="btn btn-danger" onclick="rejectRequest(${req.id})">Reject</button>
+                    receivedDiv.innerHTML = data.received.map(req => {
+                        const initial = req.sender_name ? req.sender_name.charAt(0).toUpperCase() : '?';
+                        return `
+                            <div class="request-card" style="display: flex; align-items: center; gap: 15px;">
+                                <div class="user-avatar" style="flex-shrink: 0;">
+                                    <img src="${pythonURI}/api/id/pfp/image/${req.sender_uid}"
+                                         alt="${req.sender_name}"
+                                         onerror="this.style.display='none'; this.parentElement.textContent='${initial}';">
+                                </div>
+                                <div style="flex: 1;">
+                                    <strong>${req.sender_name}</strong> (@${req.sender_uid}) wants to be your friend
+                                    <div class="request-actions">
+                                        <button class="btn btn-success" onclick="acceptRequest(${req.id})">Accept</button>
+                                        <button class="btn btn-danger" onclick="rejectRequest(${req.id})">Reject</button>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    `).join('');
+                        `;
+                    }).join('');
                 }
 
                 // Sent requests
                 if (data.sent.length === 0) {
                     sentDiv.innerHTML = '<p style="color: #999;">No sent requests</p>';
                 } else {
-                    sentDiv.innerHTML = data.sent.filter(req => req.status === 'pending').map(req => `
-                        <div class="request-card">
-                            Request sent to <strong>${req.receiver_name}</strong> (@${req.receiver_uid})
-                            <div class="request-actions">
-                                <button class="btn btn-secondary" onclick="cancelRequest(${req.id})">Cancel</button>
-                            </div>
-                        </div>
-                    `).join('');
-
-                    if (sentDiv.innerHTML === '') {
+                    const pendingRequests = data.sent.filter(req => req.status === 'pending');
+                    if (pendingRequests.length === 0) {
                         sentDiv.innerHTML = '<p style="color: #999;">No sent requests</p>';
+                    } else {
+                        sentDiv.innerHTML = pendingRequests.map(req => {
+                            const initial = req.receiver_name ? req.receiver_name.charAt(0).toUpperCase() : '?';
+                            return `
+                                <div class="request-card" style="display: flex; align-items: center; gap: 15px;">
+                                    <div class="user-avatar" style="flex-shrink: 0;">
+                                        <img src="${pythonURI}/api/id/pfp/image/${req.receiver_uid}"
+                                             alt="${req.receiver_name}"
+                                             onerror="this.style.display='none'; this.parentElement.textContent='${initial}';">
+                                    </div>
+                                    <div style="flex: 1;">
+                                        Request sent to <strong>${req.receiver_name}</strong> (@${req.receiver_uid})
+                                        <div class="request-actions">
+                                            <button class="btn btn-secondary" onclick="cancelRequest(${req.id})">Cancel</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('');
                     }
                 }
 
@@ -831,7 +895,11 @@ search_exclude: true
                     return `
                         <div class="user-card">
                             <div class="user-header">
-                                <div class="user-avatar">${initial}</div>
+                                <div class="user-avatar">
+                                    <img src="${pythonURI}/api/id/pfp/image/${conv.partner_uid}"
+                                         alt="${conv.partner_name}"
+                                         onerror="this.style.display='none'; this.parentElement.textContent='${initial}';">
+                                </div>
                                 <div class="user-info">
                                     <h3>${conv.partner_name}</h3>
                                     <p>@${conv.partner_uid}</p>
