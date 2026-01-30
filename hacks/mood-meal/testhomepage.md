@@ -424,6 +424,27 @@ tags: [mood-tracking, meals, activities, music, wellness]
       background: rgba(33, 150, 243, 0.1);
     }
 
+    /* Weather Animations */
+    @keyframes rain {
+      0% { background-position: 0 0; }
+      100% { background-position: 20px 20px; }
+    }
+
+    @keyframes snow {
+      0% { transform: translateY(-10px); }
+      100% { transform: translateY(10px); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.5; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.1); }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
     /* Weather Display Styles */
     .weather-display {
       display: flex;
@@ -434,7 +455,7 @@ tags: [mood-tracking, meals, activities, music, wellness]
     }
 
     .weather-stat {
-      background: rgba(17, 17, 17, 0.9);
+      background: #1e1e1e;
       border: 1px solid #333;
       padding: 1.25rem 1.5rem;
       border-radius: 12px;
@@ -443,13 +464,11 @@ tags: [mood-tracking, meals, activities, music, wellness]
       flex: 1;
       max-width: 180px;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     }
 
     .weather-stat:hover {
-      border-color: #2196F3;
+      border-color: #444;
       transform: translateY(-3px);
-      box-shadow: 0 6px 20px rgba(33, 150, 243, 0.2);
     }
 
     .weather-stat .icon {
@@ -459,7 +478,7 @@ tags: [mood-tracking, meals, activities, music, wellness]
     }
 
     .weather-stat .label {
-      color: #888;
+      color: #666;
       font-size: 0.75rem;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -469,7 +488,7 @@ tags: [mood-tracking, meals, activities, music, wellness]
     .weather-stat .value {
       font-size: 1.25rem;
       font-weight: 700;
-      color: #2196F3;
+      color: #e0e0e0;
     }
 
     /* Forecast Grid Styles */
@@ -482,7 +501,7 @@ tags: [mood-tracking, meals, activities, music, wellness]
     }
 
     .forecast-card {
-      background: rgba(17, 17, 17, 0.9);
+      background: #1e1e1e;
       border: 1px solid #333;
       border-radius: 12px;
       padding: 1rem;
@@ -491,17 +510,15 @@ tags: [mood-tracking, meals, activities, music, wellness]
       min-width: 110px;
       flex: 1;
       max-width: 140px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     }
 
     .forecast-card:hover {
-      border-color: #2196F3;
+      border-color: #444;
       transform: translateY(-3px);
-      box-shadow: 0 6px 20px rgba(33, 150, 243, 0.2);
     }
 
     .forecast-card .time {
-      color: #2196F3;
+      color: #aaa;
       font-weight: 600;
       font-size: 0.85rem;
       margin-bottom: 0.5rem;
@@ -515,11 +532,11 @@ tags: [mood-tracking, meals, activities, music, wellness]
     .forecast-card .temp {
       font-size: 1.1rem;
       font-weight: 700;
-      color: #fff;
+      color: #e0e0e0;
     }
 
     .forecast-card .desc {
-      color: #888;
+      color: #666;
       font-size: 0.75rem;
       margin-top: 0.3rem;
       text-transform: capitalize;
@@ -565,6 +582,22 @@ tags: [mood-tracking, meals, activities, music, wellness]
 
       .weather-stat .value {
         font-size: 1.1rem;
+      }
+
+      #weather-hero {
+        padding: 1.5rem !important;
+      }
+
+      #weather-hero > div > div:last-child {
+        text-align: center !important;
+      }
+
+      #temp-large {
+        font-size: 2.5rem !important;
+      }
+
+      #location-name-hero {
+        font-size: 1.4rem !important;
       }
 
       table {
@@ -729,14 +762,26 @@ tags: [mood-tracking, meals, activities, music, wellness]
 
     <!-- Weather & Outfit (added) -->
     <div class="card" id="weather-section">
-      <h2>📍 Weather & Outfit</h2>
-      <p style="color: #bbb;">We’ll detect your location to get local weather and outfit suggestions.</p>
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h2 style="margin: 0;">🌤️ Weather Dashboard</h2>
+          <p style="color: #bbb; margin: 0.5rem 0 0 0;">Real-time weather data with personalized insights</p>
+        </div>
+        <div id="weather-last-updated" style="display: none; color: #888; font-size: 0.85rem;">
+          <span id="last-update-time"></span>
+          <button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; margin-left: 0.5rem;" onclick="refreshWeather()">🔄 Refresh</button>
+        </div>
+      </div>
 
       <div id="location-status" style="margin: 1.5rem 0;">
-        <p style="color: #bbb; margin-bottom: 1rem;">Click the button below to detect your location and get weather data.</p>
-        <button class="btn btn-primary" style="width: 100%;" onclick="getLocation()">
-          📍 Get My Location & Weather
-        </button>
+        <div style="background: rgba(30, 30, 30, 0.9); border: 1px solid #333; border-radius: 12px; padding: 2rem; text-align: center;">
+          <div style="font-size: 3rem; margin-bottom: 1rem;">🌍</div>
+          <h3 style="margin: 0 0 0.5rem 0;">Detect Your Location</h3>
+          <p style="color: #888; margin-bottom: 1.5rem;">Get personalized weather data and outfit recommendations based on your current location</p>
+          <button class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.1rem; background: #2a2a2a; border: 1px solid #444;" onclick="getLocation()">
+            📍 Get My Location & Weather
+          </button>
+        </div>
       </div>
 
       <div id="manual-location" class="hidden">
@@ -749,21 +794,38 @@ tags: [mood-tracking, meals, activities, music, wellness]
       </div>
 
       <div id="weather-container" class="hidden">
-        <div class="success-message" id="location-found">
-          <strong>✓ Location Found:</strong> <span id="location-name"></span>
+        <!-- Location Header with animated background -->
+        <div id="weather-hero" style="background: #1a1a1a; border: 1px solid #333; border-radius: 16px; padding: 2rem; margin-bottom: 1.5rem; position: relative; overflow: hidden;">
+          <div id="weather-animation" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; opacity: 0.2;"></div>
+          <div style="position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div>
+              <div style="color: #666; font-size: 0.9rem; font-weight: 600; margin-bottom: 0.5rem;">📍 CURRENT LOCATION</div>
+              <h3 id="location-name-hero" style="font-size: 1.8rem; margin: 0; color: #e0e0e0;">--</h3>
+              <p style="color: #666; margin: 0.25rem 0 0 0;" id="weather-date">--</p>
+            </div>
+            <div style="text-align: center;">
+              <div id="weather-icon-large" style="font-size: 4rem; line-height: 1;">🌤️</div>
+              <div id="weather-condition-hero" style="color: #aaa; font-weight: 600; text-transform: capitalize;">--</div>
+            </div>
+            <div style="text-align: right;">
+              <div id="temp-large" style="font-size: 3.5rem; font-weight: 700; color: #e0e0e0;">--°</div>
+              <div style="color: #666;">Feels like <span id="feels-like-hero" style="color: #888;">--°</span></div>
+            </div>
+          </div>
         </div>
 
-        <h3 style="margin-top: 1.5rem;">Current Weather</h3>
+        <!-- Weather Stats Grid -->
+        <h3 style="margin-bottom: 1rem;">📊 Weather Details</h3>
         <div class="weather-display">
-          <div class="weather-stat">
-            <div class="icon" id="weather-icon">🌤️</div>
-            <div class="label">Condition</div>
-            <div class="value" id="weather-condition">Clear</div>
-          </div>
           <div class="weather-stat">
             <div class="icon">🌡️</div>
             <div class="label">Temperature</div>
             <div class="value" id="temperature">--°F</div>
+          </div>
+          <div class="weather-stat">
+            <div class="icon">🤒</div>
+            <div class="label">Feels Like</div>
+            <div class="value" id="feels-like">--°F</div>
           </div>
           <div class="weather-stat">
             <div class="icon">💧</div>
@@ -776,39 +838,135 @@ tags: [mood-tracking, meals, activities, music, wellness]
             <div class="value" id="wind-speed">-- mph</div>
           </div>
           <div class="weather-stat">
-            <div class="icon">🕐</div>
-            <div class="label">Time of Day</div>
-            <div class="value" id="time-of-day">--</div>
+            <div class="icon">👁️</div>
+            <div class="label">Visibility</div>
+            <div class="value" id="visibility">-- mi</div>
+          </div>
+          <div class="weather-stat">
+            <div class="icon">📊</div>
+            <div class="label">Pressure</div>
+            <div class="value" id="pressure">-- hPa</div>
           </div>
         </div>
 
-        <h3 style="margin-top: 1.5rem;">Today's Forecast</h3>
+        <!-- Comfort Index -->
+        <div style="background: #1e1e1e; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; border: 1px solid #333;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div>
+              <h4 style="margin: 0; color: #e0e0e0;">🎯 Comfort Index</h4>
+              <p style="color: #666; margin: 0.25rem 0 0 0; font-size: 0.9rem;">Based on temperature, humidity, and wind</p>
+            </div>
+            <div style="text-align: center;">
+              <div id="comfort-score" style="font-size: 2.5rem; font-weight: 700; color: #e0e0e0;">--</div>
+              <div id="comfort-label" style="color: #666; font-size: 0.85rem;">Calculating...</div>
+            </div>
+            <div id="comfort-bar" style="width: 100%; height: 8px; background: #333; border-radius: 4px; overflow: hidden; margin-top: 0.5rem;">
+              <div id="comfort-fill" style="height: 100%; width: 0%; background: #555; transition: width 0.5s ease; border-radius: 4px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Weather-Mood Impact -->
+        <div id="weather-mood-impact" style="background: #1e1e1e; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; border: 1px solid #333;">
+          <h4 style="margin: 0 0 1rem 0; color: #e0e0e0;">🧠 Weather & Mood Connection</h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+            <div style="background: #252525; padding: 1rem; border-radius: 8px; border: 1px solid #333;">
+              <div style="font-size: 1.5rem; margin-bottom: 0.5rem;" id="mood-impact-icon">😊</div>
+              <div style="color: #e0e0e0; font-weight: 600;" id="mood-impact-title">Positive Impact</div>
+              <p style="color: #888; font-size: 0.85rem; margin: 0.5rem 0 0 0;" id="mood-impact-desc">Loading...</p>
+            </div>
+            <div style="background: #252525; padding: 1rem; border-radius: 8px; border: 1px solid #333;">
+              <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">💡</div>
+              <div style="color: #e0e0e0; font-weight: 600;">Mood Tip</div>
+              <p style="color: #888; font-size: 0.85rem; margin: 0.5rem 0 0 0;" id="mood-tip">Loading...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Suggested Activities Based on Weather -->
+        <div style="background: #1e1e1e; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; border: 1px solid #333;">
+          <h4 style="margin: 0 0 1rem 0; color: #e0e0e0;">🎯 Weather-Based Activity Suggestions</h4>
+          <div id="weather-activities" style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
+            <!-- Activities will be populated here -->
+          </div>
+        </div>
+
+        <!-- Today's Hourly Forecast -->
+        <h3 style="margin-top: 1.5rem;">⏰ Hourly Forecast</h3>
         <div id="forecast-container" style="margin-top: 1rem;">
           <div class="loading"></div> Loading forecast...
         </div>
 
+        <!-- 5-Day Extended Forecast -->
+        <h3 style="margin-top: 2rem;">📅 5-Day Extended Forecast</h3>
+        <div id="extended-forecast" style="margin-top: 1rem;">
+          <div class="loading"></div> Loading extended forecast...
+        </div>
+
+        <!-- Weather Insights -->
+        <div style="background: #1e1e1e; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; border: 1px solid #333;">
+          <h4 style="margin: 0 0 1rem 0; color: #e0e0e0;">💡 Weather Insights</h4>
+          <div id="weather-insights" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+            <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
+              <span style="font-size: 1.5rem;">🌅</span>
+              <div>
+                <div style="color: #ccc; font-weight: 600;">Sunrise & Sunset</div>
+                <p style="color: #888; font-size: 0.85rem; margin: 0.25rem 0 0 0;"><span id="sunrise-time">--</span> / <span id="sunset-time">--</span></p>
+              </div>
+            </div>
+            <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
+              <span style="font-size: 1.5rem;">🕐</span>
+              <div>
+                <div style="color: #ccc; font-weight: 600;">Day Length</div>
+                <p style="color: #888; font-size: 0.85rem; margin: 0.25rem 0 0 0;" id="day-length">-- hours</p>
+              </div>
+            </div>
+            <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
+              <span style="font-size: 1.5rem;" id="uv-icon">☀️</span>
+              <div>
+                <div style="color: #ccc; font-weight: 600;">UV Index</div>
+                <p style="color: #888; font-size: 0.85rem; margin: 0.25rem 0 0 0;" id="uv-index">-- (Low)</p>
+              </div>
+            </div>
+            <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
+              <span style="font-size: 1.5rem;">🌙</span>
+              <div>
+                <div style="color: #ccc; font-weight: 600;">Moon Phase</div>
+                <p style="color: #888; font-size: 0.85rem; margin: 0.25rem 0 0 0;" id="moon-phase">--</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
 
+      <!-- Outfit Recommendations (Enhanced) -->
       <div id="outfit-recommendations" class="hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h3 style="margin: 0;">👔 Personalized Outfit Recommendations</h3>
+          <button class="btn btn-secondary" style="padding: 0.5rem 1rem; background: #2a2a2a; border: 1px solid #444;" onclick="generateOutfit()">🔄 New Suggestions</button>
+        </div>
         <div class="outfit-section">
-          <div class="outfit-category">
-            <h3>💡 General Advice</h3>
-            <p id="general-advice" style="color: #ddd; line-height: 1.6;"></p>
+          <div class="outfit-category" style="background: #1e1e1e; border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; border: 1px solid #333;">
+            <h4 style="margin: 0 0 0.75rem 0; color: #e0e0e0;">💡 General Advice</h4>
+            <p id="general-advice" style="color: #999; line-height: 1.6; margin: 0;"></p>
           </div>
 
-          <div class="outfit-category">
-            <h3>👕 Clothing</h3>
-            <div class="outfit-items" id="clothing-items"></div>
-          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+            <div class="outfit-category" style="background: #1e1e1e; border-radius: 12px; padding: 1.25rem; border: 1px solid #333;">
+              <h4 style="margin: 0 0 0.75rem 0; color: #ccc;">👕 Clothing</h4>
+              <div class="outfit-items" id="clothing-items"></div>
+            </div>
 
-          <div class="outfit-category">
-            <h3>🎒 Accessories</h3>
-            <div class="outfit-items" id="accessories-items"></div>
-          </div>
+            <div class="outfit-category" style="background: #1e1e1e; border-radius: 12px; padding: 1.25rem; border: 1px solid #333;">
+              <h4 style="margin: 0 0 0.75rem 0; color: #ccc;">🎒 Accessories</h4>
+              <div class="outfit-items" id="accessories-items"></div>
+            </div>
 
-          <div class="outfit-category">
-            <h3>👟 Footwear</h3>
-            <div class="outfit-items" id="footwear-items"></div>
+            <div class="outfit-category" style="background: #1e1e1e; border-radius: 12px; padding: 1.25rem; border: 1px solid #333;">
+              <h4 style="margin: 0 0 0.75rem 0; color: #ccc;">👟 Footwear</h4>
+              <div class="outfit-items" id="footwear-items"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -2113,31 +2271,267 @@ tags: [mood-tracking, meals, activities, music, wellness]
         description: data.weather[0].description,
         humidity: data.main.humidity,
         windSpeed: Math.round(data.wind.speed),
-        icon: data.weather[0].icon
+        icon: data.weather[0].icon,
+        visibility: data.visibility ? Math.round(data.visibility / 1609.34) : null, // meters to miles
+        pressure: data.main.pressure,
+        sunrise: data.sys?.sunrise,
+        sunset: data.sys?.sunset
       };
 
       document.getElementById('location-status').classList.add('hidden');
       document.getElementById('manual-location').classList.add('hidden');
       document.getElementById('weather-container').classList.remove('hidden');
-      document.getElementById('location-name').textContent = weatherState.location.name || 'Your Location';
-      document.getElementById('weather-condition').textContent = weatherState.weather.condition;
+
+      const locationName = weatherState.location.name || 'Your Location';
+
+      // Update hero section
+      document.getElementById('location-name-hero').textContent = locationName;
+      document.getElementById('weather-date').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      document.getElementById('weather-icon-large').textContent = getWeatherEmoji(weatherState.weather.condition.toLowerCase());
+      document.getElementById('weather-condition-hero').textContent = weatherState.weather.description;
+      document.getElementById('temp-large').textContent = `${weatherState.weather.temp}°`;
+      document.getElementById('feels-like-hero').textContent = `${weatherState.weather.feelsLike}°F`;
+
+      // Update stats grid
       document.getElementById('temperature').textContent = `${weatherState.weather.temp}°F`;
+      document.getElementById('feels-like').textContent = `${weatherState.weather.feelsLike}°F`;
       document.getElementById('humidity').textContent = `${weatherState.weather.humidity}%`;
       document.getElementById('wind-speed').textContent = `${weatherState.weather.windSpeed} mph`;
-      document.getElementById('weather-icon').textContent = getWeatherEmoji(weatherState.weather.condition.toLowerCase());
+      document.getElementById('visibility').textContent = weatherState.weather.visibility ? `${weatherState.weather.visibility} mi` : 'N/A';
+      document.getElementById('pressure').textContent = `${weatherState.weather.pressure} hPa`;
 
+      // Time of day
       const hour = new Date().getHours();
       let timeOfDay;
       if (hour >= 6 && hour < 12) timeOfDay = 'Morning';
       else if (hour >= 12 && hour < 17) timeOfDay = 'Afternoon';
       else if (hour >= 17 && hour < 21) timeOfDay = 'Evening';
       else timeOfDay = 'Night';
-
       weatherState.timeOfDay = timeOfDay;
-      document.getElementById('time-of-day').textContent = timeOfDay;
+
+      // Calculate and display comfort index
+      updateComfortIndex();
+
+      // Update weather-mood impact
+      updateWeatherMoodImpact();
+
+      // Update weather-based activities
+      updateWeatherActivities();
+
+      // Update weather insights (sunrise/sunset, UV, moon phase)
+      updateWeatherInsights(data);
+
+      // Update last updated time
+      document.getElementById('weather-last-updated').style.display = 'flex';
+      document.getElementById('last-update-time').textContent = `Updated: ${new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`;
+
+      // Add weather animation
+      updateWeatherAnimation();
 
       showToast('✅ Weather data loaded!');
       getForecast(weatherState.location.lat, weatherState.location.lon);
+    }
+
+    function refreshWeather() {
+      if (weatherState.location) {
+        showToast('🔄 Refreshing weather data...');
+        getWeatherByCoords(weatherState.location.lat, weatherState.location.lon);
+      }
+    }
+
+    function updateComfortIndex() {
+      const temp = weatherState.weather.temp;
+      const humidity = weatherState.weather.humidity;
+      const wind = weatherState.weather.windSpeed;
+
+      // Calculate comfort score (0-100)
+      let score = 100;
+
+      // Temperature factor (ideal: 65-75°F)
+      if (temp < 50) score -= (50 - temp) * 1.5;
+      else if (temp > 85) score -= (temp - 85) * 2;
+      else if (temp < 65) score -= (65 - temp) * 0.5;
+      else if (temp > 75) score -= (temp - 75) * 0.5;
+
+      // Humidity factor (ideal: 30-60%)
+      if (humidity > 70) score -= (humidity - 70) * 0.5;
+      else if (humidity < 30) score -= (30 - humidity) * 0.3;
+
+      // Wind factor (high wind reduces comfort)
+      if (wind > 20) score -= (wind - 20) * 1;
+      else if (wind > 10) score -= (wind - 10) * 0.3;
+
+      score = Math.max(0, Math.min(100, Math.round(score)));
+
+      let label, color;
+      if (score >= 80) { label = 'Excellent'; color = '#a0a0a0'; }
+      else if (score >= 60) { label = 'Good'; color = '#888888'; }
+      else if (score >= 40) { label = 'Moderate'; color = '#707070'; }
+      else { label = 'Poor'; color = '#606060'; }
+
+      document.getElementById('comfort-score').textContent = score;
+      document.getElementById('comfort-score').style.color = '#e0e0e0';
+      document.getElementById('comfort-label').textContent = label;
+      document.getElementById('comfort-fill').style.width = `${score}%`;
+      document.getElementById('comfort-fill').style.background = '#666';
+    }
+
+    function updateWeatherMoodImpact() {
+      const condition = weatherState.weather.condition.toLowerCase();
+      const temp = weatherState.weather.temp;
+
+      let icon, title, desc, tip;
+
+      if (condition.includes('clear') || condition.includes('sun')) {
+        icon = '😊'; title = 'Mood Booster';
+        desc = 'Sunny weather increases serotonin production, naturally boosting your mood and energy levels.';
+        tip = 'Take advantage of the sunshine! Even 15 minutes outdoors can improve your mood significantly.';
+      } else if (condition.includes('cloud')) {
+        icon = '😌'; title = 'Calm & Reflective';
+        desc = 'Overcast skies can promote introspection and creativity. Great for focused work.';
+        tip = 'Perfect weather for indoor creative activities or catching up on reading.';
+      } else if (condition.includes('rain') || condition.includes('drizzle')) {
+        icon = '🧘'; title = 'Cozy & Relaxing';
+        desc = 'Rain sounds are naturally calming and can reduce stress. Embrace the cozy vibes!';
+        tip = 'Listen to the rain while enjoying a warm drink. It\'s nature\'s white noise machine.';
+      } else if (condition.includes('snow')) {
+        icon = '❄️'; title = 'Magical & Peaceful';
+        desc = 'Snow creates a quiet, peaceful atmosphere that can feel magical and calming.';
+        tip = 'Bundle up and take a short walk in the snow—it\'s great for mindfulness.';
+      } else if (condition.includes('thunder') || condition.includes('storm')) {
+        icon = '⚡'; title = 'Energizing';
+        desc = 'Storms can be exciting! The change in air pressure can make some people feel energized.';
+        tip = 'Stay safe indoors and use this time for high-energy indoor activities.';
+      } else {
+        icon = '🌤️'; title = 'Balanced';
+        desc = 'Current weather conditions are neutral for mood—make of the day what you will!';
+        tip = 'A great day to tackle whatever\'s on your to-do list.';
+      }
+
+      // Temperature impact
+      if (temp < 40) {
+        tip += ' Bundle up warmly—cold can affect energy levels.';
+      } else if (temp > 85) {
+        tip += ' Stay hydrated and cool—heat can cause fatigue.';
+      }
+
+      document.getElementById('mood-impact-icon').textContent = icon;
+      document.getElementById('mood-impact-title').textContent = title;
+      document.getElementById('mood-impact-desc').textContent = desc;
+      document.getElementById('mood-tip').textContent = tip;
+    }
+
+    function updateWeatherActivities() {
+      const condition = weatherState.weather.condition.toLowerCase();
+      const temp = weatherState.weather.temp;
+      const activities = [];
+
+      // Outdoor activities for good weather
+      if ((condition.includes('clear') || condition.includes('cloud')) && temp >= 50 && temp <= 85) {
+        activities.push({ icon: '🚶', name: 'Go for a walk', type: 'outdoor' });
+        activities.push({ icon: '🚴', name: 'Bike ride', type: 'outdoor' });
+        activities.push({ icon: '📸', name: 'Photography', type: 'outdoor' });
+        if (temp >= 65) {
+          activities.push({ icon: '🧺', name: 'Picnic', type: 'outdoor' });
+        }
+      }
+
+      // Indoor activities
+      if (condition.includes('rain') || condition.includes('storm') || temp < 40 || temp > 90) {
+        activities.push({ icon: '📚', name: 'Read a book', type: 'indoor' });
+        activities.push({ icon: '🎮', name: 'Video games', type: 'indoor' });
+        activities.push({ icon: '🎬', name: 'Movie marathon', type: 'indoor' });
+        activities.push({ icon: '🧘', name: 'Indoor yoga', type: 'indoor' });
+      }
+
+      // Cozy activities for cold/rainy
+      if (condition.includes('rain') || temp < 50) {
+        activities.push({ icon: '☕', name: 'Coffee/tea time', type: 'cozy' });
+        activities.push({ icon: '🍳', name: 'Cook comfort food', type: 'cozy' });
+      }
+
+      // Hot weather activities
+      if (temp > 80 && condition.includes('clear')) {
+        activities.push({ icon: '🏊', name: 'Swimming', type: 'outdoor' });
+        activities.push({ icon: '🍦', name: 'Get ice cream', type: 'treat' });
+      }
+
+      // Snow activities
+      if (condition.includes('snow')) {
+        activities.push({ icon: '⛷️', name: 'Skiing/Sledding', type: 'outdoor' });
+        activities.push({ icon: '☃️', name: 'Build a snowman', type: 'outdoor' });
+        activities.push({ icon: '🍫', name: 'Hot chocolate', type: 'cozy' });
+      }
+
+      // Default activities
+      if (activities.length < 4) {
+        activities.push({ icon: '🎧', name: 'Listen to music', type: 'any' });
+        activities.push({ icon: '✍️', name: 'Journaling', type: 'any' });
+      }
+
+      const container = document.getElementById('weather-activities');
+      container.innerHTML = activities.slice(0, 6).map(a => `
+        <div style="background: #252525; padding: 0.75rem 1rem; border-radius: 8px; display: flex; align-items: center; gap: 0.5rem; border: 1px solid #333;">
+          <span style="font-size: 1.25rem;">${a.icon}</span>
+          <span style="color: #ccc;">${a.name}</span>
+          <span style="font-size: 0.7rem; color: #666; text-transform: uppercase; margin-left: auto;">${a.type}</span>
+        </div>
+      `).join('');
+    }
+
+    function updateWeatherInsights(data) {
+      // Sunrise/Sunset
+      if (data.sys?.sunrise && data.sys?.sunset) {
+        const sunrise = new Date(data.sys.sunrise * 1000);
+        const sunset = new Date(data.sys.sunset * 1000);
+        document.getElementById('sunrise-time').textContent = sunrise.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+        document.getElementById('sunset-time').textContent = sunset.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+
+        // Day length
+        const dayLengthMs = (data.sys.sunset - data.sys.sunrise) * 1000;
+        const hours = Math.floor(dayLengthMs / 3600000);
+        const minutes = Math.floor((dayLengthMs % 3600000) / 60000);
+        document.getElementById('day-length').textContent = `${hours}h ${minutes}m`;
+      }
+
+      // UV Index (estimate based on conditions and time)
+      const hour = new Date().getHours();
+      const condition = weatherState.weather.condition.toLowerCase();
+      let uvIndex = 0;
+      if (hour >= 10 && hour <= 16) {
+        if (condition.includes('clear')) uvIndex = hour >= 11 && hour <= 14 ? 8 : 5;
+        else if (condition.includes('cloud')) uvIndex = 3;
+        else uvIndex = 1;
+      }
+      let uvLabel, uvIcon;
+      if (uvIndex <= 2) { uvLabel = 'Low'; uvIcon = '🟢'; }
+      else if (uvIndex <= 5) { uvLabel = 'Moderate'; uvIcon = '🟡'; }
+      else if (uvIndex <= 7) { uvLabel = 'High'; uvIcon = '🟠'; }
+      else { uvLabel = 'Very High'; uvIcon = '🔴'; }
+      document.getElementById('uv-index').textContent = `${uvIndex} (${uvLabel})`;
+      document.getElementById('uv-icon').textContent = uvIcon;
+
+      // Moon phase (simplified calculation)
+      const moonPhases = ['🌑 New Moon', '🌒 Waxing Crescent', '🌓 First Quarter', '🌔 Waxing Gibbous', '🌕 Full Moon', '🌖 Waning Gibbous', '🌗 Last Quarter', '🌘 Waning Crescent'];
+      const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+      const moonIndex = Math.floor(((dayOfYear % 29.5) / 29.5) * 8) % 8;
+      document.getElementById('moon-phase').textContent = moonPhases[moonIndex];
+    }
+
+    function updateWeatherAnimation() {
+      const condition = weatherState.weather.condition.toLowerCase();
+      const container = document.getElementById('weather-animation');
+      let animation = '';
+
+      if (condition.includes('rain') || condition.includes('drizzle')) {
+        animation = '<div style="position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(transparent, rgba(100,149,237,0.1));animation:rain 1s linear infinite;"></div>';
+      } else if (condition.includes('snow')) {
+        animation = '<div style="position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(white 1px, transparent 1px);background-size:20px 20px;animation:snow 3s linear infinite;"></div>';
+      } else if (condition.includes('clear')) {
+        animation = '<div style="position:absolute;top:10px;right:20px;width:60px;height:60px;background:radial-gradient(circle,rgba(255,200,50,0.3),transparent);border-radius:50%;animation:pulse 2s ease-in-out infinite;"></div>';
+      }
+
+      container.innerHTML = animation;
     }
 
     async function getForecast(lat, lon){
@@ -2147,18 +2541,48 @@ tags: [mood-tracking, meals, activities, music, wellness]
         const resp = await fetch(url, { method: 'GET', credentials: 'include', headers: {'Content-Type':'application/json','X-Origin':'client'} });
         if (!resp.ok) throw new Error(`Forecast API ${resp.status}`);
         const data = await resp.json();
+
+        // Hourly forecast (next 8 entries = 24 hours)
         const todayForecasts = data.list.slice(0,8);
         weatherState.forecast = todayForecasts.map(item => ({ time: new Date(item.dt*1000), temp: Math.round(item.main.temp), condition: item.weather[0].main, description: item.weather[0].description, pop: Math.round(item.pop*100) }));
+
+        // 5-day forecast (get one entry per day at noon)
+        const dailyForecasts = [];
+        const seenDates = new Set();
+        for (const item of data.list) {
+          const date = new Date(item.dt * 1000);
+          const dateStr = date.toDateString();
+          const hour = date.getHours();
+          // Get midday forecast for each day
+          if (!seenDates.has(dateStr) && hour >= 11 && hour <= 14) {
+            seenDates.add(dateStr);
+            dailyForecasts.push({
+              date: date,
+              temp: Math.round(item.main.temp),
+              tempMin: Math.round(item.main.temp_min),
+              tempMax: Math.round(item.main.temp_max),
+              condition: item.weather[0].main,
+              description: item.weather[0].description,
+              pop: Math.round(item.pop * 100),
+              humidity: item.main.humidity,
+              wind: Math.round(item.wind.speed)
+            });
+          }
+        }
+        weatherState.extendedForecast = dailyForecasts.slice(0, 5);
+
         displayForecast();
+        displayExtendedForecast();
       } catch (e) {
         console.error('Error fetching forecast', e);
         document.getElementById('forecast-container').innerHTML = '<div style="color: #ff4a4a;">Could not load forecast data</div>';
+        document.getElementById('extended-forecast').innerHTML = '<div style="color: #ff4a4a;">Could not load extended forecast</div>';
       }
     }
 
     function displayForecast(){
       const container = document.getElementById('forecast-container');
-      if (!weatherState.forecast || !weatherState.forecast.length) { container.innerHTML = '<div style="color: #bbb;">No forecast data available</div>'; return; }
+      if (!weatherState.forecast || !weatherState.forecast.length) { container.innerHTML = '<div style="color: #666;">No forecast data available</div>'; return; }
       const html = weatherState.forecast.map(f => {
         const timeStr = f.time.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true});
         const icon = getWeatherEmoji(f.condition.toLowerCase());
@@ -2168,11 +2592,47 @@ tags: [mood-tracking, meals, activities, music, wellness]
             <div class="icon">${icon}</div>
             <div class="temp">${f.temp}°F</div>
             <div class="desc">${f.description}</div>
-            ${f.pop>20?`<div style="color:#4a9eff;font-size:0.8rem;margin-top:0.3rem;">💧 ${f.pop}%</div>`:''}
+            ${f.pop>20?`<div style="color:#888;font-size:0.8rem;margin-top:0.3rem;">💧 ${f.pop}%</div>`:''}
           </div>
         `;
       }).join('');
       container.innerHTML = `<div class="forecast-grid">${html}</div>`;
+    }
+
+    function displayExtendedForecast() {
+      const container = document.getElementById('extended-forecast');
+      if (!weatherState.extendedForecast || !weatherState.extendedForecast.length) {
+        container.innerHTML = '<div style="color: #bbb;">No extended forecast data available</div>';
+        return;
+      }
+
+      const html = weatherState.extendedForecast.map((f, idx) => {
+        const dayName = idx === 0 ? 'Today' : f.date.toLocaleDateString('en-US', { weekday: 'short' });
+        const dateStr = f.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        const icon = getWeatherEmoji(f.condition.toLowerCase());
+
+        return `
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 1rem; background: #1e1e1e; border-radius: 12px; border: 1px solid #333; margin-bottom: 0.5rem; transition: all 0.3s ease;" onmouseover="this.style.borderColor='#444'" onmouseout="this.style.borderColor='#333'">
+            <div style="min-width: 80px;">
+              <div style="font-weight: 600; color: #ccc;">${dayName}</div>
+              <div style="font-size: 0.8rem; color: #666;">${dateStr}</div>
+            </div>
+            <div style="font-size: 2rem;">${icon}</div>
+            <div style="text-align: center; flex: 1; max-width: 150px;">
+              <div style="font-size: 0.85rem; color: #888; text-transform: capitalize;">${f.description}</div>
+            </div>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+              ${f.pop > 20 ? `<div style="color: #888; font-size: 0.85rem;">💧 ${f.pop}%</div>` : ''}
+              <div style="color: #666; font-size: 0.85rem;">💨 ${f.wind} mph</div>
+            </div>
+            <div style="text-align: right; min-width: 80px;">
+              <span style="font-size: 1.25rem; font-weight: 700; color: #e0e0e0;">${f.temp}°</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      container.innerHTML = html;
     }
 
     function getWeatherEmoji(condition){
