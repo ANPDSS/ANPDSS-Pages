@@ -1,291 +1,332 @@
 ---
-layout: post
-title: Mood Meal Quest
-description: >
+# Jekyll front matter: Configuration metadata for the Jekyll static site generator.
+# This section defines how the page is rendered and what data is available in templates.
+
+layout: post # Specifies the layout template ('post') to use for rendering this page.
+
+title: Mood Meal Quest # The title of the page, displayed in the browser tab and page header.
+
+description: > # A multi-line description of the page content, used for SEO and summaries.
   Learn to prompt AI to create your itinerary, data visualization, and learn about the core concepts and limitations of AI!
-author: CSP 2025-26
-permalink: /mood-meal/
-lxdData:
-  Title: "Mood Meal Modules"
-  Description: "Discover personalized meal recommendations based on your mood and preferences!"
-  Topics:
-    - Title: "Module 1"
-      Genre: "Introduction"
-      Level: 1
-      Description: "Profile Builder (Allergens, Hobbies, Artists)"
-      Categories: ["Getting Started", "Introduction"]
-      Lessons: "/mood-meal/submodule_1/"
-      Image: "/images/mood-meal-module1.png"
-      Alt: "Mood Meal Module 1"
-    - Title: "Module 2"
-      Genre: "Analysis"
-      Level: 2
-      Description: "Mood detection"
-      Categories: ["Mood", "Analysis", "User Input"]
-      Lessons: "/mood-meal/submodule_2/"
-      Image: "/images/mood-meal-module2.png"
-      Alt: "Mood Meal Module 2"
-    - Title: "Module 3"
-      Genre: "Recommendation"
-      Level: 3
-      Description: "Cooking Plan"
-      Categories: ["AI", "Recommendations", "Meals"]
-      Lessons: "/mood-meal/submodule_3/"
-      Image: "/images/mood-meal-module3.png"
-      Alt: "Mood Meal Module 3"
-    - Title: "Module 4"
-      Genre: "Details"
-      Level: 4
-      Description: "Activity Recommender"
-      Categories: ["Recipes", "Instructions", "Cooking"]
-      Lessons: "/mood-meal/submodule_4/"
-      Image: "/images/mood-meal-module4.png"
-      Alt: "Mood Meal Module 4"
-    - Title: "Module 5"
-      Genre: "Management"
-      Level: 5
-      Description: "Music Recommender"
-      Categories: ["Pantry", "Inventory", "Ingredients"]
-      Lessons: "/mood-meal/submodule_5/"
-      Image: "/images/mood-meal-module5.png"
-      Alt: "Mood Meal Module 5"
-    - Title: "Module 6"
-      Genre: "Configuration"
-      Level: 6
-      Description: "Mood Plan Dashboard & Insights (Aggregator)"
-      Categories: ["Settings", "Preferences", "Configuration"]
-      Lessons: "/mood-meal/submodule_6/"
-      Image: "/images/mood-meal-module6.png"
-      Alt: "Mood Meal Module 6"
-footer:
-  home: /mood-meal/
-  next: /mood-meal/submodule_1/
+
+author: CSP 2025-26 # The author of the page, typically the class or group.
+
+permalink: /mood-meal/ # Custom URL path for the page, overriding the default generated path.
+
+lxdData: # Custom data structure for the page, accessible in Liquid templates as page.lxdData.
+  Title: "Mood Meal Modules" # Title for the modules section.
+  Description: "Discover personalized meal recommendations based on your mood and preferences!" # Description for the modules.
+  Topics: # Array of topic objects, each representing a module in the quest.
+    - Title: "Module 1" # Title of the first module.
+      Genre: "Introduction" # Genre category for the module.
+      Level: 1 # Level number, indicating sequence or difficulty.
+      Description: "Profile Builder (Allergens, Hobbies, Artists)" # Detailed description of what the module covers.
+      Categories: ["Getting Started", "Introduction"] # List of categories for tagging and filtering.
+      Lessons: "/mood-meal/submodule_1/" # Relative URL to the lesson page for this module.
+      Image: "/images/mood-meal-module1.png" # Path to the image for the module card.
+      Alt: "Mood Meal Module 1" # Alt text for accessibility.
+    - Title: "Module 2" # Second module.
+      Genre: "Analysis" # Genre.
+      Level: 2 # Level.
+      Description: "Mood detection" # Description.
+      Categories: ["Mood", "Analysis", "User Input"] # Categories.
+      Lessons: "/mood-meal/submodule_2/" # Lesson link.
+      Image: "/images/mood-meal-module2.png" # Image.
+      Alt: "Mood Meal Module 2" # Alt.
+    - Title: "Module 3" # Third module.
+      Genre: "Recommendation" # Genre.
+      Level: 3 # Level.
+      Description: "Cooking Plan" # Description.
+      Categories: ["AI", "Recommendations", "Meals"] # Categories.
+      Lessons: "/mood-meal/submodule_3/" # Lesson.
+      Image: "/images/mood-meal-module3.png" # Image.
+      Alt: "Mood Meal Module 3" # Alt.
+    - Title: "Module 4" # Fourth module.
+      Genre: "Details" # Genre.
+      Level: 4 # Level.
+      Description: "Activity Recommender" # Description.
+      Categories: ["Recipes", "Instructions", "Cooking"] # Categories.
+      Lessons: "/mood-meal/submodule_4/" # Lesson.
+      Image: "/images/mood-meal-module4.png" # Image.
+      Alt: "Mood Meal Module 4" # Alt.
+    - Title: "Module 5" # Fifth module.
+      Genre: "Management" # Genre.
+      Level: 5 # Level.
+      Description: "Music Recommender" # Description.
+      Categories: ["Pantry", "Inventory", "Ingredients"] # Categories.
+      Lessons: "/mood-meal/submodule_5/" # Lesson.
+      Image: "/images/mood-meal-module5.png" # Image.
+      Alt: "Mood Meal Module 5" # Alt.
+    - Title: "Module 6" # Sixth module.
+      Genre: "Configuration" # Genre.
+      Level: 6 # Level.
+      Description: "Mood Plan Dashboard & Insights (Aggregator)" # Description.
+      Categories: ["Settings", "Preferences", "Configuration"] # Categories.
+      Lessons: "/mood-meal/submodule_6/" # Lesson.
+      Image: "/images/mood-meal-module6.png" # Image.
+      Alt: "Mood Meal Module 6" # Alt.
+
+footer: # Footer navigation data for the page.
+  home: /mood-meal/ # Link to the home page of the quest.
+  next: /mood-meal/submodule_1/ # Link to the next module.
 ---
 
 <style>
+  /* Styles for the Gantt chart wrapper container */
   .gantt-wrapper {
-    background: #000;
-    color: #fff;
-    padding: 2rem;
-    margin: 2rem 0;
+    background: #000; /* Black background for dark theme */
+    color: #fff; /* White text color */
+    padding: 2rem; /* Padding around the wrapper */
+    margin: 2rem 0; /* Vertical margin */
   }
   
+  /* Header section within the Gantt chart */
   .gantt-header {
-    max-width: 1400px;
-    margin: 0 auto 2rem;
+    max-width: 1400px; /* Maximum width */
+    margin: 0 auto 2rem; /* Center and bottom margin */
   }
   
+  /* Heading in the header */
   .gantt-header h1 {
-    font-size: 2rem;
-    font-weight: bold;
-    margin-bottom: 0.5rem;
+    font-size: 2rem; /* Large font size */
+    font-weight: bold; /* Bold weight */
+    margin-bottom: 0.5rem; /* Bottom margin */
   }
   
+  /* Paragraph in the header */
   .gantt-header p {
-    color: #9ca3af;
-    font-size: 1rem;
+    color: #9ca3af; /* Gray color */
+    font-size: 1rem; /* Standard font size */
   }
   
+  /* Card container for the Gantt content */
   .gantt-card {
-    max-width: 1400px;
-    margin: 0 auto;
-    background: #1f2937;
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-    border: 1px solid #374151;
+    max-width: 1400px; /* Max width */
+    margin: 0 auto; /* Center */
+    background: #1f2937; /* Dark gray background */
+    border-radius: 0.5rem; /* Rounded corners */
+    padding: 1.5rem; /* Padding */
+    border: 1px solid #374151; /* Border */
   }
   
+  /* Heading in the card */
   .gantt-card h2 {
-    font-size: 1.25rem;
-    font-weight: bold;
-    margin-bottom: 1.5rem;
+    font-size: 1.25rem; /* Font size */
+    font-weight: bold; /* Bold */
+    margin-bottom: 1.5rem; /* Bottom margin */
   }
   
+  /* Timeline container */
   .gantt-timeline {
-    position: relative;
-    padding-bottom: 50px;
+    position: relative; /* Relative positioning */
+    padding-bottom: 50px; /* Bottom padding for date axis */
   }
   
+  /* Content area of the timeline */
   .gantt-timeline-content {
-    position: relative;
-    margin-left: 10rem;
+    position: relative; /* Relative */
+    margin-left: 10rem; /* Left margin for labels */
   }
   
+  /* Red line indicating today */
   .gantt-red-line {
-    position: absolute;
-    top: -24px;
-    bottom: 50px;
-    width: 2px;
-    background: #dc2626;
-    z-index: 20;
+    position: absolute; /* Absolute positioning */
+    top: -24px; /* Top position */
+    bottom: 50px; /* Bottom */
+    width: 2px; /* Thin width */
+    background: #dc2626; /* Red color */
+    z-index: 20; /* High z-index */
   }
   
+  /* Label for the red line */
   .gantt-red-line-label {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    color: #dc2626;
-    font-size: 0.75rem;
-    font-weight: bold;
-    white-space: nowrap;
+    position: absolute; /* Absolute */
+    top: 0; /* Top */
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%); /* Center */
+    color: #dc2626; /* Red */
+    font-size: 0.75rem; /* Small font */
+    font-weight: bold; /* Bold */
+    white-space: nowrap; /* No wrap */
   }
   
+  /* Container for grid lines */
   .gantt-grid-lines {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
+    position: absolute; /* Absolute */
+    left: 0; /* Left */
+    right: 0; /* Right */
+    top: 0; /* Top */
+    bottom: 0; /* Bottom */
   }
   
+  /* Individual grid line */
   .gantt-grid-line {
-    position: absolute;
-    border-left: 1px solid #1f2937;
-    height: 100%;
+    position: absolute; /* Absolute */
+    border-left: 1px solid #1f2937; /* Left border */
+    height: 100%; /* Full height */
   }
   
+  /* Container for task rows */
   .gantt-tasks {
-    position: relative;
+    position: relative; /* Relative */
   }
   
+  /* Individual task row */
   .gantt-row {
-    display: flex;
-    align-items: center;
-    height: 3rem;
-    position: relative;
-    margin-bottom: 0.5rem;
+    display: flex; /* Flexbox */
+    align-items: center; /* Center vertically */
+    height: 3rem; /* Fixed height */
+    position: relative; /* Relative */
+    margin-bottom: 0.5rem; /* Bottom margin */
   }
   
+  /* Label for the task row */
   .gantt-label {
-    width: 10rem;
-    margin-left: -10rem;
-    padding-right: 1rem;
-    text-align: right;
-    font-size: 0.875rem;
-    flex-shrink: 0;
+    width: 10rem; /* Fixed width */
+    margin-left: -10rem; /* Negative margin to position */
+    padding-right: 1rem; /* Right padding */
+    text-align: right; /* Right align */
+    font-size: 0.875rem; /* Font size */
+    flex-shrink: 0; /* Don't shrink */
   }
   
+  /* Container for task bars */
   .gantt-bars {
-    flex: 1;
-    position: relative;
-    height: 100%;
+    flex: 1; /* Take remaining space */
+    position: relative; /* Relative */
+    height: 100%; /* Full height */
   }
   
+  /* Individual task bar */
   .gantt-bar {
-    position: absolute;
-    height: 2.25rem;
-    background: #fff;
-    border: 2px solid #9ca3af;
-    border-radius: 0.25rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: #000;
-    transition: background 0.2s;
+    position: absolute; /* Absolute */
+    height: 2.25rem; /* Height */
+    background: #fff; /* White background */
+    border: 2px solid #9ca3af; /* Border */
+    border-radius: 0.25rem; /* Rounded */
+    display: flex; /* Flex */
+    align-items: center; /* Center */
+    justify-content: center; /* Center */
+    font-size: 0.75rem; /* Small font */
+    font-weight: 500; /* Medium weight */
+    color: #000; /* Black text */
+    transition: background 0.2s; /* Transition */
   }
   
+  /* Hover effect for task bar */
   .gantt-bar:hover {
-    background: #e5e7eb;
+    background: #e5e7eb; /* Light gray on hover */
   }
   
+  /* Container for milestones */
   .gantt-milestones {
-    position: relative;
-    margin-top: 1.5rem;
-    height: 3rem;
-    display: flex;
-    align-items: center;
+    position: relative; /* Relative */
+    margin-top: 1.5rem; /* Top margin */
+    height: 3rem; /* Height */
+    display: flex; /* Flex */
+    align-items: center; /* Center */
   }
   
+  /* Label for milestones */
   .gantt-milestone-label {
-    width: 10rem;
-    margin-left: -10rem;
-    padding-right: 1rem;
-    text-align: right;
-    font-size: 0.875rem;
-    flex-shrink: 0;
+    width: 10rem; /* Width */
+    margin-left: -10rem; /* Negative margin */
+    padding-right: 1rem; /* Padding */
+    text-align: right; /* Right align */
+    font-size: 0.875rem; /* Font size */
+    flex-shrink: 0; /* Don't shrink */
   }
   
+  /* Container for milestone bars */
   .gantt-milestone-bars {
-    flex: 1;
-    position: relative;
-    height: 100%;
+    flex: 1; /* Take space */
+    position: relative; /* Relative */
+    height: 100%; /* Full height */
   }
   
+  /* Individual milestone */
   .gantt-milestone {
-    position: absolute;
+    position: absolute; /* Absolute */
   }
   
+  /* Diamond shape for milestone */
   .gantt-milestone-diamond {
-    width: 12px;
-    height: 12px;
-    background: #fff;
-    transform: translateX(-50%) rotate(45deg);
-    border: 1px solid #9ca3af;
+    width: 12px; /* Width */
+    height: 12px; /* Height */
+    background: #fff; /* White */
+    transform: translateX(-50%) rotate(45deg); /* Center and rotate */
+    border: 1px solid #9ca3af; /* Border */
   }
   
+  /* Text for milestone */
   .gantt-milestone-text {
-    position: absolute;
-    top: 24px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 0.75rem;
-    white-space: nowrap;
+    position: absolute; /* Absolute */
+    top: 24px; /* Below diamond */
+    left: 50%; /* Center */
+    transform: translateX(-50%); /* Center */
+    font-size: 0.75rem; /* Small font */
+    white-space: nowrap; /* No wrap */
   }
   
+  /* Date axis container */
   .gantt-dates {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 2.5rem;
-    border-top: 1px solid #374151;
+    position: absolute; /* Absolute */
+    bottom: 0; /* Bottom */
+    left: 0; /* Left */
+    right: 0; /* Right */
+    height: 2.5rem; /* Height */
+    border-top: 1px solid #374151; /* Top border */
   }
   
+  /* Individual date label */
   .gantt-date {
-    position: absolute;
-    top: 8px;
-    font-size: 0.75rem;
-    color: #9ca3af;
-    transform: translateX(-50%);
+    position: absolute; /* Absolute */
+    top: 8px; /* Top */
+    font-size: 0.75rem; /* Small font */
+    color: #9ca3af; /* Gray */
+    transform: translateX(-50%); /* Center */
   }
   
+  /* Table container for Gantt */
   .gantt-table {
-    max-width: 1400px;
-    margin: 2rem auto 0;
-    background: #1f2937;
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-    border: 1px solid #374151;
+    max-width: 1400px; /* Max width */
+    margin: 2rem auto 0; /* Center and top margin */
+    background: #1f2937; /* Dark background */
+    border-radius: 0.5rem; /* Rounded */
+    padding: 1.5rem; /* Padding */
+    border: 1px solid #374151; /* Border */
   }
   
+  /* Heading in table */
   .gantt-table h2 {
-    font-size: 1.25rem;
-    font-weight: bold;
-    margin-bottom: 1rem;
+    font-size: 1.25rem; /* Font size */
+    font-weight: bold; /* Bold */
+    margin-bottom: 1rem; /* Bottom margin */
   }
   
+  /* Table styles */
   .gantt-table table {
-    width: 100%;
-    font-size: 0.875rem;
+    width: 100%; /* Full width */
+    font-size: 0.875rem; /* Font size */
   }
   
+  /* Table header */
   .gantt-table th {
-    text-align: left;
-    padding: 0.75rem;
-    border-bottom: 1px solid #374151;
-    font-weight: 600;
+    text-align: left; /* Left align */
+    padding: 0.75rem; /* Padding */
+    border-bottom: 1px solid #374151; /* Bottom border */
+    font-weight: 600; /* Semi-bold */
   }
   
+  /* Table data */
   .gantt-table td {
-    padding: 0.75rem;
-    border-bottom: 1px solid #1f2937;
+    padding: 0.75rem; /* Padding */
+    border-bottom: 1px solid #1f2937; /* Bottom border */
   }
   
+  /* Table row hover */
   .gantt-table tr:hover {
-    background: #111827;
+    background: #111827; /* Darker on hover */
   }
 </style>
 
@@ -360,173 +401,206 @@ footer:
 </div>
 
 <script>
+// This script generates a dynamic Gantt chart for the project timeline.
+// It uses JavaScript to calculate positions and render the chart elements.
+
 (function() {
+  // Define the start and end dates for the project timeline.
+  // These dates determine the range of the Gantt chart.
   const startDate = new Date('2024-11-20');
   const endDate = new Date('2024-12-15');
   
+  // Function to calculate the position of a given date on the timeline as a percentage.
+  // This converts a date to a position between 0% and 100% relative to the start and end dates.
+  // Parameters:
+  // - date: A string or Date object representing the date to position.
+  // Returns: A number between 0 and 100 representing the percentage position.
   function getDatePosition(date) {
-    const d = new Date(date);
-    const total = endDate - startDate;
-    const current = d - startDate;
+    const d = new Date(date); // Convert the input to a Date object if it's not already.
+    const total = endDate - startDate; // Total duration in milliseconds.
+    const current = d - startDate; // Time elapsed from start to the given date in milliseconds.
+    // Calculate percentage, clamped between 0 and 100 to handle dates outside the range.
     return Math.max(0, Math.min(100, (current / total) * 100));
   }
   
+  // Function to calculate the left position and width for a task block on the timeline.
+  // This is used to position the bars representing work periods.
+  // Parameters:
+  // - start: Start date of the block.
+  // - end: End date of the block.
+  // Returns: An object with 'left' (percentage from left) and 'width' (percentage width).
   function getBlockPosition(start, end) {
-    const startPos = getDatePosition(start);
-    const endPos = getDatePosition(end);
-    return { left: startPos, width: endPos - startPos };
+    const startPos = getDatePosition(start); // Get start position.
+    const endPos = getDatePosition(end); // Get end position.
+    return { left: startPos, width: endPos - startPos }; // Width is the difference.
   }
   
+  // Array of tasks, each with a role (assigned person) and blocks (periods of work).
+  // Each block has start date, end date, and a label describing the work.
+  // This data drives the task bars in the Gantt chart.
   const tasks = [
     {
-      role: 'User Accounts (Darshan)',
+      role: 'User Accounts (Darshan)', // Person responsible for user account features.
       blocks: [
-        { start: '2024-11-20', end: '2024-11-28', label: 'Auth Setup' },
-        { start: '2024-12-02', end: '2024-12-08', label: 'Profile API' },
-        { start: '2024-12-09', end: '2024-12-13', label: 'Deploy' }
+        { start: '2024-11-20', end: '2024-11-28', label: 'Auth Setup' }, // Setting up authentication.
+        { start: '2024-12-02', end: '2024-12-08', label: 'Profile API' }, // Building profile API.
+        { start: '2024-12-09', end: '2024-12-13', label: 'Deploy' } // Deployment phase.
       ]
     },
     {
-      role: 'Mood Analyzer (Shayan)',
+      role: 'Mood Analyzer (Shayan)', // Person for mood analysis feature.
       blocks: [
-        { start: '2024-11-22', end: '2024-11-29', label: 'Mood UI' },
-        { start: '2024-12-01', end: '2024-12-09', label: 'Scoring Logic' },
-        { start: '2024-12-10', end: '2024-12-14', label: 'Charts' }
+        { start: '2024-11-22', end: '2024-11-29', label: 'Mood UI' }, // User interface for mood input.
+        { start: '2024-12-01', end: '2024-12-09', label: 'Scoring Logic' }, // Logic to score moods.
+        { start: '2024-12-10', end: '2024-12-14', label: 'Charts' } // Charts for mood visualization.
       ]
     },
     {
-      role: 'Recommendation (Aditya)',
+      role: 'Recommendation (Aditya)', // Person for meal recommendations.
       blocks: [
-        { start: '2024-11-25', end: '2024-12-02', label: 'Meal Cards' },
-        { start: '2024-12-03', end: '2024-12-11', label: 'Mood→Meal Engine' },
-        { start: '2024-12-12', end: '2024-12-15', label: 'Polish' }
+        { start: '2024-11-25', end: '2024-12-02', label: 'Meal Cards' }, // UI for meal cards.
+        { start: '2024-12-03', end: '2024-12-11', label: 'Mood→Meal Engine' }, // Engine linking mood to meals.
+        { start: '2024-12-12', end: '2024-12-15', label: 'Polish' } // Final polishing.
       ]
     },
     {
-      role: 'Recipe Viewer (Neil)',
+      role: 'Recipe Viewer (Neil)', // Person for recipe viewing.
       blocks: [
-        { start: '2024-11-21', end: '2024-11-27', label: 'Recipe UI' },
-        { start: '2024-11-28', end: '2024-12-06', label: 'Cooking Mode' },
-        { start: '2024-12-07', end: '2024-12-13', label: 'Timers & Deploy' }
+        { start: '2024-11-21', end: '2024-11-27', label: 'Recipe UI' }, // Recipe user interface.
+        { start: '2024-11-28', end: '2024-12-06', label: 'Cooking Mode' }, // Cooking mode feature.
+        { start: '2024-12-07', end: '2024-12-13', label: 'Timers & Deploy' } // Timers and deployment.
       ]
     },
     {
-      role: 'Pantry Manager (Sathwik)',
+      role: 'Pantry Manager (Sathwik)', // Person for pantry management.
       blocks: [
-        { start: '2024-11-23', end: '2024-11-30', label: 'Pantry UI' },
-        { start: '2024-12-01', end: '2024-12-10', label: 'CRUD & Expiration' },
-        { start: '2024-12-11', end: '2024-12-14', label: 'Sync' }
+        { start: '2024-11-23', end: '2024-11-30', label: 'Pantry UI' }, // Pantry UI.
+        { start: '2024-12-01', end: '2024-12-10', label: 'CRUD & Expiration' }, // Create, read, update, delete and expiration logic.
+        { start: '2024-12-11', end: '2024-12-14', label: 'Sync' } // Synchronization.
       ]
     },
     {
-      role: 'Shopping List (Perry)',
+      role: 'Shopping List (Perry)', // Person for shopping list.
       blocks: [
-        { start: '2024-11-26', end: '2024-12-01', label: 'List UI' },
-        { start: '2024-12-02', end: '2024-12-12', label: 'Auto-Generate Logic' },
-        { start: '2024-12-13', end: '2024-12-15', label: 'Final' }
+        { start: '2024-11-26', end: '2024-12-01', label: 'List UI' }, // Shopping list UI.
+        { start: '2024-12-02', end: '2024-12-12', label: 'Auto-Generate Logic' }, // Logic to auto-generate list.
+        { start: '2024-12-13', end: '2024-12-15', label: 'Final' } // Final touches.
       ]
     }
   ];
   
+  // Array of milestones, key checkpoints in the project.
+  // Each has a name and date.
   const milestones = [
-    { name: 'Checkpoint #1', date: '2024-11-27' },
-    { name: 'Checkpoint #2', date: '2024-12-06' },
-    { name: 'Checkpoint #3', date: '2024-12-13' },
-    { name: 'Final Presentation', date: '2024-12-15' }
+    { name: 'Checkpoint #1', date: '2024-11-27' }, // First checkpoint.
+    { name: 'Checkpoint #2', date: '2024-12-06' }, // Second checkpoint.
+    { name: 'Checkpoint #3', date: '2024-12-13' }, // Third checkpoint.
+    { name: 'Final Presentation', date: '2024-12-15' } // Final presentation.
   ];
   
+  // Array of date markers for the grid lines on the timeline.
+  // These dates have vertical lines to mark important points.
   const dateMarkers = [
     '2024-11-20', '2024-11-25', '2024-11-28', '2024-12-02',
     '2024-12-05', '2024-12-09', '2024-12-12', '2024-12-15'
   ];
   
-  // Render grid lines
-  const gridLines = document.getElementById('gridLines');
+  // Render the vertical grid lines at each date marker.
+  // This creates visual separators on the timeline.
+  const gridLines = document.getElementById('gridLines'); // Get the container for grid lines.
   dateMarkers.forEach(date => {
-    const pos = getDatePosition(date);
-    const line = document.createElement('div');
-    line.className = 'gantt-grid-line';
-    line.style.left = pos + '%';
-    gridLines.appendChild(line);
+    const pos = getDatePosition(date); // Calculate position.
+    const line = document.createElement('div'); // Create a div for the line.
+    line.className = 'gantt-grid-line'; // Apply CSS class.
+    line.style.left = pos + '%'; // Position it.
+    gridLines.appendChild(line); // Add to container.
   });
   
-  // Render tasks
-  const tasksContainer = document.getElementById('ganttTasks');
+  // Render the task rows with their bars.
+  // Each task has a label and multiple bars for work blocks.
+  const tasksContainer = document.getElementById('ganttTasks'); // Container for tasks.
   tasks.forEach(task => {
-    const row = document.createElement('div');
-    row.className = 'gantt-row';
+    const row = document.createElement('div'); // Create row div.
+    row.className = 'gantt-row'; // CSS class.
     
-    const label = document.createElement('div');
+    const label = document.createElement('div'); // Label for the role.
     label.className = 'gantt-label';
-    label.textContent = task.role;
-    row.appendChild(label);
+    label.textContent = task.role; // Set text.
+    row.appendChild(label); // Add to row.
     
-    const bars = document.createElement('div');
+    const bars = document.createElement('div'); // Container for bars.
     bars.className = 'gantt-bars';
     
+    // For each work block, create a bar.
     task.blocks.forEach(block => {
-      const { left, width } = getBlockPosition(block.start, block.end);
-      const bar = document.createElement('div');
-      bar.className = 'gantt-bar';
-      bar.style.left = left + '%';
-      bar.style.width = width + '%';
-      bar.textContent = block.label;
-      bars.appendChild(bar);
+      const { left, width } = getBlockPosition(block.start, block.end); // Get position and width.
+      const bar = document.createElement('div'); // Bar div.
+      bar.className = 'gantt-bar'; // CSS class.
+      bar.style.left = left + '%'; // Position.
+      bar.style.width = width + '%'; // Width.
+      bar.textContent = block.label; // Label text.
+      bars.appendChild(bar); // Add to bars container.
     });
     
-    row.appendChild(bars);
-    tasksContainer.appendChild(row);
+    row.appendChild(bars); // Add bars to row.
+    tasksContainer.appendChild(row); // Add row to container.
   });
   
-  // Render milestones
-  const milestoneContainer = document.getElementById('milestoneContainer');
+  // Render the milestones as diamonds with labels.
+  // Milestones are key events marked on the timeline.
+  const milestoneContainer = document.getElementById('milestoneContainer'); // Container.
   milestones.forEach(milestone => {
-    const pos = getDatePosition(milestone.date);
-    const m = document.createElement('div');
+    const pos = getDatePosition(milestone.date); // Position.
+    const m = document.createElement('div'); // Milestone div.
     m.className = 'gantt-milestone';
-    m.style.left = pos + '%';
+    m.style.left = pos + '%'; // Position.
     
-    const diamond = document.createElement('div');
+    const diamond = document.createElement('div'); // Diamond shape.
     diamond.className = 'gantt-milestone-diamond';
     
-    const text = document.createElement('div');
+    const text = document.createElement('div'); // Text label.
     text.className = 'gantt-milestone-text';
-    text.textContent = milestone.name;
+    text.textContent = milestone.name; // Set text.
     
-    m.appendChild(diamond);
-    m.appendChild(text);
-    milestoneContainer.appendChild(m);
+    m.appendChild(diamond); // Add diamond.
+    m.appendChild(text); // Add text.
+    milestoneContainer.appendChild(m); // Add to container.
   });
   
-  // Render date axis
-  const dateAxis = document.getElementById('dateAxis');
+  // Render the date axis at the bottom with formatted dates.
+  // Shows the dates at the bottom of the chart.
+  const dateAxis = document.getElementById('dateAxis'); // Container.
   dateMarkers.forEach(date => {
-    const pos = getDatePosition(date);
-    const d = new Date(date);
+    const pos = getDatePosition(date); // Position.
+    const d = new Date(date); // Date object.
+    // Format as MM-DD.
     const formatted = String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
     
-    const dateLabel = document.createElement('div');
+    const dateLabel = document.createElement('div'); // Label div.
     dateLabel.className = 'gantt-date';
-    dateLabel.style.left = pos + '%';
-    dateLabel.textContent = formatted;
-    dateAxis.appendChild(dateLabel);
+    dateLabel.style.left = pos + '%'; // Position.
+    dateLabel.textContent = formatted; // Set text.
+    dateAxis.appendChild(dateLabel); // Add to container.
   });
   
-  // Position TODAY line
-  // By default this will use a forced demo date so the line appears at 2024-12-01
-  // Change FORCE_TODAY to null to use the real current date instead.
-  const FORCE_TODAY = new Date('2024-12-01'); // set to null to use actual today
+  // Position the TODAY line on the timeline.
+  // This line indicates the current date.
+  // By default, uses a forced demo date for demonstration.
+  // To use real current date, set FORCE_TODAY to null.
+  const FORCE_TODAY = new Date('2024-12-01'); // Demo date; set to null for real today.
 
+  // Function to update the position of the TODAY line.
+  // Calculates current date position and sets the line's left style.
   function updateTodayLine() {
-    const currentDate = FORCE_TODAY || new Date();
-    const currentPosition = getDatePosition(currentDate);
-    const todayLine = document.getElementById('todayLine');
-
-    todayLine.style.left = currentPosition + '%';
+    const currentDate = FORCE_TODAY || new Date(); // Use demo or real date.
+    const currentPosition = getDatePosition(currentDate); // Get position.
+    const todayLine = document.getElementById('todayLine'); // Get the line element.
+    todayLine.style.left = currentPosition + '%'; // Set position.
   }
 
-  updateTodayLine();
-  // Update once per day (24 hours). This keeps the line fresh on page without heavy timers.
+  updateTodayLine(); // Initial update.
+  // Update the TODAY line once per day to keep it current without constant updates.
+  // Interval is 24 hours in milliseconds.
   setInterval(updateTodayLine, 24 * 60 * 60 * 1000);
 })();
 </script>
