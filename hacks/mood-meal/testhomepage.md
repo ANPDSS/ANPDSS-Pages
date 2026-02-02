@@ -22,16 +22,14 @@ tags: [mood-tracking, meals, activities, music, wellness]
       padding: 0;
       box-sizing: border-box;
     }
-
-  body {
+body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: linear-gradient(135deg, #000000 0%, #0a0a1a 100%);
       color: #ffffff;
       min-height: 100vh;
       overflow-x: hidden;
     }
-
-    /* Navigation */
+/* Navigation */
     .top-nav {
       position: fixed;
       top: 0;
@@ -46,22 +44,19 @@ tags: [mood-tracking, meals, activities, music, wellness]
       justify-content: space-between;
       align-items: center;
     }
-
-    .logo {
+.logo {
       font-size: 1.5rem;
       font-weight: bold;
       background: linear-gradient(45deg, #2196F3, #4eff9e);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-
-    .nav-links {
+.nav-links {
       display: flex;
       gap: 1rem;
       align-items: center;
     }
-
-    .nav-btn {
+.nav-btn {
       padding: 0.5rem 1rem;
       background: transparent;
       color: #2196F3;
@@ -70,29 +65,24 @@ tags: [mood-tracking, meals, activities, music, wellness]
       cursor: pointer;
       transition: all 0.3s ease;
     }
-
-    .nav-btn:hover {
+.nav-btn:hover {
       background: #2196F3;
       color: white;
       transform: translateY(-2px);
     }
-
-    .nav-btn.active {
+.nav-btn.active {
       background: #2196F3;
       color: white;
     }
-
-    .admin-nav-btn {
+.admin-nav-btn {
       background: linear-gradient(135deg, #2196F3, #4eff9e) !important;
       color: white !important;
       border: none !important;
     }
-
-    .admin-nav-btn:hover {
+ .admin-nav-btn:hover {
       box-shadow: 0 0 15px rgba(33, 150, 243, 0.5), 0 0 20px rgba(78, 255, 158, 0.3);
     }
-
-    .nav-btn-accent {
+.nav-btn-accent {
       padding: 0.5rem 1rem;
       background: linear-gradient(135deg, #2196F3, #1976D2);
       color: white;
@@ -103,36 +93,30 @@ tags: [mood-tracking, meals, activities, music, wellness]
       text-decoration: none;
       font-weight: 500;
     }
-
-    .nav-btn-accent:hover {
+.nav-btn-accent:hover {
       background: linear-gradient(135deg, #1976D2, #1565C0);
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
     }
-
-    /* Main Container */
+/* Main Container */
     .container {
       max-width: 1200px;
       margin: 80px auto 2rem;
       padding: 2rem;
     }
-
-    /* Section Styles */
+/* Section Styles */
     .section {
       display: none;
       animation: fadeIn 0.5s ease;
     }
-
-    .section.active {
+.section.active {
       display: block;
     }
-
-    @keyframes fadeIn {
+@keyframes fadeIn {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
-
-    /* Cards */
+/* Cards */
     .card {
       background: rgba(17, 17, 17, 0.8);
       border: 1px solid #2a2a2a;
@@ -142,13 +126,11 @@ tags: [mood-tracking, meals, activities, music, wellness]
       box-shadow: 0 10px 40px rgba(33, 150, 243, 0.1);
       transition: all 0.3s ease;
     }
-
-    .card:hover {
+.card:hover {
       transform: translateY(-5px);
       box-shadow: 0 15px 50px rgba(33, 150, 243, 0.2);
     }
-
-    /* Buttons */
+/* Buttons */
     .btn {
       padding: 0.75rem 1.5rem;
       border: none;
@@ -158,28 +140,23 @@ tags: [mood-tracking, meals, activities, music, wellness]
       transition: all 0.3s ease;
       font-size: 1rem;
     }
-
-    .btn-primary {
+.btn-primary {
       background: linear-gradient(135deg, #2196F3, #1976D2);
       color: white;
     }
-
-    .btn-primary:hover {
+.btn-primary:hover {
       transform: translateY(-2px);
       box-shadow: 0 8px 20px rgba(33, 150, 243, 0.4);
     }
-
-    .btn-secondary {
+.btn-secondary {
       background: transparent;
       color: #2196F3;
       border: 2px solid #2196F3;
     }
-
-    .btn-secondary:hover {
+.btn-secondary:hover {
       background: rgba(33, 150, 243, 0.1);
     }
-
-    /* Modal/Popup */
+/* Modal/Popup */
     .modal {
       position: fixed;
       top: 0;
@@ -193,12 +170,10 @@ tags: [mood-tracking, meals, activities, music, wellness]
       z-index: 2000;
       animation: fadeIn 0.3s ease;
     }
-
-    .modal.show {
+.modal.show {
       display: flex;
     }
-
-    .modal-content {
+.modal-content {
       background: #111111;
       border: 2px solid #2196F3;
       border-radius: 16px;
@@ -209,13 +184,11 @@ tags: [mood-tracking, meals, activities, music, wellness]
       overflow-y: auto;
       animation: slideUp 0.3s ease;
     }
-
-    @keyframes slideUp {
+@keyframes slideUp {
       from { transform: translateY(50px); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
     }
-
-    /* Mood Slider */
+/* Mood Slider */
     .mood-slider {
       width: 100%;
       -webkit-appearance: none;
@@ -225,8 +198,7 @@ tags: [mood-tracking, meals, activities, music, wellness]
       outline: none;
       margin: 1rem 0;
     }
-
-    .mood-slider::-webkit-slider-thumb {
+.mood-slider::-webkit-slider-thumb {
       -webkit-appearance: none;
       width: 24px;
       height: 24px;
@@ -236,21 +208,18 @@ tags: [mood-tracking, meals, activities, music, wellness]
       cursor: pointer;
       transition: all 0.2s ease;
     }
-
-    .mood-slider::-webkit-slider-thumb:hover {
+.mood-slider::-webkit-slider-thumb:hover {
       transform: scale(1.3);
       box-shadow: 0 0 15px rgba(33, 150, 243, 0.8);
     }
-
-    /* Emoji Buttons */
+/* Emoji Buttons */
     .emoji-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
       gap: 1rem;
       margin: 1rem 0;
     }
-
-    .emoji-btn {
+.emoji-btn {
       padding: 1rem;
       background: rgba(33, 150, 243, 0.1);
       border: 2px solid transparent;
@@ -259,27 +228,23 @@ tags: [mood-tracking, meals, activities, music, wellness]
       transition: all 0.3s ease;
       font-size: 1.2rem;
     }
-
-    .emoji-btn:hover {
+.emoji-btn:hover {
       border-color: #2196F3;
       background: rgba(33, 150, 243, 0.2);
       transform: scale(1.05);
     }
-
-    .emoji-btn.selected {
+.emoji-btn.selected {
       border-color: #4eff9e;
       background: rgba(78, 255, 158, 0.2);
     }
-
-    /* Tags */
+/* Tags */
     .tags-container {
       display: flex;
       flex-wrap: wrap;
       gap: 0.5rem;
       margin: 1rem 0;
     }
-
-    .tag {
+.tag {
       padding: 0.5rem 1rem;
       background: rgba(33, 150, 243, 0.1);
       border: 1px solid #333;
@@ -287,40 +252,34 @@ tags: [mood-tracking, meals, activities, music, wellness]
       cursor: pointer;
       transition: all 0.3s ease;
     }
-
-    .tag:hover {
+.tag:hover {
       border-color: #2196F3;
       background: rgba(33, 150, 243, 0.2);
     }
-
-    .tag.selected {
+.tag.selected {
       border-color: #4eff9e;
       background: rgba(78, 255, 158, 0.2);
     }
-
-    /* Results Grid */
+/* Results Grid */
     .results-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 1.5rem;
       margin: 2rem 0;
     }
-
-    .result-card {
+.result-card {
       background: rgba(11, 11, 11, 0.9);
       border: 1px solid #2a2a2a;
       border-radius: 12px;
       padding: 1.5rem;
       transition: all 0.3s ease;
     }
-
-    .result-card:hover {
+.result-card:hover {
       border-color: #2196F3;
       transform: translateY(-5px);
       box-shadow: 0 8px 25px rgba(33, 150, 243, 0.3);
     }
-
-    /* Input Fields */
+/* Input Fields */
     input, select, textarea {
       width: 100%;
       padding: 0.75rem;
@@ -331,14 +290,12 @@ tags: [mood-tracking, meals, activities, music, wellness]
       font-size: 1rem;
       margin: 0.5rem 0;
     }
-
-    input:focus, select:focus, textarea:focus {
+input:focus, select:focus, textarea:focus {
       outline: none;
       border-color: #2196F3;
       box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.2);
     }
-
-    /* Toast Notification */
+/* Toast Notification */
     .toast {
       position: fixed;
       bottom: 2rem;
@@ -352,31 +309,25 @@ tags: [mood-tracking, meals, activities, music, wellness]
       animation: slideInRight 0.3s ease;
       z-index: 3000;
     }
-
-    .toast.show {
+.toast.show {
       display: block;
     }
-
-    @keyframes slideInRight {
+@keyframes slideInRight {
       from { transform: translateX(400px); opacity: 0; }
       to { transform: translateX(0); opacity: 1; }
     }
-
-    h2 {
+h2 {
       color: #2196F3;
       margin-bottom: 1rem;
     }
-
-    h3 {
+h3 {
       color: #4eff9e;
       margin: 1.5rem 0 1rem;
     }
-
-    .hidden {
+.hidden {
       display: none !important;
     }
-
-    /* Loading Animation */
+/* Loading Animation */
     .loading {
       display: inline-block;
       width: 20px;
@@ -386,12 +337,10 @@ tags: [mood-tracking, meals, activities, music, wellness]
       border-top-color: #2196F3;
       animation: spin 0.6s linear infinite;
     }
-
-    @keyframes spin {
+@keyframes spin {
       to { transform: rotate(360deg); }
     }
-
-    /* Preference Pills */
+/* Preference Pills */
     .pill {
       display: inline-block;
       padding: 0.4rem 1rem;
@@ -402,50 +351,41 @@ tags: [mood-tracking, meals, activities, music, wellness]
       cursor: pointer;
       transition: all 0.2s ease;
     }
-
-    .pill:hover {
+.pill:hover {
       border-color: #2196F3;
       transform: scale(1.05);
     }
-
-    .pill.active {
+.pill.active {
       background: rgba(33, 150, 243, 0.3);
       border-color: #2196F3;
     }
-
-    /* Table Styling */
+/* Table Styling */
     table {
       border: 1px solid #2a2a2a;
       border-radius: 8px;
       overflow: hidden;
     }
-
-    table tbody tr:hover {
+table tbody tr:hover {
       background: rgba(33, 150, 243, 0.1);
     }
-
-    /* Weather Animations */
+/* Weather Animations */
     @keyframes rain {
       0% { background-position: 0 0; }
       100% { background-position: 20px 20px; }
     }
-
-    @keyframes snow {
+@keyframes snow {
       0% { transform: translateY(-10px); }
       100% { transform: translateY(10px); }
     }
-
-    @keyframes pulse {
+@keyframes pulse {
       0%, 100% { opacity: 0.5; transform: scale(1); }
       50% { opacity: 0.8; transform: scale(1.1); }
     }
-
-    @keyframes float {
+@keyframes float {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-5px); }
     }
-
-    /* Weather Display Styles */
+/* Weather Display Styles */
     .weather-display {
       display: flex;
       flex-wrap: wrap;
@@ -453,8 +393,7 @@ tags: [mood-tracking, meals, activities, music, wellness]
       gap: 1rem;
       margin: 1.5rem 0;
     }
-
-    .weather-stat {
+.weather-stat {
       background: #1e1e1e;
       border: 1px solid #333;
       padding: 1.25rem 1.5rem;
@@ -465,33 +404,28 @@ tags: [mood-tracking, meals, activities, music, wellness]
       max-width: 180px;
       transition: all 0.3s ease;
     }
-
-    .weather-stat:hover {
+.weather-stat:hover {
       border-color: #444;
       transform: translateY(-3px);
     }
-
-    .weather-stat .icon {
+.weather-stat .icon {
       font-size: 2rem;
       margin-bottom: 0.5rem;
       display: block;
     }
-
-    .weather-stat .label {
+.weather-stat .label {
       color: #666;
       font-size: 0.75rem;
       text-transform: uppercase;
       letter-spacing: 0.5px;
       margin-bottom: 0.25rem;
     }
-
-    .weather-stat .value {
+.weather-stat .value {
       font-size: 1.25rem;
       font-weight: 700;
       color: #e0e0e0;
     }
-
-    /* Forecast Grid Styles */
+/* Forecast Grid Styles */
     .forecast-grid {
       display: flex;
       flex-wrap: wrap;
@@ -499,8 +433,7 @@ tags: [mood-tracking, meals, activities, music, wellness]
       gap: 0.75rem;
       margin-top: 1rem;
     }
-
-    .forecast-card {
+.forecast-card {
       background: #1e1e1e;
       border: 1px solid #333;
       border-radius: 12px;
@@ -511,100 +444,80 @@ tags: [mood-tracking, meals, activities, music, wellness]
       flex: 1;
       max-width: 140px;
     }
-
-    .forecast-card:hover {
+.forecast-card:hover {
       border-color: #444;
       transform: translateY(-3px);
     }
-
-    .forecast-card .time {
+.forecast-card .time {
       color: #aaa;
       font-weight: 600;
       font-size: 0.85rem;
       margin-bottom: 0.5rem;
     }
-
-    .forecast-card .icon {
+.forecast-card .icon {
       font-size: 1.75rem;
       margin: 0.4rem 0;
     }
-
-    .forecast-card .temp {
+.forecast-card .temp {
       font-size: 1.1rem;
       font-weight: 700;
       color: #e0e0e0;
     }
-
-    .forecast-card .desc {
+.forecast-card .desc {
       color: #666;
       font-size: 0.75rem;
       margin-top: 0.3rem;
       text-transform: capitalize;
     }
-
-    @media (max-width: 768px) {
+@media (max-width: 768px) {
       .container {
         padding: 1rem;
         margin-top: 70px;
       }
-
-      .top-nav {
+.top-nav {
         padding: 0.75rem 1rem;
       }
-
-      .nav-links {
+.nav-links {
         flex-wrap: wrap;
       }
-
-      .nav-btn-accent {
+.nav-btn-accent {
         padding: 0.4rem 0.75rem;
         font-size: 0.85rem;
       }
-
-      .results-grid {
+.results-grid {
         grid-template-columns: 1fr;
       }
-
-      .weather-display {
+.weather-display {
         flex-wrap: wrap;
         gap: 0.75rem;
       }
-
-      .weather-stat {
+.weather-stat {
         min-width: calc(50% - 0.5rem);
         max-width: calc(50% - 0.5rem);
         padding: 1rem;
       }
-
-      .weather-stat .icon {
+.weather-stat .icon {
         font-size: 1.5rem;
       }
-
-      .weather-stat .value {
+.weather-stat .value {
         font-size: 1.1rem;
       }
-
-      #weather-hero {
+#weather-hero {
         padding: 1.5rem !important;
       }
-
-      #weather-hero > div > div:last-child {
+#weather-hero > div > div:last-child {
         text-align: center !important;
       }
-
-      #temp-large {
+#temp-large {
         font-size: 2.5rem !important;
       }
-
-      #location-name-hero {
+#location-name-hero {
         font-size: 1.4rem !important;
       }
-
-      table {
+table {
         font-size: 0.9rem;
       }
-
-      table th, table td {
+table th, table td {
         padding: 0.5rem !important;
       }
     }
@@ -758,10 +671,10 @@ tags: [mood-tracking, meals, activities, music, wellness]
           💾 Save Mood & Get Recommendations
         </button>
 
-      </div>
+  </div>
 
-    <!-- Weather & Outfit (added) -->
-    <div class="card" id="weather-section">
+  <!-- Weather & Outfit (added) -->
+  <div class="card" id="weather-section">
       <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
         <div>
           <h2 style="margin: 0;">🌤️ Weather Dashboard</h2>
@@ -773,7 +686,7 @@ tags: [mood-tracking, meals, activities, music, wellness]
         </div>
       </div>
 
-      <div id="location-status" style="margin: 1.5rem 0;">
+  <div id="location-status" style="margin: 1.5rem 0;">
         <div style="background: rgba(30, 30, 30, 0.9); border: 1px solid #333; border-radius: 12px; padding: 2rem; text-align: center;">
           <div style="font-size: 3rem; margin-bottom: 1rem;">🌍</div>
           <h3 style="margin: 0 0 0.5rem 0;">Detect Your Location</h3>
@@ -784,7 +697,7 @@ tags: [mood-tracking, meals, activities, music, wellness]
         </div>
       </div>
 
-      <div id="manual-location" class="hidden">
+  <div id="manual-location" class="hidden">
         <h3>Enter Your ZIP Code</h3>
         <p style="color: #bbb; margin-bottom: 1rem;">We couldn't detect your location automatically. Please enter your ZIP code:</p>
         <div style="display: flex; gap: 1rem;">
@@ -793,7 +706,7 @@ tags: [mood-tracking, meals, activities, music, wellness]
         </div>
       </div>
 
-      <div id="weather-container" class="hidden">
+  <div id="weather-container" class="hidden">
         <!-- Location Header with animated background -->
         <div id="weather-hero" style="background: #1a1a1a; border: 1px solid #333; border-radius: 16px; padding: 2rem; margin-bottom: 1.5rem; position: relative; overflow: hidden;">
           <div id="weather-animation" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; opacity: 0.2;"></div>
@@ -814,8 +727,8 @@ tags: [mood-tracking, meals, activities, music, wellness]
           </div>
         </div>
 
-        <!-- Weather Stats Grid -->
-        <h3 style="margin-bottom: 1rem;">📊 Weather Details</h3>
+  <!-- Weather Stats Grid -->
+  <h3 style="margin-bottom: 1rem;">📊 Weather Details</h3>
         <div class="weather-display">
           <div class="weather-stat">
             <div class="icon">🌡️</div>
@@ -849,8 +762,8 @@ tags: [mood-tracking, meals, activities, music, wellness]
           </div>
         </div>
 
-        <!-- Comfort Index -->
-        <div style="background: #1e1e1e; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; border: 1px solid #333;">
+  <!-- Comfort Index -->
+  <div style="background: #1e1e1e; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; border: 1px solid #333;">
           <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
             <div>
               <h4 style="margin: 0; color: #e0e0e0;">🎯 Comfort Index</h4>
@@ -866,8 +779,8 @@ tags: [mood-tracking, meals, activities, music, wellness]
           </div>
         </div>
 
-        <!-- Weather-Mood Impact -->
-        <div id="weather-mood-impact" style="background: #1e1e1e; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; border: 1px solid #333;">
+  <!-- Weather-Mood Impact -->
+  <div id="weather-mood-impact" style="background: #1e1e1e; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; border: 1px solid #333;">
           <h4 style="margin: 0 0 1rem 0; color: #e0e0e0;">🧠 Weather & Mood Connection</h4>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
             <div style="background: #252525; padding: 1rem; border-radius: 8px; border: 1px solid #333;">
@@ -883,28 +796,28 @@ tags: [mood-tracking, meals, activities, music, wellness]
           </div>
         </div>
 
-        <!-- Suggested Activities Based on Weather -->
-        <div style="background: #1e1e1e; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; border: 1px solid #333;">
+  <!-- Suggested Activities Based on Weather -->
+  <div style="background: #1e1e1e; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; border: 1px solid #333;">
           <h4 style="margin: 0 0 1rem 0; color: #e0e0e0;">🎯 Weather-Based Activity Suggestions</h4>
           <div id="weather-activities" style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
             <!-- Activities will be populated here -->
           </div>
         </div>
 
-        <!-- Today's Hourly Forecast -->
-        <h3 style="margin-top: 1.5rem;">⏰ Hourly Forecast</h3>
+  <!-- Today's Hourly Forecast -->
+  <h3 style="margin-top: 1.5rem;">⏰ Hourly Forecast</h3>
         <div id="forecast-container" style="margin-top: 1rem;">
           <div class="loading"></div> Loading forecast...
         </div>
 
-        <!-- 5-Day Extended Forecast -->
-        <h3 style="margin-top: 2rem;">📅 5-Day Extended Forecast</h3>
+  <!-- 5-Day Extended Forecast -->
+  <h3 style="margin-top: 2rem;">📅 5-Day Extended Forecast</h3>
         <div id="extended-forecast" style="margin-top: 1rem;">
           <div class="loading"></div> Loading extended forecast...
         </div>
 
-        <!-- Weather Insights -->
-        <div style="background: #1e1e1e; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; border: 1px solid #333;">
+  <!-- Weather Insights -->
+  <div style="background: #1e1e1e; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; border: 1px solid #333;">
           <h4 style="margin: 0 0 1rem 0; color: #e0e0e0;">💡 Weather Insights</h4>
           <div id="weather-insights" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
             <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
@@ -938,10 +851,10 @@ tags: [mood-tracking, meals, activities, music, wellness]
           </div>
         </div>
 
-      </div>
+  </div>
 
-      <!-- Outfit Recommendations (Enhanced) -->
-      <div id="outfit-recommendations" class="hidden">
+  <!-- Outfit Recommendations (Enhanced) -->
+  <div id="outfit-recommendations" class="hidden">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
           <h3 style="margin: 0;">👔 Personalized Outfit Recommendations</h3>
           <button class="btn btn-secondary" style="padding: 0.5rem 1rem; background: #2a2a2a; border: 1px solid #444;" onclick="generateOutfit()">🔄 New Suggestions</button>
@@ -952,18 +865,18 @@ tags: [mood-tracking, meals, activities, music, wellness]
             <p id="general-advice" style="color: #999; line-height: 1.6; margin: 0;"></p>
           </div>
 
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
             <div class="outfit-category" style="background: #1e1e1e; border-radius: 12px; padding: 1.25rem; border: 1px solid #333;">
               <h4 style="margin: 0 0 0.75rem 0; color: #ccc;">👕 Clothing</h4>
               <div class="outfit-items" id="clothing-items"></div>
             </div>
 
-            <div class="outfit-category" style="background: #1e1e1e; border-radius: 12px; padding: 1.25rem; border: 1px solid #333;">
+  <div class="outfit-category" style="background: #1e1e1e; border-radius: 12px; padding: 1.25rem; border: 1px solid #333;">
               <h4 style="margin: 0 0 0.75rem 0; color: #ccc;">🎒 Accessories</h4>
               <div class="outfit-items" id="accessories-items"></div>
             </div>
 
-            <div class="outfit-category" style="background: #1e1e1e; border-radius: 12px; padding: 1.25rem; border: 1px solid #333;">
+  <div class="outfit-category" style="background: #1e1e1e; border-radius: 12px; padding: 1.25rem; border: 1px solid #333;">
               <h4 style="margin: 0 0 0.75rem 0; color: #ccc;">👟 Footwear</h4>
               <div class="outfit-items" id="footwear-items"></div>
             </div>
@@ -1145,8 +1058,8 @@ tags: [mood-tracking, meals, activities, music, wellness]
         </div>
       </div>
 
-      <!-- Get New Recommendations Section -->
-      <div class="card" style="margin-top: 1.5rem; padding: 1.5rem;">
+  <!-- Get New Recommendations Section -->
+  <div class="card" style="margin-top: 1.5rem; padding: 1.5rem;">
         <h3 style="margin-top: 0; margin-bottom: 1rem; color: #2196F3;">🔄 Want Different Recommendations?</h3>
         <p style="color: #bbb; margin-bottom: 1rem; font-size: 0.9rem;">Tell us what you'd like to change and we'll generate new suggestions tailored to your feedback.</p>
         <div style="margin-bottom: 1rem;">
@@ -1208,25 +1121,25 @@ tags: [mood-tracking, meals, activities, music, wellness]
   <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="closeModal('saved-modal')">Close</button>
     </div>
   </div>
-
-    <!-- Friends Modal (loads friends/messages in an iframe like microblog) -->
-    <div class="modal" id="friends-modal">
+  
+<!-- Friends Modal (loads friends/messages in an iframe like microblog) -->
+  <div class="modal" id="friends-modal">
       <div class="modal-content" style="max-width:900px; width:95%;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
           <h2>👥 Friends</h2>
           <button id="friends-modal-close" onclick="closeFriendsModal()" style="background:none; border:none; color:#888; font-size:2rem; cursor:pointer;">&times;</button>
         </div>
 
-        <div style="display:flex; gap:0.5rem; margin-bottom:1rem;">
+  <div style="display:flex; gap:0.5rem; margin-bottom:1rem;">
           <button class="btn btn-secondary" id="friends-tab-btn" onclick="loadFriendsTab()">Friends List</button>
           <button class="btn btn-secondary" id="messages-tab-btn" onclick="loadMessagesTab()">Messages</button>
         </div>
 
-        <div id="friends-iframe-wrap" style="height:60vh; border-radius:8px; overflow:hidden; border:1px solid #222; background:#000;">
+  <div id="friends-iframe-wrap" style="height:60vh; border-radius:8px; overflow:hidden; border:1px solid #222; background:#000;">
           <div style="color:#bbb; text-align:center; padding:2rem;">Click a tab to load content.</div>
         </div>
 
-        <div style="margin-top:1rem; display:flex; gap:0.5rem;">
+  <div style="margin-top:1rem; display:flex; gap:0.5rem;">
           <button class="btn btn-primary" onclick="closeFriendsModal()" style="flex:1;">Close</button>
         </div>
       </div>
