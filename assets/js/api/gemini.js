@@ -1,8 +1,15 @@
+// Import API configuration from config module
 import { pythonURI, fetchOptions } from './config.js';
 
 /**
  * Gemini AI API Module
  * Provides reusable functions for interacting with Gemini AI endpoints
+ *
+ * PROGRAMMING CONSTRUCTS USED:
+ * - Sequencing: Promise chains execute fetch -> validate -> parse in order
+ * - Selection: if/else handles errors, response formats, and parse modes
+ * - Iteration: (implicit in Promise chain processing)
+ * - Lists: requestOptions object stores fetch configuration
  */
 
 /**
@@ -14,7 +21,9 @@ import { pythonURI, fetchOptions } from './config.js';
  * @param {boolean} [options.parseJSON=false] - Whether to parse response as JSON
  * @returns {Promise} - Returns promise for chaining
  */
+// Sends a prompt to the Gemini AI backend and returns the response
 export function queryGemini(options) {
+    // Sequencing: Destructure options to extract parameters
     const {
         prompt,
         text,
@@ -22,13 +31,15 @@ export function queryGemini(options) {
         parseJSON = false
     } = options;
 
-    // Validate required parameters
+    // Selection: Validate that required parameters are provided
     if (!prompt || !text) {
         return Promise.reject(new Error('Both prompt and text parameters are required'));
     }
 
+    // Sequencing: Build the full API URL
     const URL = pythonURI + endpoint;
 
+    // List: Create request configuration object
     const requestOptions = {
         ...fetchOptions,
         method: 'POST',
@@ -38,17 +49,19 @@ export function queryGemini(options) {
         })
     };
 
+    // Sequencing: Execute fetch, then process response, then parse data
     return fetch(URL, requestOptions)
         .then(response => {
+            // Selection: Check if HTTP response was successful
             if (!response.ok) {
-                return response.text().then(text => { 
-                    throw new Error(`HTTP ${response.status}: ${text}`); 
+                return response.text().then(text => {
+                    throw new Error(`HTTP ${response.status}: ${text}`);
                 });
             }
             return response.json();
         })
         .then(data => {
-            // Handle API-level errors before parsing
+            // Selection: Handle API-level errors before parsing
             if (data.error || (data.message && !data.success)) {
                 let errorMsg = data.error || data.message || "Unknown error";
                 
@@ -86,9 +99,10 @@ export function queryGemini(options) {
  * @param {Object} data - Raw response data from Gemini API
  * @returns {Object} - Parsed JSON object
  */
+// Parses Gemini response and extracts JSON, handling different response formats
 export function parseGeminiResponse(data) {
     try {
-        // Case 1: Response wrapped in 'response' field
+        // Selection: Case 1 - Response wrapped in 'response' field
         if (data.response) {
             let responseText = typeof data.response === 'string' 
                 ? data.response 

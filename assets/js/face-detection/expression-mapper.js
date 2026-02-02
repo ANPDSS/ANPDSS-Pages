@@ -1,9 +1,15 @@
 /**
  * Expression Mapper Module
  * Maps face-api.js facial expressions to mood scores (0-100) and tags
+ *
+ * PROGRAMMING CONSTRUCTS USED:
+ * - Sequencing: Functions execute step-by-step to calculate mood scores
+ * - Selection: if/else determines mood category based on score ranges
+ * - Iteration: forEach loops process expression arrays; for...of loops through categories
+ * - Lists: EXPRESSION_SCORE_MAP and MOOD_CATEGORIES store mapping data
  */
 
-// Expression to mood score mapping with tags
+// List: Maps each expression type to a score range and descriptive tags
 const EXPRESSION_SCORE_MAP = {
   happy: { min: 75, max: 90, tags: ['happy', 'energetic'] },
   neutral: { min: 50, max: 65, tags: ['neutral', 'calm'] },
@@ -14,7 +20,7 @@ const EXPRESSION_SCORE_MAP = {
   disgusted: { min: 25, max: 45, tags: ['frustrated', 'tired'] }
 };
 
-// Mood category mapping based on score
+// List: Maps score ranges to mood category names
 const MOOD_CATEGORIES = [
   { min: 0, max: 40, category: 'Stressed/Anxious' },
   { min: 41, max: 60, category: 'Tired/Low Energy' },
@@ -38,7 +44,7 @@ export function calculateMoodScore(expressions) {
     };
   }
 
-  // Convert expressions object to sorted array by confidence
+  // List: Convert expressions object to sorted array by confidence
   const expressionArray = Object.entries(expressions)
     .map(([expression, confidence]) => ({ expression, confidence }))
     .sort((a, b) => b.confidence - a.confidence);
@@ -52,16 +58,18 @@ export function calculateMoodScore(expressions) {
   let weightedSum = 0;
   const tagScores = {};
 
+  // Iteration: Loop through each expression to calculate weighted score
   expressionArray.forEach(({ expression, confidence }) => {
     const mapping = EXPRESSION_SCORE_MAP[expression];
     const conf = Number(confidence) || 0;
     totalConf += conf;
 
     let exprScore = 50; // default neutral
+    // Selection: Check if expression has a mapping defined
     if (mapping) {
       // Interpolate inside the mapping range based on confidence (0..1)
       exprScore = mapping.min + (mapping.max - mapping.min) * conf;
-      // accumulate tag weights
+      // Iteration: Loop through tags and accumulate weights
       (mapping.tags || []).forEach(tag => { tagScores[tag] = (tagScores[tag] || 0) + conf; });
     }
 
@@ -103,8 +111,11 @@ function calculateSingleScore(expression) {
  * @param {number} score - Mood score (0-100)
  * @returns {string} Mood category
  */
+// Returns the mood category string based on numeric score
 export function getMoodCategory(score) {
+  // Iteration: Loop through each category to find matching range
   for (const category of MOOD_CATEGORIES) {
+    // Selection: Check if score falls within this category's range
     if (score >= category.min && score <= category.max) {
       return category.category;
     }

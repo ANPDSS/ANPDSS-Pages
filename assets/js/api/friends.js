@@ -1,24 +1,39 @@
 ---
 ---
+/**
+ * Friends and Messaging API Module
+ * Handles friend requests, friend lists, and private messaging
+ *
+ * PROGRAMMING CONSTRUCTS USED:
+ * - Sequencing: Async/await ensures API calls execute in order
+ * - Selection: if/else checks response.ok to handle success vs errors
+ * - Iteration: (used when processing returned friend/message lists)
+ * - Lists: fetchOptions object stores request config; API returns friend arrays
+ */
 import { pythonURI, fetchOptions } from './config.js';
 
+// API endpoint URLs for friend and message operations
 const friendAPI = `${pythonURI}/api/friend`;
 const messageAPI = `${pythonURI}/api/message`;
 
 /**
  * Get friend recommendations for current user
  */
+// Fetches friend recommendations based on mood and preference similarity
 export async function getFriendRecommendations(limit = 10) {
     try {
+        // Sequencing: Send GET request to recommendations endpoint
         const response = await fetch(`${friendAPI}/recommendations?limit=${limit}`, {
             ...fetchOptions,
             method: 'GET'
         });
 
+        // Selection: Check if request was successful
         if (!response.ok) {
             throw new Error(`Failed to get recommendations: ${response.status}`);
         }
 
+        // Returns a list of recommended users
         return await response.json();
     } catch (error) {
         console.error('Error getting friend recommendations:', error);
@@ -50,14 +65,17 @@ export async function searchUsers(query) {
 /**
  * Send a friend request
  */
+// Sends a friend request to another user by their ID
 export async function sendFriendRequest(receiverId) {
     try {
+        // Sequencing: POST request with receiver_id in body
         const response = await fetch(`${friendAPI}/request`, {
             ...fetchOptions,
             method: 'POST',
             body: JSON.stringify({ receiver_id: receiverId })
         });
 
+        // Selection: Handle error response differently than success
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(errorData.message || `Failed to send request: ${response.status}`);
@@ -139,17 +157,21 @@ export async function cancelFriendRequest(requestId) {
 /**
  * Get list of friends
  */
+// Retrieves the current user's friends list as an array
 export async function getFriendsList() {
     try {
+        // Sequencing: Fetch friend list from API
         const response = await fetch(`${friendAPI}/list`, {
             ...fetchOptions,
             method: 'GET'
         });
 
+        // Selection: Check response status
         if (!response.ok) {
             throw new Error(`Failed to get friends list: ${response.status}`);
         }
 
+        // List: Returns array of friend objects
         return await response.json();
     } catch (error) {
         console.error('Error getting friends list:', error);
@@ -182,11 +204,14 @@ export async function unfriend(friendId) {
 /**
  * Send a private message
  */
+// Sends a private message to a friend
 export async function sendMessage(receiverId, content) {
     try {
+        // Sequencing: POST message data to send endpoint
         const response = await fetch(`${messageAPI}/send`, {
             ...fetchOptions,
             method: 'POST',
+            // List: Message data object with receiver and content
             body: JSON.stringify({
                 receiver_id: receiverId,
                 content: content

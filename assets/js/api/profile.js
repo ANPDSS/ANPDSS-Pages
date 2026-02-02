@@ -1,8 +1,18 @@
+/**
+ * Profile API Module
+ * Handles user profile updates, authentication, and data management
+ *
+ * PROGRAMMING CONSTRUCTS USED:
+ * - Sequencing: Fetch requests execute in order using promises and async/await
+ * - Selection: if/else checks response.ok for success/error handling
+ * - Iteration: (used when processing user data fields)
+ * - Lists: requestOptions object stores fetch configuration; options.body contains user data
+ */
 import {baseurl, fetchOptions, pythonURI, javaURI } from './config.js';
 
-// Update User Data with "Put"
+// Updates user profile data using HTTP PUT method
 export function putUpdate(options) {
-    // Modify the options to use the PUT method and include the request body.
+    // List: Build request configuration object with PUT method
     const requestOptions = {
         ...fetchOptions, // This will copy all properties from options
         method: 'PUT', // Override the method property
@@ -12,17 +22,16 @@ export function putUpdate(options) {
 
     // Clear the message area
 
-    // Send PUT request
+    // Sequencing: Send PUT request then handle response
     fetch(options.URL, requestOptions)
         .then(response => {
-            // Trap error response from Web API
+            // Selection: Check if response indicates an error
             if (!response.ok) {
                 const errorMsg = 'Error: ' + response.status;
                 console.log(errorMsg);
                 return;
             }
-            // Success!!!
-            // Call the callback function
+            // Success - call the callback function
             options.callback();
         })
         .catch(error => {
@@ -34,9 +43,9 @@ export function putUpdate(options) {
 
 
 
-// Update User Data with "POST" 
+// Creates new user data using HTTP POST method
 export function postUpdate(options) {
-    // Modify the options to use the POST method and include the request body.
+    // List: Build request configuration object with POST method
     const requestOptions = {
         ...fetchOptions, // This will copy all properties from options
         method: 'POST', // Override the method property
@@ -65,20 +74,23 @@ export function postUpdate(options) {
         });
 }
 
+// Logs out the user by deleting their authentication session
 export async function logoutUser() {
         const URL = pythonURI + '/api/authenticate'; // Adjusted endpoint for logout
-        
+
+        // List: Build request options with DELETE method
          const options = {
                 ...fetchOptions,
                 method: 'DELETE',
             };
-         
-         
+
+
             console.log('Logout clicked');
-         
-         
+
+        // Sequencing: Try to logout, then redirect or handle error
         try {
                 const response = await fetch(URL, options);
+                // Selection: Check if logout was successful
                 if (response.ok) {
                     window.location.href = "${baseurl}/duallogin"; // Redirect to login page
                 } else {
@@ -98,28 +110,28 @@ export async function logoutUser() {
          
          
          
+// Deletes user data using HTTP DELETE method
 export function deleteData(options)  {
-             // Modify the options to use the DELETE method and include the request body.
+             // List: Build request configuration with DELETE method
              const requestOptions = {
                  ...fetchOptions, // This will copy all properties from options
                  method: 'DELETE', // Override the method property
                  cache: options.cache, // Set the cache property
                  body: JSON.stringify(options.body) // Include the request body
              };
-         
+
              // Clear the message area
-         
-             // Send DELETE request
+
+             // Sequencing: Send DELETE request then handle response
              fetch(options.URL, requestOptions)
                  .then(response => {
-                     // Trap error response from Web API
+                     // Selection: Check if response indicates an error
                      if (!response.ok) {
                          const errorMsg = 'Error: ' + response.status;
                          console.log(errorMsg);
                          return;
                      }
-                     // Success!!!
-                     // Call the callback function
+                     // Success - call the callback function
                      options.callback();
                  })
                  .catch(error => {

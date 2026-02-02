@@ -1,9 +1,15 @@
 /**
  * Face Mood Detector Module
  * Handles camera access, face detection, and expression analysis using face-api.js
+ *
+ * PROGRAMMING CONSTRUCTS USED:
+ * - Sequencing: Async/await ensures code runs in order (initialize -> startCamera -> detect)
+ * - Selection: if/else statements validate camera support, face detection, and errors
+ * - Iteration: forEach loop stops camera tracks; reduce finds largest face
+ * - Lists: ERROR_CODES object stores error types; detections array holds detected faces
  */
 
-// Error codes
+// List: Error codes for different detection failure scenarios
 export const ERROR_CODES = {
   NO_FACE_DETECTED: 'NO_FACE_DETECTED',
   FACE_TOO_SMALL: 'FACE_TOO_SMALL',
@@ -16,14 +22,16 @@ export const ERROR_CODES = {
   BROWSER_NOT_SUPPORTED: 'BROWSER_NOT_SUPPORTED'
 };
 
+// Class that handles face detection and mood analysis from camera feed
 export class FaceMoodDetector {
+  // Constructor initializes video/canvas elements and configuration options
   constructor(videoElement, canvasElement, options = {}) {
     this.video = videoElement;
     this.canvas = canvasElement;
     this.stream = null;
     this.modelsLoaded = false;
 
-    // Options with defaults
+    // Sequencing: Set default options then override with user-provided options
     this.options = {
       modelPath: options.modelPath || 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/',
       minConfidence: options.minConfidence || 0.3,
@@ -37,6 +45,7 @@ export class FaceMoodDetector {
    * @returns {Object} { supported, message }
    */
   static checkBrowserSupport() {
+    // Selection: Check if browser has camera API support
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
       return {
         supported: false,
@@ -170,9 +179,9 @@ export class FaceMoodDetector {
         };
       }
 
-      // Check for multiple faces
+      // Selection: Check for multiple faces
       if (detections.length > 1) {
-        // Use the largest face (closest to camera)
+        // Iteration: Use reduce to find the largest face (closest to camera)
         const largestFace = detections.reduce((max, current) => {
           const maxArea = max.detection.box.area;
           const currentArea = current.detection.box.area;
@@ -271,8 +280,10 @@ export class FaceMoodDetector {
   /**
    * Stop camera stream
    */
+  // Stops the camera and releases all media resources
   stopCamera() {
     if (this.stream) {
+      // Iteration: Loop through each track and stop it
       this.stream.getTracks().forEach(track => track.stop());
       this.stream = null;
     }
