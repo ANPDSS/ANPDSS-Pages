@@ -2122,7 +2122,7 @@ tags: [mood-tracking, meals, activities, music, wellness]
       if (msgEl && message) msgEl.textContent = message;
       el.classList.add('show');
     }
-
+    // This shows where we pull the ai from 
     function hideGlobalLoader() {
       const el = document.getElementById('global-loader');
       if (!el) return;
