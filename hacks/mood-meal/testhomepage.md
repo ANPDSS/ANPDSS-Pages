@@ -2632,8 +2632,8 @@ table th, table td {
         <button onclick="closeCameraModal()" style="background: transparent; border: none; color: #fff; font-size: 2rem; cursor: pointer; padding: 0.5rem;">&times;</button>
       </div>
 
-      <!-- Step 1: Loading -->
-      <div id="modal-step-loading" class="modal-step">
+  <!-- Step 1: Loading -->
+  <div id="modal-step-loading" class="modal-step">
         <div style="text-align: center; padding: 3rem;">
           <div style="font-size: 3rem; margin-bottom: 1rem;">⏳</div>
           <h3 id="loading-message">Loading AI models...</h3>
@@ -2644,8 +2644,8 @@ table th, table td {
         </div>
       </div>
 
-      <!-- Step 2: Permission -->
-      <div id="modal-step-permission" class="modal-step" style="display: none;">
+  <!-- Step 2: Permission -->
+  <div id="modal-step-permission" class="modal-step" style="display: none;">
         <div style="text-align: center; padding: 3rem;">
           <div style="font-size: 3rem; margin-bottom: 1rem;">📷</div>
           <h3>Camera Access Required</h3>
@@ -2668,18 +2668,18 @@ table th, table td {
         </div>
       </div>
 
-      <!-- Step 3: Detection -->
-      <div id="modal-step-detection" class="modal-step" style="display: none;">
+  <!-- Step 3: Detection -->
+  <div id="modal-step-detection" class="modal-step" style="display: none;">
         <div style="text-align: center;">
           <h3 style="margin-bottom: 1rem;">Position Your Face</h3>
           <p id="detection-status" style="color: #4eff9e; margin-bottom: 1rem;">Looking for your face...</p>
 
-          <div style="position: relative; display: inline-block; border-radius: 12px; overflow: hidden;">
+  <div style="position: relative; display: inline-block; border-radius: 12px; overflow: hidden;">
             <video id="face-video" autoplay playsinline style="width: 100%; max-width: 640px; border-radius: 12px; background: #000;"></video>
             <canvas id="face-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></canvas>
           </div>
 
-          <div style="margin-top: 1.5rem;">
+  <div style="margin-top: 1.5rem;">
             <button id="capture-btn" class="btn btn-primary" onclick="captureMood()" style="width: 100%; display: none;">
               📸 Capture My Mood
             </button>
@@ -2688,7 +2688,7 @@ table th, table td {
             </button>
           </div>
 
-          <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 8px; text-align: left;">
+  <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 8px; text-align: left;">
             <strong>Tips for best results:</strong>
             <ul style="margin-top: 0.5rem; padding-left: 1.5rem; color: #bbb;">
               <li>Face the camera directly</li>
@@ -2700,14 +2700,14 @@ table th, table td {
         </div>
       </div>
 
-      <!-- Step 4: Review -->
-      <div id="modal-step-review" class="modal-step" style="display: none;">
+<!-- Step 4: Review -->
+  <div id="modal-step-review" class="modal-step" style="display: none;">
         <div style="text-align: center;">
           <h3 style="margin-bottom: 1rem;">Review Your Mood</h3>
 
-          <img id="captured-preview" style="width: 100%; max-width: 640px; border-radius: 12px; margin-bottom: 1.5rem; border: 3px solid #4eff9e;" alt="Captured face">
+  <img id="captured-preview" style="width: 100%; max-width: 640px; border-radius: 12px; margin-bottom: 1.5rem; border: 3px solid #4eff9e;" alt="Captured face">
 
-          <div style="background: rgba(33, 150, 243, 0.1); border: 2px solid #2196F3; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+  <div style="background: rgba(33, 150, 243, 0.1); border: 2px solid #2196F3; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
             <h4 style="margin-top: 0;">Detected Mood</h4>
             <div style="font-size: 3rem; margin: 1rem 0;" id="review-score">75</div>
             <div style="font-size: 1.5rem; color: #4eff9e; margin-bottom: 1rem;" id="review-expression">Happy</div>
@@ -2721,7 +2721,7 @@ table th, table td {
             </div>
           </div>
 
-          <button class="btn btn-primary" onclick="confirmDetectedMood()" style="width: 100%; margin-bottom: 1rem;">
+  <button class="btn btn-primary" onclick="confirmDetectedMood()" style="width: 100%; margin-bottom: 1rem;">
             ✓ Confirm & Use This Mood
           </button>
           <button class="btn" onclick="retryDetection()" style="width: 100%; background: transparent; border: 1px solid #2196F3;">
@@ -2730,8 +2730,8 @@ table th, table td {
         </div>
       </div>
 
-      <!-- Error Display -->
-      <div id="modal-step-error" class="modal-step" style="display: none;">
+  <!-- Error Display -->
+  <div id="modal-step-error" class="modal-step" style="display: none;">
         <div style="text-align: center; padding: 3rem;">
           <div style="font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
           <h3 id="error-title">Something Went Wrong</h3>
