@@ -859,13 +859,17 @@ footer: # Footer navigation data for the page.
   }
 </style>
 
+<!-- Header section displaying the title and description from front matter data -->
 <div class="mood-meal-header">
   <h1>{{ page.lxdData.Title }}</h1>
   <p>{{ page.lxdData.Description }}</p>
 </div>
 
+<!-- Grid container for displaying module cards in a responsive layout -->
 <div class="modules-grid">
+<!-- Liquid template loop to iterate over each topic defined in the front matter -->
 {% for topic in page.lxdData.Topics %}
+  <!-- Module card for each topic, with dynamic class based on level -->
   <div class="module-card module-card-{{ topic.Level }}">
     <h3>{{ topic.Title }}</h3>
     <div class="module-meta">
@@ -874,6 +878,7 @@ footer: # Footer navigation data for the page.
     </div>
     <p class="module-description">{{ topic.Description }}</p>
     <div class="module-categories">
+      <!-- Nested loop to display each category tag for the topic -->
       {% for category in topic.Categories %}
       <span class="category-tag">{{ category }}</span>
       {% endfor %}
