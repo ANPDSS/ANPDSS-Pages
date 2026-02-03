@@ -15,7 +15,16 @@ footer:
   home: /west-coast/ai/
   next: /west-coast/ai/submodule_2/
 ---
+
+<!-- ==========================================================================
+     SUBMODULE 1: Understanding Artificial Intelligence
+     Interactive educational page with collapsible sections, quizzes,
+     free-response activities, a progress bar, and scroll-based completion.
+     ========================================================================== -->
+
+<!-- CSS: Dark-themed styles for the AI learning module -->
 <style>
+    /* Global reset: remove default margins/padding, use border-box */
     * {
         margin: 0;
         padding: 0;
