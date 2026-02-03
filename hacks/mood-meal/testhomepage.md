@@ -1158,6 +1158,18 @@ table th, table td {
 
   <script>
     // State Management
+    // Global application state
+// -------------------------------------------------
+// Single source of truth for the UI.
+// This avoids passing state between functions manually.
+//
+// currentMood:
+//   score       -> number from 0–100
+//   primaryTag  -> main mood label (e.g. "happy")
+//   tags        -> additional descriptors
+//
+// savedMeals / Activities / Music:
+//   store IDs of user-saved items
     const state = {
       currentMood: { score: 50, tags: [], primaryTag: null },
       savedMeals: [],
