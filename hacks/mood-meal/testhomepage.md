@@ -3042,7 +3042,7 @@ table th, table td {
         window.faceDetectionState.faceDetector.cleanup();
       }
 
-      // Hide modal
+      // Hide modal.
       document.getElementById('camera-modal').style.display = 'none';
 
       // Reset state 
