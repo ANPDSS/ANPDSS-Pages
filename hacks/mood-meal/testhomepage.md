@@ -3045,7 +3045,7 @@ table th, table td {
       // Hide modal
       document.getElementById('camera-modal').style.display = 'none';
 
-      // Reset state
+      // Reset state 
       window.faceDetectionState.detectedMoodData = null;
       window.faceDetectionState.capturedImageData = null;
       window.faceDetectionState.failureCount = 0;
