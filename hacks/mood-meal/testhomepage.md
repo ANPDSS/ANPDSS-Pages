@@ -1217,7 +1217,12 @@ table th, table td {
       { id: 5, title: 'Jazz Evening', artist: 'Smooth Sounds', genre: 'jazz', energy: 'low', emoji: '🎷' }
     ];
 
-    
+    // Navigation
+    // SPA navigation controller
+    // -------------------------------------------------
+    // Hides all sections, then shows exactly one.
+    // Also updates active nav button state.
+    // Special case: loads mood history when needed.
     function showSection(sectionName) {
       document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
