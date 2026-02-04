@@ -11,10 +11,28 @@ function getStoredToken() {
         // ignore storage errors
     }
 
-    // Fallback: parse cookies for common token names (only works if cookie is not HttpOnly)
+    // =====================================================================
+    // =====                       LISTS                              =====
+    // =====================================================================
+    // Lists (Arrays) store multiple values in a single variable.
+    // Below, 'names' is a LIST (array) of possible token names to
+    // search for in the browser cookies. 'parts' is also a LIST
+    // created by splitting the cookie string. Arrays let us group
+    // related data and loop through it efficiently.
+    // This is a clear example of LISTS being used in JavaScript.
+    // =====================================================================
     const names = ['jwt', 'jwt_python_flask', 'token', 'access_token'];
     if (document.cookie) {
         const parts = document.cookie.split(';').map(s => s.trim());
+        // =================================================================
+        // =====                    ITERATION                          =====
+        // =================================================================
+        // Iteration means repeating a block of code for each item in a
+        // collection (looping). Below, the 'for...of' loop ITERATES
+        // over every cookie part in the 'parts' array. For EACH part,
+        // it extracts the key and value, then checks if the key matches
+        // one of our token names. This is a textbook for loop example.
+        // =================================================================
         for (const p of parts) {
             const eq = p.indexOf('=');
             if (eq > -1) {
@@ -56,6 +74,17 @@ function pythonDatabase() {
         });
 }
 
+// =====================================================================
+// =====                     SEQUENCING                            =====
+// =====================================================================
+// Sequencing means executing statements one after another, in order.
+// Below, when the page finishes loading (DOMContentLoaded), the code
+// runs a specific SEQUENCE of steps: (1) log the base URL, (2) call
+// getCredentials() to fetch user data from the API, (3) store the
+// data in window.user, (4) find the loginArea element, and (5) update
+// the UI. Each step depends on the previous one completing first.
+// This entire block is a clear example of SEQUENCING in action.
+// =====================================================================
 document.addEventListener('DOMContentLoaded', function() {
     console.log("Base URL:", baseurl); // Debugging line
     getCredentials() // Call the function to get credentials
@@ -69,6 +98,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
+            // =================================================================
+            // =====                    SELECTION                          =====
+            // =================================================================
+            // Selection means choosing different paths of execution based
+            // on a condition (if/else). Below, the code checks IF the
+            // user data exists. If YES, it builds a dropdown menu with
+            // the user's name and profile links. If NO (else), it shows
+            // a simple "Login" link instead. The ternary operator inside
+            // the template literal is also selection (checking if roles
+            // exist). This is a textbook example of SELECTION.
+            // =================================================================
             if (data) { // Update the login area based on the data
                 loginArea.innerHTML = `
                     <div class="dropdown">
