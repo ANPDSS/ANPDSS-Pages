@@ -2,6 +2,16 @@
 ---
 export const baseurl = "{{ site.baseurl }}";
 
+  // =====================================================================
+  // =====                     SELECTION                             =====
+  // =====================================================================
+  // Selection means choosing different paths of execution based on a
+  // condition (if/else). Below, the code checks IF the hostname is
+  // "localhost" or "127.0.0.1". If YES, it sets pythonURI to the
+  // local development server. If NO (else), it sets the URI to the
+  // production server. This decides which backend to connect to.
+  // This is a clear example of SELECTION (conditional logic).
+  // =====================================================================
   export var pythonURI;
   if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
       pythonURI = "http://localhost:8309";  // Same URI for localhost or 127.0.0.1
