@@ -29,7 +29,7 @@ body {
       min-height: 100vh;
       overflow-x: hidden;
     }
-/* Navigation */
+/* Navigation - replaces the site header */
     .top-nav {
       position: fixed;
       top: 0;
@@ -38,14 +38,18 @@ body {
       background: rgba(17, 17, 17, 0.95);
       backdrop-filter: blur(10px);
       border-bottom: 2px solid #2196F3;
-      z-index: 1000;
-      padding: 1rem 2rem;
+      z-index: 10000;
+      padding: 0.6rem 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
+    /* Hide the site header so MoodLife nav takes over */
+    .site-header {
+      display: none !important;
+    }
 .logo {
-      font-size: 1.5rem;
+      font-size: 1.3rem;
       font-weight: bold;
       background: linear-gradient(45deg, #2196F3, #4eff9e);
       -webkit-background-clip: text;
@@ -53,7 +57,7 @@ body {
     }
 .nav-links {
       display: flex;
-      gap: 1rem;
+      gap: 0.75rem;
       align-items: center;
     }
 .nav-btn {
@@ -101,7 +105,7 @@ body {
 /* Main Container */
     .container {
       max-width: 1200px;
-      margin: 80px auto 2rem;
+      margin: 70px auto 2rem;
       padding: 2rem;
     }
 /* Section Styles */
@@ -3088,3 +3092,4 @@ table th, table td {
   </script>
 </body>
 </html>
+
