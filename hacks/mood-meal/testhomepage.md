@@ -78,14 +78,6 @@ body {
       background: #2196F3;
       color: white;
     }
-.admin-nav-btn {
-      background: linear-gradient(135deg, #2196F3, #4eff9e) !important;
-      color: white !important;
-      border: none !important;
-    }
- .admin-nav-btn:hover {
-      box-shadow: 0 0 15px rgba(33, 150, 243, 0.5), 0 0 20px rgba(78, 255, 158, 0.3);
-    }
 .nav-btn-accent {
       padding: 0.5rem 1rem;
       background: linear-gradient(135deg, #2196F3, #1976D2);
@@ -538,7 +530,7 @@ table th, table td {
       <button class="nav-btn" id="friends-btn">👥 Friends</button>
       <button class="nav-btn" id="user-btn">👤 Guest Profile</button>
       <a href="#weather-section" class="nav-btn-accent" onclick="scrollToWeather(event)">Weather & Outfit Below</a>
-      <a href="{{ site.baseurl }}/mood-meal/admin/" class="nav-btn admin-nav-btn" id="admin-nav-btn" style="display: none; text-decoration: none;">⚙️ Admin</a>
+      <a href="{{ site.baseurl }}/login" class="nav-btn-accent" style="text-decoration: none;">🔐 Login</a>
     </div>
   </nav>
 
@@ -1225,32 +1217,7 @@ table th, table td {
       allowedTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/webp']
     };
 
-    // Admin Check - Show admin button if user is admin
-    (async function checkAdminStatus() {
-      try {
-        const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
-          ? 'http://localhost:8309'
-          : 'https://moodlife.opencodingsociety.com';
-
-        const response = await fetch(`${pythonURI}/api/admin/check`, {
-          method: 'GET',
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' }
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          if (data.is_admin) {
-            const adminBtn = document.getElementById('admin-nav-btn');
-            if (adminBtn) {
-              adminBtn.style.display = 'inline-block';
-            }
-          }
-        }
-      } catch (error) {
-        // Silently fail - user just won't see admin button
-      }
-    })();
+    // Admin functionality is handled server-side only (not exposed on frontend)
 
     // Mock Data
     const mockMeals = [

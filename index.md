@@ -251,6 +251,10 @@ hide: true
 
 </script>
 
+<div style="text-align: center; margin: 2rem 0;">
+  <a href="{{site.baseurl}}/mood-meal1/" style="display: inline-block; padding: 1rem 2.5rem; font-size: 1.2rem; font-weight: 600; color: white; background: #555; border-radius: 10px; text-decoration: none; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-3px)';" onmouseout="this.style.transform='translateY(0)';"> MoodLife - Wellness App</a>
+</div>
+ 
 ## About
 
 Empower yourself to solve real-world problems, unlock creativity, and open doors to every field—because coding is the language of innovation.
