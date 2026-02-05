@@ -1094,9 +1094,12 @@ table th, table td {
       </div>
       
   <div style="text-align: center; margin-bottom: 2rem;">
-        <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #2196F3, #4eff9e); border-radius: 50%; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 2rem;">
-          👤
+        <div id="profile-pic-wrapper" style="width: 80px; height: 80px; background: linear-gradient(135deg, #2196F3, #4eff9e); border-radius: 50%; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 2rem; overflow: hidden; cursor: pointer; position: relative;" onclick="document.getElementById('profile-pic-input').click()">
+          <img id="profile-pic-display" src="" alt="Profile" style="width:100%; height:100%; object-fit:cover; display:none;">
+          <span id="profile-pic-placeholder">👤</span>
         </div>
+        <input type="file" id="profile-pic-input" accept="image/png,image/jpeg,image/gif,image/webp" style="display:none;" onchange="handleProfilePicUpload(event)">
+        <p style="color:#666; font-size:0.8rem; margin-bottom:0.5rem;">Click avatar to upload a photo</p>
         <h3 id="user-name">Guest User</h3>
         <p style="color: #bbb;">MoodLife Member</p>
       </div>
@@ -1126,7 +1129,7 @@ table th, table td {
     </div>
   </div>
   
-<!-- Friends Modal (loads friends/messages in an iframe like microblog) -->
+<!-- Friends Modal -->
   <div class="modal" id="friends-modal">
       <div class="modal-content" style="max-width:900px; width:95%;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
@@ -1134,13 +1137,30 @@ table th, table td {
           <button id="friends-modal-close" onclick="closeFriendsModal()" style="background:none; border:none; color:#888; font-size:2rem; cursor:pointer;">&times;</button>
         </div>
 
+  <!-- Search bar for friends -->
+  <div style="margin-bottom:1rem;">
+          <input type="text" id="friend-search-input" placeholder="Search for friends by name..." style="width:100%; padding:0.75rem; border-radius:8px; border:1px solid #444; background:rgba(0,0,0,0.5); color:#fff; font-size:1rem;">
+        </div>
+
   <div style="display:flex; gap:0.5rem; margin-bottom:1rem;">
           <button class="btn btn-secondary" id="friends-tab-btn" onclick="loadFriendsTab()">Friends List</button>
           <button class="btn btn-secondary" id="messages-tab-btn" onclick="loadMessagesTab()">Messages</button>
         </div>
 
-  <div id="friends-iframe-wrap" style="height:60vh; border-radius:8px; overflow:hidden; border:1px solid #222; background:#000;">
-          <div style="color:#bbb; text-align:center; padding:2rem;">Click a tab to load content.</div>
+  <!-- Friends List Container (replaces iframe) -->
+  <div id="friends-list-container" style="height:55vh; border-radius:8px; overflow-y:auto; border:1px solid #222; background:#0a0a0a; padding:1rem;">
+          <div style="color:#bbb; text-align:center; padding:2rem;">Click Friends List to load.</div>
+        </div>
+  <!-- Messages Container -->
+  <div id="messages-list-container" style="height:55vh; border-radius:8px; overflow-y:auto; border:1px solid #222; background:#0a0a0a; padding:1rem; display:none;">
+          <div style="color:#bbb; text-align:center; padding:2rem;">Click Messages to load.</div>
+        </div>
+  <!-- Message compose area -->
+  <div id="message-compose" style="display:none; margin-top:0.5rem;">
+          <div style="display:flex; gap:0.5rem;">
+            <input type="text" id="message-input" placeholder="Type a message..." style="flex:1; padding:0.75rem; border-radius:8px; border:1px solid #444; background:rgba(0,0,0,0.5); color:#fff; font-size:1rem;">
+            <button class="btn btn-primary" onclick="sendDirectMessage()">Send</button>
+          </div>
         </div>
 
   <div style="margin-top:1rem; display:flex; gap:0.5rem;">
@@ -1179,6 +1199,30 @@ table th, table td {
       savedMeals: [],
       savedActivities: [],
       savedMusic: []
+    };
+
+    // ========== FRIENDS SYSTEM STATE ==========
+    // CB: Lists - arrays store friend objects, pending requests, and search results
+    const friendsState = {
+      friendsList: [],
+      pendingRequests: [],
+      searchResults: []
+    };
+
+    // ========== PRIVATE MESSAGING STATE ==========
+    // CB: Lists - arrays store conversations and active message thread
+    const messagingState = {
+      conversations: [],
+      activeMessages: [],
+      activeConversationId: null
+    };
+
+    // ========== BASE64 PROFILE PICS STATE ==========
+    // CB: Lists - array stores profile pic history; allowedTypes is a validation list
+    const profilePicState = {
+      currentPic: null,
+      picHistory: [],
+      allowedTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/webp']
     };
 
     // Admin Check - Show admin button if user is admin
@@ -1949,14 +1993,14 @@ table th, table td {
       document.getElementById(modalId).classList.remove('show');
     }
 
-    // Friends modal controls (use iframe to load existing /friends and /messages pages)
+    // ========== FRIENDS SYSTEM ==========
+    // CB Requirements: Sequencing, Selection, Iteration, Lists
+
     function showFriendsModal() {
       const el = document.getElementById('friends-modal');
       if (!el) return;
       el.classList.add('show');
-      // focus the close button for accessibility
       document.getElementById('friends-modal-close')?.focus();
-      // default: load friends tab
       loadFriendsTab();
     }
 
@@ -1964,55 +2008,410 @@ table th, table td {
       const el = document.getElementById('friends-modal');
       if (!el) return;
       el.classList.remove('show');
-      // remove iframe to stop any running scripts
-      const wrap = document.getElementById('friends-iframe-wrap');
-      if (wrap) wrap.innerHTML = '<div style="color:#bbb; text-align:center; padding:2rem;">Click a tab to load content.</div>';
+      messagingState.activeConversationId = null;
+      document.getElementById('message-compose').style.display = 'none';
     }
 
-    function makeIframeFor(path) {
-      const wrap = document.getElementById('friends-iframe-wrap');
-      if (!wrap) return;
-      wrap.innerHTML = '';
-      const iframe = document.createElement('iframe');
-      iframe.src = path;
-      iframe.style.width = '100%';
-      iframe.style.height = '100%';
-      iframe.style.border = '0';
-      // Keep scripts/forms/popups and allow same-origin so iframe keeps its real origin
-      // (without allow-same-origin the iframe gets an opaque 'null' origin which can
-      // cause CORS failures when the framed page requests resources from the server)
-      iframe.sandbox = 'allow-scripts allow-forms allow-popups allow-same-origin';
-      iframe.title = 'Friends panel';
-      // show a simple loading state while iframe loads
-      const loader = document.createElement('div');
-      loader.style.color = '#bbb';
-      loader.style.textAlign = 'center';
-      loader.style.padding = '2rem';
-      loader.textContent = 'Loading...';
-      wrap.appendChild(loader);
-      iframe.onload = () => { try { loader.remove(); } catch(e){} };
-      iframe.onerror = () => {
-        loader.textContent = 'Failed to load. Open in new tab.';
-      };
-      wrap.appendChild(iframe);
-    }
-
-    function loadFriendsTab() {
+    async function loadFriendsTab() {
+      // CB: Sequencing - activate tab, fetch data, process response, render list
       document.getElementById('friends-tab-btn')?.classList.add('active');
       document.getElementById('messages-tab-btn')?.classList.remove('active');
-      // Build permalink using top-level site segment (e.g. /ANPDSS-Pages)
-      const siteBase = '/' + (location.pathname.split('/')[1] || '');
-      const url = `${location.origin}${siteBase}/friends`;
-      makeIframeFor(url);
+      document.getElementById('friends-list-container').style.display = 'block';
+      document.getElementById('messages-list-container').style.display = 'none';
+      document.getElementById('message-compose').style.display = 'none';
+
+      const container = document.getElementById('friends-list-container');
+      container.innerHTML = '<div style="text-align:center; padding:2rem;"><div class="loading"></div> Loading friends...</div>';
+
+      const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+        ? 'http://localhost:8309'
+        : 'https://moodlife.opencodingsociety.com';
+
+      try {
+        const response = await fetch(`${pythonURI}/api/friends`, {
+          method: 'GET', credentials: 'include',
+          headers: { 'Content-Type': 'application/json', 'X-Origin': 'client' }
+        });
+
+        // CB: Selection - check if response is ok
+        if (!response.ok) throw new Error('Failed to load friends');
+
+        const data = await response.json();
+        // CB: Lists - store friends in array
+        friendsState.friendsList = Array.isArray(data) ? data : (data.friends || []);
+
+        // CB: Selection - handle empty list
+        if (friendsState.friendsList.length === 0) {
+          container.innerHTML = '<div style="text-align:center; color:#888; padding:2rem;">No friends yet. Search for users above to add friends!</div>';
+          return;
+        }
+
+        // CB: Iteration - loop through friends list to render each friend
+        container.innerHTML = friendsState.friendsList.map(friend => {
+          // CB: Selection - determine online status styling
+          const isOnline = friend.is_online || false;
+          const statusDot = isOnline ? '#4eff9e' : '#666';
+          const statusText = isOnline ? 'Online' : 'Offline';
+          const profileImg = friend.pfp
+            ? `<img src="${friend.pfp}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
+            : `<span style="font-size:1.5rem;">${friend.name ? friend.name.charAt(0).toUpperCase() : '?'}</span>`;
+
+          return `
+            <div style="display:flex; align-items:center; gap:1rem; padding:0.75rem; background:#1a1a1a; border-radius:8px; margin-bottom:0.5rem; border:1px solid #333;">
+              <div style="width:45px; height:45px; border-radius:50%; background:#333; display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0;">
+                ${profileImg}
+              </div>
+              <div style="flex:1;">
+                <div style="color:#e0e0e0; font-weight:600;">${friend.name || 'Unknown'}</div>
+                <div style="display:flex; align-items:center; gap:0.35rem; margin-top:0.25rem;">
+                  <span style="width:8px; height:8px; border-radius:50%; background:${statusDot}; display:inline-block;"></span>
+                  <span style="color:#888; font-size:0.8rem;">${statusText}</span>
+                </div>
+              </div>
+              <button class="btn btn-secondary" style="padding:0.4rem 0.8rem; font-size:0.8rem;" onclick="openMessageWith(${friend.id}, '${(friend.name || '').replace(/'/g, "\\'")}')">Message</button>
+              <button class="btn" style="padding:0.4rem 0.8rem; font-size:0.8rem; background:transparent; border:1px solid #ff4a4a; color:#ff4a4a;" onclick="removeFriend(${friend.id})">Remove</button>
+            </div>
+          `;
+        }).join('');
+
+      } catch (e) {
+        console.warn('Friends API error, loading iframe fallback:', e);
+        const siteBase = '/' + (location.pathname.split('/')[1] || '');
+        container.innerHTML = `<iframe src="${location.origin}${siteBase}/friends" style="width:100%;height:100%;border:0;" sandbox="allow-scripts allow-forms allow-popups allow-same-origin"></iframe>`;
+      }
     }
 
-    function loadMessagesTab() {
+    async function searchFriends() {
+      const query = (document.getElementById('friend-search-input') || {}).value || '';
+      // CB: Selection - validate search query length
+      if (query.trim().length < 2) {
+        showToast('Enter at least 2 characters to search');
+        return;
+      }
+
+      const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+        ? 'http://localhost:8309'
+        : 'https://moodlife.opencodingsociety.com';
+
+      try {
+        const response = await fetch(`${pythonURI}/api/friends/search?query=${encodeURIComponent(query.trim())}`, {
+          method: 'GET', credentials: 'include',
+          headers: { 'Content-Type': 'application/json', 'X-Origin': 'client' }
+        });
+        if (!response.ok) throw new Error('Search failed');
+
+        const data = await response.json();
+        // CB: Lists - store search results in array
+        friendsState.searchResults = Array.isArray(data) ? data : (data.results || []);
+
+        const container = document.getElementById('friends-list-container');
+        // CB: Selection - check empty results
+        if (friendsState.searchResults.length === 0) {
+          container.innerHTML = '<div style="text-align:center; color:#888; padding:2rem;">No users found matching your search.</div>';
+          return;
+        }
+
+        // CB: Iteration - render each search result
+        container.innerHTML = friendsState.searchResults.map(user => {
+          // CB: Selection - check if already a friend
+          const alreadyFriend = friendsState.friendsList.some(f => f.id === user.id);
+          const actionBtn = alreadyFriend
+            ? '<span style="color:#4eff9e; font-size:0.85rem;">Already Friends</span>'
+            : `<button class="btn btn-primary" style="padding:0.4rem 0.8rem; font-size:0.8rem;" onclick="sendFriendRequest(${user.id})">Add Friend</button>`;
+
+          return `
+            <div style="display:flex; align-items:center; gap:1rem; padding:0.75rem; background:#1a1a1a; border-radius:8px; margin-bottom:0.5rem; border:1px solid #333;">
+              <div style="width:45px; height:45px; border-radius:50%; background:#333; display:flex; align-items:center; justify-content:center; font-size:1.5rem; flex-shrink:0;">
+                ${user.name ? user.name.charAt(0).toUpperCase() : '?'}
+              </div>
+              <div style="flex:1; color:#e0e0e0; font-weight:600;">${user.name || 'Unknown'}</div>
+              ${actionBtn}
+            </div>
+          `;
+        }).join('');
+
+      } catch (e) {
+        console.error('Friend search error:', e);
+        showToast('Search failed. Please try again.');
+      }
+    }
+
+    async function sendFriendRequest(userId) {
+      // CB: Selection - prevent duplicate friend requests
+      if (friendsState.friendsList.some(f => f.id === userId)) {
+        showToast('Already friends with this user');
+        return;
+      }
+
+      const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+        ? 'http://localhost:8309'
+        : 'https://moodlife.opencodingsociety.com';
+
+      try {
+        // CB: Sequencing - send request then refresh the friends list
+        const response = await fetch(`${pythonURI}/api/friends/request`, {
+          method: 'POST', credentials: 'include',
+          headers: { 'Content-Type': 'application/json', 'X-Origin': 'client' },
+          body: JSON.stringify({ friend_id: userId })
+        });
+        if (!response.ok) throw new Error('Request failed');
+        showToast('Friend request sent!');
+        loadFriendsTab();
+      } catch (e) {
+        console.error('Friend request error:', e);
+        showToast('Failed to send friend request.');
+      }
+    }
+
+    async function removeFriend(friendId) {
+      const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+        ? 'http://localhost:8309'
+        : 'https://moodlife.opencodingsociety.com';
+
+      try {
+        const response = await fetch(`${pythonURI}/api/friends/${friendId}`, {
+          method: 'DELETE', credentials: 'include',
+          headers: { 'Content-Type': 'application/json', 'X-Origin': 'client' }
+        });
+        if (!response.ok) throw new Error('Remove failed');
+        // CB: Lists + Iteration - filter the removed friend out of the list
+        friendsState.friendsList = friendsState.friendsList.filter(f => f.id !== friendId);
+        showToast('Friend removed');
+        loadFriendsTab();
+      } catch (e) {
+        console.error('Remove friend error:', e);
+        showToast('Failed to remove friend.');
+      }
+    }
+
+    // Wire up search on Enter key
+    document.getElementById('friend-search-input')?.addEventListener('keyup', (e) => {
+      if (e.key === 'Enter') searchFriends();
+    });
+
+    // ========== PRIVATE MESSAGING ==========
+    // CB Requirements: Sequencing, Selection, Iteration, Lists
+
+    async function loadMessagesTab() {
+      // CB: Sequencing - activate tab, fetch conversations, process, render
       document.getElementById('messages-tab-btn')?.classList.add('active');
       document.getElementById('friends-tab-btn')?.classList.remove('active');
-      // Build permalink using top-level site segment (e.g. /ANPDSS-Pages)
-      const siteBase = '/' + (location.pathname.split('/')[1] || '');
-      const url = `${location.origin}${siteBase}/messages`;
-      makeIframeFor(url);
+      document.getElementById('messages-list-container').style.display = 'block';
+      document.getElementById('friends-list-container').style.display = 'none';
+      document.getElementById('message-compose').style.display = 'none';
+
+      const container = document.getElementById('messages-list-container');
+      container.innerHTML = '<div style="text-align:center; padding:2rem;"><div class="loading"></div> Loading conversations...</div>';
+
+      const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+        ? 'http://localhost:8309'
+        : 'https://moodlife.opencodingsociety.com';
+
+      try {
+        const response = await fetch(`${pythonURI}/api/messages/conversations`, {
+          method: 'GET', credentials: 'include',
+          headers: { 'Content-Type': 'application/json', 'X-Origin': 'client' }
+        });
+        if (!response.ok) throw new Error('Failed to load conversations');
+
+        const data = await response.json();
+        // CB: Lists - store conversations in array
+        messagingState.conversations = Array.isArray(data) ? data : (data.conversations || []);
+
+        // CB: Selection - handle empty conversations
+        if (messagingState.conversations.length === 0) {
+          container.innerHTML = '<div style="text-align:center; color:#888; padding:2rem;">No conversations yet. Message a friend to start chatting!</div>';
+          return;
+        }
+
+        // CB: Iteration - render each conversation
+        container.innerHTML = messagingState.conversations.map(conv => {
+          // CB: Selection - highlight unread conversations
+          const hasUnread = conv.unread_count > 0;
+          const borderColor = hasUnread ? '#2196F3' : '#333';
+          const unreadBadge = hasUnread
+            ? `<span style="background:#2196F3; color:#fff; font-size:0.7rem; padding:0.2rem 0.5rem; border-radius:10px;">${conv.unread_count}</span>`
+            : '';
+          const lastMsg = conv.last_message || 'No messages yet';
+          const timeStr = conv.last_message_time
+            ? new Date(conv.last_message_time).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+            : '';
+
+          return `
+            <div style="display:flex; align-items:center; gap:1rem; padding:0.75rem; background:#1a1a1a; border-radius:8px; margin-bottom:0.5rem; border:1px solid ${borderColor}; cursor:pointer;" onclick="openConversation(${conv.id}, '${(conv.friend_name || '').replace(/'/g, "\\'")}')">
+              <div style="width:45px; height:45px; border-radius:50%; background:#333; display:flex; align-items:center; justify-content:center; font-size:1.5rem; flex-shrink:0;">
+                ${conv.friend_name ? conv.friend_name.charAt(0).toUpperCase() : '?'}
+              </div>
+              <div style="flex:1; min-width:0;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <span style="color:#e0e0e0; font-weight:600;">${conv.friend_name || 'Unknown'}</span>
+                  ${unreadBadge}
+                </div>
+                <div style="color:#888; font-size:0.85rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:0.25rem;">${lastMsg}</div>
+              </div>
+              <div style="color:#666; font-size:0.75rem; flex-shrink:0;">${timeStr}</div>
+            </div>
+          `;
+        }).join('');
+
+      } catch (e) {
+        console.warn('Messages API error, loading iframe fallback:', e);
+        const siteBase = '/' + (location.pathname.split('/')[1] || '');
+        container.innerHTML = `<iframe src="${location.origin}${siteBase}/messages" style="width:100%;height:100%;border:0;" sandbox="allow-scripts allow-forms allow-popups allow-same-origin"></iframe>`;
+      }
+    }
+
+    async function openConversation(conversationId, friendName) {
+      // CB: Sequencing - set active, fetch messages, render thread, show compose
+      messagingState.activeConversationId = conversationId;
+      document.getElementById('message-compose').style.display = 'block';
+
+      const container = document.getElementById('messages-list-container');
+      container.innerHTML = `
+        <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:1rem; padding-bottom:0.75rem; border-bottom:1px solid #333;">
+          <button class="btn btn-secondary" style="padding:0.3rem 0.6rem; font-size:0.8rem;" onclick="loadMessagesTab()">← Back</button>
+          <h3 style="margin:0; color:#e0e0e0;">${friendName}</h3>
+        </div>
+        <div style="text-align:center; padding:1rem;"><div class="loading"></div></div>
+      `;
+
+      const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+        ? 'http://localhost:8309'
+        : 'https://moodlife.opencodingsociety.com';
+
+      try {
+        const response = await fetch(`${pythonURI}/api/messages/${conversationId}`, {
+          method: 'GET', credentials: 'include',
+          headers: { 'Content-Type': 'application/json', 'X-Origin': 'client' }
+        });
+        if (!response.ok) throw new Error('Failed to load messages');
+
+        const data = await response.json();
+        // CB: Lists - store messages in array
+        messagingState.activeMessages = Array.isArray(data) ? data : (data.messages || []);
+
+        const backHeader = `
+          <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:1rem; padding-bottom:0.75rem; border-bottom:1px solid #333;">
+            <button class="btn btn-secondary" style="padding:0.3rem 0.6rem; font-size:0.8rem;" onclick="loadMessagesTab()">← Back</button>
+            <h3 style="margin:0; color:#e0e0e0;">${friendName}</h3>
+          </div>
+        `;
+
+        // CB: Selection - handle empty thread
+        if (messagingState.activeMessages.length === 0) {
+          container.innerHTML = backHeader + '<div style="text-align:center; color:#888; padding:2rem;">No messages yet. Send the first message!</div>';
+          return;
+        }
+
+        // CB: Iteration - render each message in the conversation
+        const messagesHtml = messagingState.activeMessages.map(msg => {
+          // CB: Selection - determine if message was sent or received for alignment
+          const isSent = msg.is_sender || msg.is_mine;
+          const alignment = isSent ? 'flex-end' : 'flex-start';
+          const bgColor = isSent ? 'rgba(33, 150, 243, 0.2)' : '#1a1a1a';
+          const borderClr = isSent ? '#2196F3' : '#333';
+          const timeStr = msg.timestamp
+            ? new Date(msg.timestamp).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+            : '';
+
+          return `
+            <div style="display:flex; justify-content:${alignment}; margin-bottom:0.5rem;">
+              <div style="max-width:70%; padding:0.75rem 1rem; background:${bgColor}; border:1px solid ${borderClr}; border-radius:12px;">
+                <div style="color:#e0e0e0; word-wrap:break-word;">${msg.content || msg.message || ''}</div>
+                <div style="color:#666; font-size:0.7rem; margin-top:0.25rem; text-align:right;">${timeStr}</div>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        container.innerHTML = backHeader + messagesHtml;
+        container.scrollTop = container.scrollHeight;
+
+      } catch (e) {
+        console.error('Load messages error:', e);
+        container.innerHTML = '<div style="text-align:center; color:#ff4a4a; padding:2rem;">Failed to load messages.</div>';
+      }
+    }
+
+    function openMessageWith(friendId, friendName) {
+      // CB: Sequencing - switch tab, search conversations, open or start new
+      document.getElementById('messages-tab-btn')?.classList.add('active');
+      document.getElementById('friends-tab-btn')?.classList.remove('active');
+      document.getElementById('messages-list-container').style.display = 'block';
+      document.getElementById('friends-list-container').style.display = 'none';
+
+      // CB: Lists + Iteration - search conversations array for matching friend
+      const conv = messagingState.conversations.find(c => c.friend_id === friendId);
+      // CB: Selection - open existing conversation or start new one
+      if (conv) {
+        openConversation(conv.id, friendName);
+      } else {
+        messagingState.activeConversationId = `new_${friendId}`;
+        document.getElementById('message-compose').style.display = 'block';
+        document.getElementById('messages-list-container').innerHTML = `
+          <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:1rem; padding-bottom:0.75rem; border-bottom:1px solid #333;">
+            <button class="btn btn-secondary" style="padding:0.3rem 0.6rem; font-size:0.8rem;" onclick="loadMessagesTab()">← Back</button>
+            <h3 style="margin:0; color:#e0e0e0;">${friendName}</h3>
+          </div>
+          <div style="text-align:center; color:#888; padding:2rem;">Start a new conversation with ${friendName}!</div>
+        `;
+      }
+    }
+
+    async function sendDirectMessage() {
+      const input = document.getElementById('message-input');
+      const content = (input?.value || '').trim();
+      // CB: Selection - validate message content
+      if (!content) { showToast('Please type a message'); return; }
+      if (!messagingState.activeConversationId) { showToast('No active conversation'); return; }
+
+      const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+        ? 'http://localhost:8309'
+        : 'https://moodlife.opencodingsociety.com';
+
+      try {
+        // CB: Sequencing - send message, then add to list, then re-render
+        const response = await fetch(`${pythonURI}/api/messages/send`, {
+          method: 'POST', credentials: 'include',
+          headers: { 'Content-Type': 'application/json', 'X-Origin': 'client' },
+          body: JSON.stringify({ conversation_id: messagingState.activeConversationId, content: content })
+        });
+        if (!response.ok) throw new Error('Send failed');
+
+        const newMsg = await response.json();
+        // CB: Lists - push new message onto the active messages array
+        messagingState.activeMessages.push(newMsg);
+        input.value = '';
+
+        // CB: Iteration - re-render all messages in the conversation
+        const container = document.getElementById('messages-list-container');
+        const headerEl = container.querySelector('div:first-child');
+        const headerHtml = headerEl ? headerEl.outerHTML : '';
+        const messagesHtml = messagingState.activeMessages.map(msg => {
+          const isSent = msg.is_sender || msg.is_mine;
+          const alignment = isSent ? 'flex-end' : 'flex-start';
+          const bgColor = isSent ? 'rgba(33, 150, 243, 0.2)' : '#1a1a1a';
+          const borderClr = isSent ? '#2196F3' : '#333';
+          const timeStr = msg.timestamp
+            ? new Date(msg.timestamp).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+            : '';
+          return `
+            <div style="display:flex; justify-content:${alignment}; margin-bottom:0.5rem;">
+              <div style="max-width:70%; padding:0.75rem 1rem; background:${bgColor}; border:1px solid ${borderClr}; border-radius:12px;">
+                <div style="color:#e0e0e0; word-wrap:break-word;">${msg.content || msg.message || ''}</div>
+                <div style="color:#666; font-size:0.7rem; margin-top:0.25rem; text-align:right;">${timeStr}</div>
+              </div>
+            </div>
+          `;
+        }).join('');
+        container.innerHTML = headerHtml + messagesHtml;
+        container.scrollTop = container.scrollHeight;
+        showToast('Message sent!');
+
+      } catch (e) {
+        console.error('Send message error:', e);
+        showToast('Failed to send message.');
+      }
     }
 
     document.getElementById('user-btn').addEventListener('click', () => {
@@ -2027,6 +2426,129 @@ table th, table td {
       const totalSaved = state.savedMeals.length + state.savedActivities.length + state.savedMusic.length;
       document.getElementById('profile-mood').textContent = state.currentMood.score + '/100';
       document.getElementById('profile-saved').textContent = totalSaved;
+    }
+
+    // ========== BASE64 PROFILE PICS ==========
+    // CB Requirements: Sequencing, Selection, Iteration, Lists
+
+    function handleProfilePicUpload(event) {
+      const file = event.target.files[0];
+      // CB: Selection - validate file exists
+      if (!file) return;
+
+      // CB: Selection + Lists - check file type against the allowed types list
+      if (!profilePicState.allowedTypes.includes(file.type)) {
+        showToast('Please upload a PNG, JPEG, GIF, or WebP image');
+        return;
+      }
+
+      // CB: Selection - validate file size (max 2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        showToast('Image must be under 2MB');
+        return;
+      }
+
+      // CB: Sequencing - read file, convert to base64, save to history, update display, upload
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const base64String = e.target.result;
+
+        // CB: Lists - push current pic to history before replacing
+        if (profilePicState.currentPic) {
+          profilePicState.picHistory.push(profilePicState.currentPic);
+        }
+        profilePicState.currentPic = base64String;
+
+        // Store in localStorage
+        localStorage.setItem('moodlife_profile_pic', base64String);
+
+        // Update all display elements
+        updateProfilePicDisplay();
+
+        // Upload to backend
+        saveProfilePicToBackend(base64String);
+
+        showToast('Profile picture updated!');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function updateProfilePicDisplay() {
+      // CB: Lists - collect all profile pic elements into a list
+      const picElements = [
+        document.getElementById('profile-pic-display'),
+        document.getElementById('nav-profile-pic')
+      ];
+
+      // CB: Iteration - loop through all profile pic elements to update them
+      picElements.forEach(el => {
+        if (!el) return;
+        // CB: Selection - show image or hide based on whether pic data exists
+        if (profilePicState.currentPic) {
+          el.src = profilePicState.currentPic;
+          el.style.display = 'block';
+        } else {
+          el.style.display = 'none';
+        }
+      });
+
+      // Hide or show placeholder emoji
+      const placeholder = document.getElementById('profile-pic-placeholder');
+      if (placeholder) {
+        placeholder.style.display = profilePicState.currentPic ? 'none' : 'block';
+      }
+    }
+
+    async function saveProfilePicToBackend(base64String) {
+      const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+        ? 'http://localhost:8309'
+        : 'https://moodlife.opencodingsociety.com';
+
+      try {
+        // CB: Sequencing - send base64 data to backend, then check result
+        const response = await fetch(`${pythonURI}/api/id/pfp`, {
+          method: 'PUT', credentials: 'include',
+          headers: { 'Content-Type': 'application/json', 'X-Origin': 'client' },
+          body: JSON.stringify({ pfp: base64String })
+        });
+        // CB: Selection - check if save was successful
+        if (!response.ok) {
+          console.warn('Failed to save profile pic to backend:', response.status);
+        }
+      } catch (e) {
+        console.warn('Error saving profile pic:', e);
+      }
+    }
+
+    function loadProfilePic() {
+      // CB: Sequencing - try localStorage first, then try backend, then display
+      const savedPic = localStorage.getItem('moodlife_profile_pic');
+      // CB: Selection - use local pic if available
+      if (savedPic) {
+        profilePicState.currentPic = savedPic;
+        updateProfilePicDisplay();
+        return;
+      }
+
+      // Try loading from backend
+      const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+        ? 'http://localhost:8309'
+        : 'https://moodlife.opencodingsociety.com';
+
+      fetch(`${pythonURI}/api/id/pfp`, {
+        method: 'GET', credentials: 'include',
+        headers: { 'Content-Type': 'application/json', 'X-Origin': 'client' }
+      })
+        .then(r => { if (r.ok) return r.json(); throw new Error('No pic'); })
+        .then(data => {
+          // CB: Selection - check if response contains profile pic data
+          if (data && data.pfp) {
+            profilePicState.currentPic = data.pfp;
+            localStorage.setItem('moodlife_profile_pic', data.pfp);
+            updateProfilePicDisplay();
+          }
+        })
+        .catch(() => { /* No profile pic available */ });
     }
 
     // Scroll to Weather Section
@@ -2091,6 +2613,7 @@ table th, table td {
       if (savedMusic) state.savedMusic = JSON.parse(savedMusic);
 
       updateStats();
+      loadProfilePic();
     }
 
     // --- Weather & Outfit functionality (new) ---
