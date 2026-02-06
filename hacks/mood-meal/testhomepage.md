@@ -528,7 +528,7 @@ table th, table td {
       <button class="nav-btn active" data-section="home">🏠 Home</button>
       <button class="nav-btn" data-section="history">📊 History</button>
       <button class="nav-btn" id="friends-btn">👥 Friends</button>
-      <button class="nav-btn" id="user-btn">👤 Guest Profile</button>
+      <a href="{{ site.baseurl }}/profile" class="nav-btn" style="text-decoration: none;">👤 Profile</a>
       <a href="#weather-section" class="nav-btn-accent" onclick="scrollToWeather(event)">Weather & Outfit Below</a>
       <a href="{{ site.baseurl }}/login" class="nav-btn-accent" style="text-decoration: none;">🔐 Login</a>
     </div>
@@ -1077,33 +1077,6 @@ table th, table td {
 
   </div>
 
-  <!-- User Modal -->
-  <div class="modal" id="user-modal">
-    <div class="modal-content">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-        <h2>Your Profile</h2>
-        <button onclick="closeModal('user-modal')" style="background: none; border: none; color: #888; font-size: 2rem; cursor: pointer;">&times;</button>
-      </div>
-      
-  <div style="text-align: center; margin-bottom: 2rem;">
-        <div id="profile-pic-wrapper" style="width: 80px; height: 80px; background: linear-gradient(135deg, #2196F3, #4eff9e); border-radius: 50%; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 2rem; overflow: hidden; cursor: pointer; position: relative;" onclick="document.getElementById('profile-pic-input').click()">
-          <img id="profile-pic-display" src="" alt="Profile" style="width:100%; height:100%; object-fit:cover; display:none;">
-          <span id="profile-pic-placeholder">👤</span>
-        </div>
-        <input type="file" id="profile-pic-input" accept="image/png,image/jpeg,image/gif,image/webp" style="display:none;" onchange="handleProfilePicUpload(event)">
-        <p style="color:#666; font-size:0.8rem; margin-bottom:0.5rem;">Click avatar to upload a photo</p>
-        <h3 id="user-name">Guest User</h3>
-        <p style="color: #bbb;">MoodLife Member</p>
-      </div>
-
-  <div style="background: rgba(33, 150, 243, 0.1); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
-        <p><strong>Current Mood:</strong> <span id="profile-mood">Not set</span></p>
-        <p><strong>Saved Items:</strong> <span id="profile-saved">0</span></p>
-      </div>
-
-  <button class="btn btn-primary" style="width: 100%;" onclick="closeModal('user-modal')">Close</button>
-    </div>
-  </div>
 
   <!-- Saved Items Modal -->
   <div class="modal" id="saved-modal">
@@ -1207,14 +1180,6 @@ table th, table td {
       conversations: [],
       activeMessages: [],
       activeConversationId: null
-    };
-
-    // ========== BASE64 PROFILE PICS STATE ==========
-    // CB: Lists - array stores profile pic history; allowedTypes is a validation list
-    const profilePicState = {
-      currentPic: null,
-      picHistory: [],
-      allowedTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/webp']
     };
 
     // Admin functionality is handled server-side only (not exposed on frontend)
@@ -2381,142 +2346,10 @@ table th, table td {
       }
     }
 
-    document.getElementById('user-btn').addEventListener('click', () => {
-      showModal('user-modal');
-      updateProfile();
-    });
     // Friends button opens the friends modal
     const friendsBtnEl = document.getElementById('friends-btn');
     if (friendsBtnEl) friendsBtnEl.addEventListener('click', () => showFriendsModal());
 
-    function updateProfile() {
-      const totalSaved = state.savedMeals.length + state.savedActivities.length + state.savedMusic.length;
-      document.getElementById('profile-mood').textContent = state.currentMood.score + '/100';
-      document.getElementById('profile-saved').textContent = totalSaved;
-    }
-
-    // ========== BASE64 PROFILE PICS ==========
-    // CB Requirements: Sequencing, Selection, Iteration, Lists
-
-    function handleProfilePicUpload(event) {
-      const file = event.target.files[0];
-      // CB: Selection - validate file exists
-      if (!file) return;
-
-      // CB: Selection + Lists - check file type against the allowed types list
-      if (!profilePicState.allowedTypes.includes(file.type)) {
-        showToast('Please upload a PNG, JPEG, GIF, or WebP image');
-        return;
-      }
-
-      // CB: Selection - validate file size (max 2MB)
-      if (file.size > 2 * 1024 * 1024) {
-        showToast('Image must be under 2MB');
-        return;
-      }
-
-      // CB: Sequencing - read file, convert to base64, save to history, update display, upload
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const base64String = e.target.result;
-
-        // CB: Lists - push current pic to history before replacing
-        if (profilePicState.currentPic) {
-          profilePicState.picHistory.push(profilePicState.currentPic);
-        }
-        profilePicState.currentPic = base64String;
-
-        // Store in localStorage
-        localStorage.setItem('moodlife_profile_pic', base64String);
-
-        // Update all display elements
-        updateProfilePicDisplay();
-
-        // Upload to backend
-        saveProfilePicToBackend(base64String);
-
-        showToast('Profile picture updated!');
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function updateProfilePicDisplay() {
-      // CB: Lists - collect all profile pic elements into a list
-      const picElements = [
-        document.getElementById('profile-pic-display'),
-        document.getElementById('nav-profile-pic')
-      ];
-
-      // CB: Iteration - loop through all profile pic elements to update them
-      picElements.forEach(el => {
-        if (!el) return;
-        // CB: Selection - show image or hide based on whether pic data exists
-        if (profilePicState.currentPic) {
-          el.src = profilePicState.currentPic;
-          el.style.display = 'block';
-        } else {
-          el.style.display = 'none';
-        }
-      });
-
-      // Hide or show placeholder emoji
-      const placeholder = document.getElementById('profile-pic-placeholder');
-      if (placeholder) {
-        placeholder.style.display = profilePicState.currentPic ? 'none' : 'block';
-      }
-    }
-
-    async function saveProfilePicToBackend(base64String) {
-      const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
-        ? 'http://localhost:8309'
-        : 'https://moodlife.opencodingsociety.com';
-
-      try {
-        // CB: Sequencing - send base64 data to backend, then check result
-        const response = await fetch(`${pythonURI}/api/id/pfp`, {
-          method: 'PUT', credentials: 'include',
-          headers: { 'Content-Type': 'application/json', 'X-Origin': 'client' },
-          body: JSON.stringify({ pfp: base64String })
-        });
-        // CB: Selection - check if save was successful
-        if (!response.ok) {
-          console.warn('Failed to save profile pic to backend:', response.status);
-        }
-      } catch (e) {
-        console.warn('Error saving profile pic:', e);
-      }
-    }
-
-    function loadProfilePic() {
-      // CB: Sequencing - try localStorage first, then try backend, then display
-      const savedPic = localStorage.getItem('moodlife_profile_pic');
-      // CB: Selection - use local pic if available
-      if (savedPic) {
-        profilePicState.currentPic = savedPic;
-        updateProfilePicDisplay();
-        return;
-      }
-
-      // Try loading from backend
-      const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
-        ? 'http://localhost:8309'
-        : 'https://moodlife.opencodingsociety.com';
-
-      fetch(`${pythonURI}/api/id/pfp`, {
-        method: 'GET', credentials: 'include',
-        headers: { 'Content-Type': 'application/json', 'X-Origin': 'client' }
-      })
-        .then(r => { if (r.ok) return r.json(); throw new Error('No pic'); })
-        .then(data => {
-          // CB: Selection - check if response contains profile pic data
-          if (data && data.pfp) {
-            profilePicState.currentPic = data.pfp;
-            localStorage.setItem('moodlife_profile_pic', data.pfp);
-            updateProfilePicDisplay();
-          }
-        })
-        .catch(() => { /* No profile pic available */ });
-    }
 
     // Scroll to Weather Section
     function scrollToWeather(event) {
@@ -2580,7 +2413,6 @@ table th, table td {
       if (savedMusic) state.savedMusic = JSON.parse(savedMusic);
 
       updateStats();
-      loadProfilePic();
     }
 
     // --- Weather & Outfit functionality (new) ---

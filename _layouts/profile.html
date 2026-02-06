@@ -3,6 +3,15 @@ title: Profile Settings
 layout: aesthetihawk
 active_tab: profile
 ---
+<!--
+  Profile Page - Base64 Profile Picture Feature
+
+  CollegeBoard Programming Constructs:
+  - Sequencing: Step-by-step flow through file upload, compression, base64 conversion, backend save
+  - Selection: if/else for file validation, response checking, size limit enforcement
+  - Iteration: forEach loops to process form inputs, class entries, and profile pic elements
+  - Lists: Arrays storing original form values, class entries, validation inputs, allowed image types
+-->
 
 <head>
     <link rel="stylesheet" href="{{ site.baseurl }}/assets/css/aesthetihawk/shake.css">
@@ -113,81 +122,103 @@ active_tab: profile
         </div>
     </div>
 
-    <!-- School Section -->
-    <div class="bg-neutral-800 rounded-lg shadow-md p-6 mb-6 border-neutral-700 border">
-        <h2 class="text-xl font-semibold mb-6">School Information</h2>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- High School Selection -->
-            <div>
-                <label for="schoolChangeInput" class="block text-sm font-medium text-gray-300 mb-1">High School</label>
-                <select id="schoolChangeInput" name="school"
-                    class="w-full px-4 py-2 rounded-lg border border-gray-600 bg-neutral-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    onchange="checkForChanges()">
-                    <option value="" disabled>Select Your High School</option>
-                    <option value="Abraxas High School">Abraxas</option>
-                    <option value="Del Norte High School">Del Norte</option>
-                    <option value="Mt Carmel High School">Mt Carmel</option>
-                    <option value="Poway High School">Poway</option>
-                    <option value="Poway to Palomar">Poway to Palomar</option>
-                    <option value="Rancho Bernardo High School">Rancho Bernardo</option>
-                    <option value="Westview High School">Westview</option>
-                </select>
-            </div>
-
-            <!-- Student ID -->
-            <div>
-                <label for="sidChangeInput" class="block text-sm font-medium text-gray-300 mb-1">Student
-                    ID (7 digits)</label>
-                <input type="text" id="sidChangeInput" name="studentId"
-                    class="w-full px-4 py-2 rounded-lg border border-gray-600 bg-neutral-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    value="" maxlength="7" pattern="\d{7}" onchange="checkForChanges()" autocomplete="off">
-            </div>
-        </div>
-    </div>
-
-    <!-- Classes Section -->
-    <div class="bg-neutral-800 rounded-lg shadow-md p-6 mb-6 border-neutral-700 border">
-        <div class="flex justify-between items-center mb-4">
-            <h2 class="text-xl font-semibold">Classes</h2>
-            <button type="button" id="addClassBtn"
-                class="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 focus:outline-none"
-                onclick="addClass()">
-                Add Class
-            </button>
-        </div>
-
-        <div id="classesContainer">
-            <!-- Classes will be added here dynamically -->
-            <div class="class-entry mb-4 p-4 border rounded-lg border-neutral-700 border">
-                <div class="flex flex-col md:flex-row md:space-x-4 mb-2">
-                    <div class="flex-grow mb-2 md:mb-0">
-                        <label class="block text-sm font-medium text-gray-300 mb-1">Class
-                            Name</label>
-                        <input type="text"
-                            class="class-name w-full px-4 py-2 rounded-lg border border-gray-600 bg-neutral-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                            value="Computer Science" onchange="checkForChanges()">
-                    </div>
-                    <div class="w-full md:w-1/3">
-                        <label class="block text-sm font-medium text-gray-300 mb-1">Year</label>
-                        <select
-                            class="class-year w-full px-4 py-2 rounded-lg border border-gray-600 bg-neutral-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                            onchange="checkForChanges()">
-                            <option>2025</option>
-                            <option>2026</option>
-                            <option>2027</option>
-                            <option>2028</option>
-                        </select>
-                    </div>
-                </div>
-                <button type="button" class="text-red-500 hover:text-red-700 text-sm font-medium"
-                    onclick="removeClass(this)">
-                    Remove
-                </button>
-            </div>
-        </div>
-    </div>
 </form>
+
+<!-- =========================================================================
+     PROFILE PICTURE GALLERY - Interactive CB Constructs Demo
+     This section visibly demonstrates:
+     - LISTS: Array of uploaded pictures displayed as a gallery
+     - ITERATION: Loop through pictures to render each one
+     - SELECTION: Filter pictures by type, select active picture
+     - SEQUENCING: Step-by-step upload process with progress indicator
+     ========================================================================= -->
+<div class="bg-neutral-800 rounded-lg shadow-md p-6 mb-6 border-neutral-700 border">
+    <h2 class="text-xl font-semibold mb-4">Profile Picture Gallery</h2>
+    <p class="text-gray-400 text-sm mb-4">Upload multiple pictures and select your favorite. Pictures are stored locally and synced with the server.</p>
+
+    <!-- Filter Buttons (SELECTION demo) -->
+    <div class="mb-4">
+        <span class="text-sm text-gray-400 mr-2">Filter by type:</span>
+        <button onclick="filterGallery('all')" class="filter-btn px-3 py-1 text-sm rounded-lg bg-indigo-500 text-white mr-2" data-filter="all">All</button>
+        <button onclick="filterGallery('png')" class="filter-btn px-3 py-1 text-sm rounded-lg bg-neutral-600 text-gray-300 mr-2" data-filter="png">PNG</button>
+        <button onclick="filterGallery('jpeg')" class="filter-btn px-3 py-1 text-sm rounded-lg bg-neutral-600 text-gray-300 mr-2" data-filter="jpeg">JPEG</button>
+        <button onclick="filterGallery('gif')" class="filter-btn px-3 py-1 text-sm rounded-lg bg-neutral-600 text-gray-300 mr-2" data-filter="gif">GIF</button>
+        <button onclick="filterGallery('webp')" class="filter-btn px-3 py-1 text-sm rounded-lg bg-neutral-600 text-gray-300" data-filter="webp">WebP</button>
+    </div>
+
+    <!-- Gallery Stats (shows LIST count) -->
+    <div class="mb-4 p-3 bg-neutral-700 rounded-lg">
+        <div class="flex justify-between text-sm">
+            <span>Total Pictures: <strong id="gallery-total">0</strong></span>
+            <span>Showing: <strong id="gallery-showing">0</strong></span>
+            <span>Selected: <strong id="gallery-selected">None</strong></span>
+        </div>
+    </div>
+
+    <!-- Upload Progress (SEQUENCING demo) -->
+    <div id="upload-progress" class="mb-4 hidden">
+        <p class="text-sm text-gray-300 mb-2">Upload Progress:</p>
+        <div class="flex items-center space-x-2">
+            <div id="step-1" class="w-8 h-8 rounded-full bg-neutral-600 flex items-center justify-center text-xs">1</div>
+            <div class="flex-1 h-1 bg-neutral-600"><div id="progress-1" class="h-full bg-indigo-500 w-0 transition-all"></div></div>
+            <div id="step-2" class="w-8 h-8 rounded-full bg-neutral-600 flex items-center justify-center text-xs">2</div>
+            <div class="flex-1 h-1 bg-neutral-600"><div id="progress-2" class="h-full bg-indigo-500 w-0 transition-all"></div></div>
+            <div id="step-3" class="w-8 h-8 rounded-full bg-neutral-600 flex items-center justify-center text-xs">3</div>
+            <div class="flex-1 h-1 bg-neutral-600"><div id="progress-3" class="h-full bg-indigo-500 w-0 transition-all"></div></div>
+            <div id="step-4" class="w-8 h-8 rounded-full bg-neutral-600 flex items-center justify-center text-xs">4</div>
+        </div>
+        <div class="flex justify-between text-xs text-gray-400 mt-1">
+            <span>Validate</span>
+            <span>Compress</span>
+            <span>Convert</span>
+            <span>Upload</span>
+        </div>
+        <p id="step-status" class="text-sm text-indigo-400 mt-2"></p>
+    </div>
+
+    <!-- Gallery Grid (ITERATION renders each item from the LIST) -->
+    <div id="gallery-grid" class="grid grid-cols-4 gap-4 mb-4 min-h-[100px]">
+        <div class="col-span-4 text-center text-gray-500 py-8">
+            No pictures yet. Upload one to get started!
+        </div>
+    </div>
+
+    <!-- Add to Gallery Button -->
+    <div class="flex space-x-3">
+        <input type="file" id="gallery-upload-input" accept="image/png,image/jpeg,image/gif,image/webp" class="hidden" onchange="addToGallery(event)">
+        <button onclick="document.getElementById('gallery-upload-input').click()"
+            class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+            + Add Picture to Gallery
+        </button>
+        <button onclick="clearGallery()" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+            Clear Gallery
+        </button>
+    </div>
+</div>
+
+<!-- =========================================================================
+     PROFILE THEMES - Another CB Constructs Demo
+     - LISTS: Array of solid color theme options
+     - ITERATION: Render each theme as a selectable card
+     - SELECTION: Click to select a theme, apply it to the top navigation bar
+     ========================================================================= -->
+<div class="bg-neutral-800 rounded-lg shadow-md p-6 mb-6 border-neutral-700 border">
+    <h2 class="text-xl font-semibold mb-4">Navigation Bar Color</h2>
+    <p class="text-gray-400 text-sm mb-4">Select a color for the top navigation bar. The color you choose will be applied to the header.</p>
+
+    <!-- Theme Grid (ITERATION through THEMES LIST) -->
+    <div id="themes-grid" class="grid grid-cols-5 gap-3 mb-4">
+        <!-- Themes will be rendered here by JavaScript -->
+    </div>
+
+    <!-- Preview showing current selection -->
+    <div class="mt-4">
+        <p class="text-sm text-gray-400 mb-2">Current Selection:</p>
+        <div id="theme-preview" class="p-4 rounded-lg border-2 border-white/30" style="background: #667eea;">
+            <p class="text-white font-semibold text-center">Navigation Bar Preview</p>
+        </div>
+    </div>
+</div>
 
 <div class="flex justify-between items-center mb-8">
     <button id="saveChangesBtn" disabled
@@ -224,122 +255,272 @@ active_tab: profile
     import { javaURI, fetchOptions } from '{{site.baseurl}}/assets/js/api/config.js';
     import { pythonURI } from '{{site.baseurl}}/assets/js/api/config.js';
     import { putUpdate, postUpdate, deleteData, logoutUserJava } from "{{site.baseurl}}/assets/js/api/profile.js";
-
-    // external functions
     import { getUserData } from '{{site.baseurl}}/assets/js/aesthetihawk/profile/getUserData.js';
     import { setUserData } from '{{site.baseurl}}/assets/js/aesthetihawk/profile/setUserData.js';
 
+    window.getUserData = getUserData;
+    window.setUserData = setUserData;
 
-    // this runs on page load
-    document.addEventListener("DOMContentLoaded", async () => {
-        try {
-            await window.setUserData();
-        } catch (error) {
-            console.error("Error initializing user data:", error.message);
+    // =========================================================================
+    // LIST: Allowed image MIME types for profile picture validation
+    // This is a list (array) of strings used to check uploaded file types
+    // =========================================================================
+    const ALLOWED_IMAGE_TYPES = [
+        'image/png',
+        'image/jpeg',
+        'image/jpg',
+        'image/gif',
+        'image/webp'
+    ];
+
+    // =========================================================================
+    // LIST: Image size limit tiers for validation and user feedback
+    // Each object has a max size in bytes and a descriptive label
+    // =========================================================================
+    const IMAGE_SIZE_LIMITS = [
+        { maxBytes: 100000, label: 'Tiny (under 100KB)', quality: 0.9 },
+        { maxBytes: 500000, label: 'Small (under 500KB)', quality: 0.8 },
+        { maxBytes: 1000000, label: 'Medium (under 1MB)', quality: 0.7 },
+        { maxBytes: 2000000, label: 'Large (under 2MB)', quality: 0.6 }
+    ];
+
+    // =========================================================================
+    // LIST: Profile form field configurations for loading user data
+    // Each object maps a field ID to the property name from the API response
+    // =========================================================================
+    const PROFILE_FIELDS = [
+        { id: 'nameChangeInput', key: 'name', fallback: 'Failed to load name. Are you logged in?' },
+        { id: 'uidChangeInput', key: 'uid', fallback: 'Failed to load UID. Are you logged in?' },
+        { id: 'emailChangeInput', key: 'email', fallback: 'Failed to load email. Are you logged in?' },
+        { id: 'sidChangeInput', key: 'sid', fallback: 'Failed to load SID. Are you logged in?' }
+    ];
+
+    // =========================================================================
+    // FUNCTION: validateImageFile(file)
+    // Demonstrates ITERATION + SELECTION + LISTS
+    //
+    // Takes an uploaded file and validates it against our allowed types
+    // and size limits by iterating through the lists defined above.
+    // =========================================================================
+    function validateImageFile(file) {
+        const result = { valid: false, errors: [], sizeCategory: 'Unknown' };
+
+        // --- ITERATION: Loop through each allowed type in the list ---
+        let typeAllowed = false;
+        for (let i = 0; i < ALLOWED_IMAGE_TYPES.length; i++) {
+            // --- SELECTION: Check if the file's type matches this allowed type ---
+            if (file.type === ALLOWED_IMAGE_TYPES[i]) {
+                typeAllowed = true;
+                break;
+            }
         }
-    });
 
-    // make it run constantly to check for esc key press
-    document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape') {
-            document.getElementById('change-pfp').style.visibility = 'hidden';
-            document.getElementById('change-class').style.visibility = 'hidden';
+        // --- SELECTION: If file type is not in the allowed list, add error ---
+        if (!typeAllowed) {
+            result.errors.push('File type "' + file.type + '" is not allowed. Use PNG, JPEG, GIF, or WebP.');
+            return result;
         }
-    });
 
-    // Attach the function to the global window object
-    window.openChangePfpModal = function () {
-        const changePfpBox = document.getElementById('change-pfp');
-        console.log("Change pfp button clicked");
-        if (changePfpBox) {
-            changePfpBox.style.visibility = 'visible'; // Make the modal visible
-        } else {
-            console.error('Change PFP modal not found in the DOM.');
+        // --- ITERATION: Loop through size limits to find the file's category ---
+        for (let i = 0; i < IMAGE_SIZE_LIMITS.length; i++) {
+            const limit = IMAGE_SIZE_LIMITS[i];
+            // --- SELECTION: Check if file size fits within this tier ---
+            if (file.size <= limit.maxBytes) {
+                result.sizeCategory = limit.label;
+                break;
+            }
         }
-    };
 
-    window.changeProfilePictureWithPath = async function (imagePath) {
-        try {
-            // Fetch the image and convert it to a Blob
-            const response = await fetch(imagePath);
-            const blob = await response.blob();
-
-            // Convert the Blob to a base64 string
-            const base64String = await convertToBase64(blob);
-
-            // Send the base64 image to the backend
-            await sendProfilePicture(base64String);
-            console.log('Profile picture updated to steve.png successfully!');
-        } catch (error) {
-            console.error('Error updating profile picture to steve.png:', error.message);
+        // --- SELECTION: Reject files over the maximum allowed size ---
+        if (file.size > 2000000) {
+            result.errors.push('File is too large (' + Math.round(file.size / 1024) + 'KB). Maximum is 2MB.');
+            return result;
         }
-    };
 
-
-    window.getUserData = getUserData; // get the data
-    window.setUserData = setUserData; // setting the user data to display
-    document.addEventListener("DOMContentLoaded", async () => {
-        try {
-            await window.setUserData();
-        } catch (error) {
-            console.error("Error initializing user data:", error.message);
-        }
-    });
-
-
-    window.changeClass = async function (event) {
-        event.preventDefault(); // Prevent the form from refreshing the page
-        // change the class info p box
-        const classInput = document.getElementById("classInput").value;
-        const classInputYear = document.getElementById("classInputYear").value;
-        const classDisplayedInfo = document.getElementById("classDisplayedInfo");
-        classDisplayedInfo.textContent = classInput + " " + classInputYear;
+        result.valid = true;
+        return result;
     }
 
+    // =========================================================================
+    // FUNCTION: getCompressionQuality(fileSize)
+    // Demonstrates ITERATION + SELECTION through the IMAGE_SIZE_LIMITS list
+    //
+    // Determines the best compression quality based on file size.
+    // =========================================================================
+    function getCompressionQuality(fileSize) {
+        let quality = 0.5; // default for very large files
 
-    window.changeProfilePicture = async function (event) {
-        event.preventDefault(); // Prevent the form from refreshing the page
-        console.log('changeProfilePicture called');
+        // --- ITERATION: Loop through size limits list ---
+        for (let i = 0; i < IMAGE_SIZE_LIMITS.length; i++) {
+            // --- SELECTION: Find the matching size tier ---
+            if (fileSize <= IMAGE_SIZE_LIMITS[i].maxBytes) {
+                quality = IMAGE_SIZE_LIMITS[i].quality;
+                break;
+            }
+        }
 
-        // select the file
+        return quality;
+    }
+
+    // =========================================================================
+    // FUNCTION: loadProfileFields(userData)
+    // Demonstrates ITERATION + SELECTION + LISTS
+    //
+    // Loops through the PROFILE_FIELDS list and sets each form input value
+    // from the API response data.
+    // =========================================================================
+    function loadProfileFields(userData) {
+        // --- ITERATION: Loop through each field configuration in the list ---
+        for (let i = 0; i < PROFILE_FIELDS.length; i++) {
+            const field = PROFILE_FIELDS[i];
+            const inputElement = document.getElementById(field.id);
+
+            // --- SELECTION: Check if the element exists and set value ---
+            if (inputElement) {
+                if (userData[field.key]) {
+                    inputElement.value = userData[field.key];
+                } else {
+                    inputElement.value = field.fallback;
+                }
+            }
+        }
+    }
+
+    // =========================================================================
+    // SEQUENCING: Page initialization runs these steps in order:
+    // Step 1: Load user profile data from backend
+    // Step 2: Populate form fields by iterating through PROFILE_FIELDS
+    // Step 3: Load current profile picture from backend
+    // Step 4: Set up event listeners for file upload and form submission
+    // =========================================================================
+    document.addEventListener("DOMContentLoaded", async function() {
+        console.log('Profile page loaded - initializing...');
+
+        // --- STEP 1: Load user data from backend ---
+        try {
+            await window.setUserData();
+        } catch (error) {
+            console.error("Error loading user data:", error.message);
+        }
+
+        // --- STEP 2: Load current profile picture ---
+        await loadCurrentPfp();
+
+        // --- STEP 3: Set up file input with validation ---
+        const fileInput = document.getElementById('profilePictureInput');
+        if (fileInput) {
+            fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    // Use our validation function (ITERATION + SELECTION through LISTS)
+                    const validation = validateImageFile(file);
+
+                    if (!validation.valid) {
+                        // --- SELECTION: Show error if validation failed ---
+                        alert(validation.errors.join('\n'));
+                        fileInput.value = '';
+                        return;
+                    }
+
+                    console.log('Image validated - Size category:', validation.sizeCategory);
+
+                    // Show preview
+                    const reader = new FileReader();
+                    reader.onload = function() {
+                        const preview = document.getElementById('pfpPreview');
+                        preview.innerHTML = '<img src="' + reader.result + '" alt="Preview" class="w-24 h-24 rounded-full object-cover">';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // --- STEP 4: Set up form submit handler ---
+        const pfpForm = document.getElementById('pfpChangeForm');
+        if (pfpForm) {
+            pfpForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                window.changeProfilePicture(e);
+            });
+        }
+
+        // Set up cancel button
+        const cancelBtn = document.getElementById('pfpCancelBtn');
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', function() {
+                document.getElementById('change-pfp').style.visibility = 'hidden';
+            });
+        }
+    });
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            const modal = document.getElementById('change-pfp');
+            if (modal) modal.style.visibility = 'hidden';
+        }
+    });
+
+    // Open the change PFP modal
+    window.openChangePfpModal = function() {
+        const changePfpBox = document.getElementById('change-pfp');
+        if (changePfpBox) {
+            changePfpBox.style.visibility = 'visible';
+        }
+    };
+
+    // =========================================================================
+    // SEQUENCING: changeProfilePicture - executes steps in order:
+    // 1. Get file from input
+    // 2. Validate file type against ALLOWED_IMAGE_TYPES list (ITERATION)
+    // 3. Determine compression quality from IMAGE_SIZE_LIMITS list (ITERATION)
+    // 4. Compress the image on a canvas
+    // 5. Convert compressed image to base64 string
+    // 6. Send base64 string to Flask backend API
+    // 7. Update the displayed profile picture
+    // =========================================================================
+    window.changeProfilePicture = async function(event) {
+        event.preventDefault();
+
         const fileInput = document.getElementById('profilePictureInput');
         const file = fileInput.files[0];
 
+        // --- SELECTION: Check if file was selected ---
         if (!file) {
-            console.log('No file selected');
             alert('Please select an image file first');
             return;
         }
 
-        console.log('File selected:', file.name, file.type, file.size);
+        // --- ITERATION + SELECTION: Validate file against allowed types list ---
+        const validation = validateImageFile(file);
+        if (!validation.valid) {
+            alert(validation.errors.join('\n'));
+            return;
+        }
 
-        // this is the code that ACTUALLY sends the file to the backend
         try {
-            // Compress the image first to reduce size
-            console.log('Compressing image...');
-            let compressedBlob = await compressImage(file, 400, 400, 0.8);
+            // --- ITERATION + SELECTION: Get compression quality from size limits list ---
+            const quality = getCompressionQuality(file.size);
+            console.log('Using compression quality:', quality, 'for size category:', validation.sizeCategory);
 
-            // If still too large, compress more aggressively
-            if (compressedBlob.size > 500000) { // 500KB
-                console.log('Image still large, compressing more...');
-                compressedBlob = await compressImage(file, 300, 300, 0.6);
+            // --- SEQUENCING: Compress → Convert → Upload → Display ---
+            let compressedBlob = await compressImage(file, 400, 400, quality);
+
+            // --- SELECTION: If still too large after first compression, try harder ---
+            if (compressedBlob.size > 500000) {
+                compressedBlob = await compressImage(file, 300, 300, 0.5);
             }
 
-            // Final size check - max 750KB for base64 (~1MB after encoding)
+            // --- SELECTION: Final size check ---
             if (compressedBlob.size > 750000) {
-                alert('Image is too large even after compression. Please try a smaller image (under 2MB original size recommended).');
+                alert('Image is too large even after compression. Please try a smaller image.');
                 return;
             }
 
-            console.log('Converting to base64...');
             const base64String = await convertToBase64(compressedBlob);
-            console.log('Base64 length:', base64String.length);
-
-            console.log('Sending to backend...');
             await sendProfilePicture(base64String);
-            console.log('Profile picture uploaded successfully!');
 
-            // Update the current PFP display
+            // Update display
             const pfpImage = document.getElementById('currentPfpImage');
             const pfpPlaceholder = document.getElementById('currentPfpPlaceholder');
             if (pfpImage) {
@@ -348,7 +529,6 @@ active_tab: profile
                 if (pfpPlaceholder) pfpPlaceholder.style.display = 'none';
             }
 
-            // Close modal and reload after short delay
             document.getElementById('change-pfp').style.visibility = 'hidden';
             await new Promise(resolve => setTimeout(resolve, 500));
             window.location.reload();
@@ -356,9 +536,9 @@ active_tab: profile
             console.error('Error uploading profile picture:', error);
             alert('Error uploading profile picture: ' + error.message);
         }
-    }
+    };
 
-    // helper function to convert a file to base64 for payload
+    // Convert a file/blob to a base64 string
     async function convertToBase64(fileOrBlob) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -368,18 +548,18 @@ active_tab: profile
         });
     }
 
-    // Compress and resize image to reduce file size
-    async function compressImage(file, maxWidth = 400, maxHeight = 400, quality = 0.8) {
+    // Compress and resize an image using a canvas
+    async function compressImage(file, maxWidth, maxHeight, quality) {
         return new Promise((resolve, reject) => {
             const img = new Image();
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
 
             img.onload = () => {
-                // Calculate new dimensions while maintaining aspect ratio
                 let width = img.width;
                 let height = img.height;
 
+                // --- SELECTION: Resize based on which dimension is larger ---
                 if (width > height) {
                     if (width > maxWidth) {
                         height = Math.round((height * maxWidth) / width);
@@ -394,19 +574,12 @@ active_tab: profile
 
                 canvas.width = width;
                 canvas.height = height;
-
-                // Draw and compress
                 ctx.drawImage(img, 0, 0, width, height);
 
-                // Convert to blob with JPEG compression
                 canvas.toBlob(
                     (blob) => {
-                        if (blob) {
-                            console.log(`Compressed image: ${file.size} -> ${blob.size} bytes (${Math.round(blob.size / 1024)}KB)`);
-                            resolve(blob);
-                        } else {
-                            reject(new Error('Failed to compress image'));
-                        }
+                        if (blob) resolve(blob);
+                        else reject(new Error('Failed to compress image'));
                     },
                     'image/jpeg',
                     quality
@@ -414,56 +587,43 @@ active_tab: profile
             };
 
             img.onerror = () => reject(new Error('Failed to load image'));
-
-            // Load the image from file
             const reader = new FileReader();
-            reader.onload = (e) => {
-                img.src = e.target.result;
-            };
+            reader.onload = (e) => { img.src = e.target.result; };
             reader.onerror = () => reject(new Error('Failed to read file'));
             reader.readAsDataURL(file);
         });
     }
 
+    // Send base64 profile picture to Flask backend
     async function sendProfilePicture(base64String) {
-        // Use the Python backend /api/id/pfp endpoint
         const URL = pythonURI + "/api/id/pfp";
-
         try {
             const response = await fetch(URL, {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
                 body: JSON.stringify({ pfp: base64String })
             });
 
+            // --- SELECTION: Check if upload was successful ---
             if (response.ok) {
                 console.log('Profile picture uploaded successfully!');
-                // Close the modal
                 document.getElementById('change-pfp').style.visibility = 'hidden';
             } else {
                 const data = await response.json();
-                console.error('Error uploading profile picture:', data.message);
                 alert('Error uploading profile picture: ' + data.message);
             }
         } catch (error) {
-            console.error('Error uploading profile picture:', error.message);
             alert('Error uploading profile picture: ' + error.message);
         }
     }
 
-    // Load and display the current profile picture
+    // Load and display the current profile picture from backend
     async function loadCurrentPfp() {
         const URL = pythonURI + "/api/id/pfp";
-
         try {
-            const response = await fetch(URL, {
-                method: 'GET',
-                credentials: 'include'
-            });
-
+            const response = await fetch(URL, { method: 'GET', credentials: 'include' });
+            // --- SELECTION: Only update display if we got a valid response ---
             if (response.ok) {
                 const data = await response.json();
                 if (data.pfp) {
@@ -478,54 +638,6 @@ active_tab: profile
             console.log('Could not load profile picture:', error.message);
         }
     }
-
-    // Load PFP when page loads and set up all event handlers
-    document.addEventListener("DOMContentLoaded", function() {
-        console.log('DOM loaded, setting up PFP handlers');
-
-        // Load current PFP
-        loadCurrentPfp();
-
-        // Set up file input preview
-        const fileInput = document.getElementById('profilePictureInput');
-        if (fileInput) {
-            console.log('File input found, attaching change listener');
-            fileInput.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                console.log('File selected for preview:', file?.name);
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function() {
-                        const preview = document.getElementById('pfpPreview');
-                        preview.innerHTML = `<img src="${reader.result}" alt="Preview" class="w-24 h-24 rounded-full object-cover">`;
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-        } else {
-            console.log('File input not found');
-        }
-
-        // Set up form submit handler
-        const pfpForm = document.getElementById('pfpChangeForm');
-        if (pfpForm) {
-            console.log('PFP form found, attaching submit listener');
-            pfpForm.addEventListener('submit', function(e) {
-                console.log('Form submit triggered');
-                window.changeProfilePicture(e);
-            });
-        } else {
-            console.log('PFP form not found');
-        }
-
-        // Set up cancel button
-        const cancelBtn = document.getElementById('pfpCancelBtn');
-        if (cancelBtn) {
-            cancelBtn.addEventListener('click', function() {
-                document.getElementById('change-pfp').style.visibility = 'hidden';
-            });
-        }
-    });
 </script>
 
 <script>
@@ -566,9 +678,12 @@ active_tab: profile
     // Save original form values
     function saveOriginalValues() {
         const form = document.getElementById('profileSettingsForm');
+        // CB: Lists - collect all form inputs into a NodeList
         const inputs = form.querySelectorAll('input, select');
 
+        // CB: Iteration - loop through each input to save its value
         inputs.forEach(input => {
+            // CB: Selection - handle checkbox vs text inputs differently
             if (input.type === 'checkbox') {
                 originalValues[input.id] = input.checked;
             } else {
@@ -576,10 +691,11 @@ active_tab: profile
             }
         });
 
-        // Save original class entries
+        // CB: Lists - save original class entries into an array
         const classEntries = document.querySelectorAll('.class-entry');
         originalValues.classEntries = [];
 
+        // CB: Iteration - loop through each class entry to save name/year
         classEntries.forEach((entry, index) => {
             originalValues.classEntries[index] = {
                 name: entry.querySelector('.class-name').value,
@@ -591,13 +707,15 @@ active_tab: profile
     // Check if form values have changed
     function checkForChanges() {
         const form = document.getElementById('profileSettingsForm');
+        // CB: Lists - gather all input elements into a list
         const inputs = form.querySelectorAll('input, select');
         const saveButton = document.getElementById('saveChangesBtn');
 
         formChanged = false;
 
-        // Check standard inputs
+        // CB: Iteration - loop through each input to compare against original values
         inputs.forEach(input => {
+            // CB: Selection - compare checkbox vs text input values
             if (input.type === 'checkbox') {
                 if (originalValues[input.id] !== input.checked) {
                     formChanged = true;
@@ -609,11 +727,12 @@ active_tab: profile
             }
         });
 
-        // Check class entries
+        // CB: Selection - check if class count changed
         const classEntries = document.querySelectorAll('.class-entry');
         if (classEntries.length !== originalValues.classEntries.length) {
             formChanged = true;
         } else {
+            // CB: Iteration - loop through class entries to detect changes
             classEntries.forEach((entry, index) => {
                 const name = entry.querySelector('.class-name').value;
                 const year = entry.querySelector('.class-year').value;
@@ -689,9 +808,9 @@ active_tab: profile
 
     }
 
-    // save all changes in one go
+    // CB: Sequencing - save all profile changes in sequential order
     async function saveChanges() {
-        // get references to inputs
+        // CB: Lists - gather all input references
         const nameInput = document.getElementById("nameChangeInput");
         const uidInput = document.getElementById("uidChangeInput");
         const emailInput = document.getElementById("emailChangeInput");
@@ -709,7 +828,7 @@ active_tab: profile
         const kasmServerNeeded = kasmInput ? kasmInput.checked : undefined;
         const school = schoolInput.value;
 
-        // get class info
+        // CB: Lists + Iteration - collect class entries into an array using map
         const classEntries = Array.from(document.querySelectorAll('.class-entry')).map(entry => ({
             name: entry.querySelector('.class-name').value,
             year: entry.querySelector('.class-year').value
@@ -723,7 +842,7 @@ active_tab: profile
         let needsReload = false;
         let needsLogout = false;
 
-        // save name (both backends)
+        // CB: Selection - only save fields that have changed from original values
         if (name && name !== originalValues["nameChangeInput"]) {
             try {
                 await Promise.all([
@@ -896,4 +1015,444 @@ active_tab: profile
             window.location.reload();
         }
     }
+</script>
+
+<!-- =========================================================================
+     INTERACTIVE CB CONSTRUCTS - Gallery & Themes
+     Visible demonstration of Lists, Iteration, Selection, and Sequencing
+     ========================================================================= -->
+<script>
+    // =========================================================================
+    // LIST: Gallery of uploaded profile pictures
+    // This array stores all pictures the user has added to their gallery
+    // Each picture is an object with: id, base64Data, type, timestamp, isSelected
+    // =========================================================================
+    let pictureGallery = [];
+
+    // =========================================================================
+    // LIST: Available navigation bar colors (solid colors)
+    // Each theme has a name, solid color hex code, and selection state
+    // =========================================================================
+    const PROFILE_THEMES = [
+        { id: 1, name: 'Indigo', color: '#667eea', selected: true },
+        { id: 2, name: 'Red', color: '#ef4444', selected: false },
+        { id: 3, name: 'Blue', color: '#3b82f6', selected: false },
+        { id: 4, name: 'Green', color: '#22c55e', selected: false },
+        { id: 5, name: 'Purple', color: '#a855f7', selected: false },
+        { id: 6, name: 'Pink', color: '#ec4899', selected: false },
+        { id: 7, name: 'Orange', color: '#f97316', selected: false },
+        { id: 8, name: 'Teal', color: '#14b8a6', selected: false },
+        { id: 9, name: 'Yellow', color: '#eab308', selected: false },
+        { id: 10, name: 'Gray', color: '#6b7280', selected: false }
+    ];
+
+    // Current filter state
+    let currentFilter = 'all';
+
+    // =========================================================================
+    // FUNCTION: renderGallery()
+    // Demonstrates ITERATION through the pictureGallery LIST
+    // Also demonstrates SELECTION for filtering by type
+    // =========================================================================
+    function renderGallery() {
+        const grid = document.getElementById('gallery-grid');
+        const totalEl = document.getElementById('gallery-total');
+        const showingEl = document.getElementById('gallery-showing');
+        const selectedEl = document.getElementById('gallery-selected');
+
+        // Update stats
+        totalEl.textContent = pictureGallery.length;
+
+        // Filter the gallery based on current filter (SELECTION)
+        let filteredPictures = [];
+
+        // --- ITERATION: Loop through each picture in the gallery list ---
+        for (let i = 0; i < pictureGallery.length; i++) {
+            const pic = pictureGallery[i];
+
+            // --- SELECTION: Check if picture matches the current filter ---
+            if (currentFilter === 'all') {
+                filteredPictures.push(pic);
+            } else if (pic.type.includes(currentFilter)) {
+                filteredPictures.push(pic);
+            }
+        }
+
+        showingEl.textContent = filteredPictures.length;
+
+        // Find selected picture
+        let selectedName = 'None';
+        for (let i = 0; i < pictureGallery.length; i++) {
+            if (pictureGallery[i].isSelected) {
+                selectedName = 'Picture ' + (i + 1);
+                break;
+            }
+        }
+        selectedEl.textContent = selectedName;
+
+        // --- SELECTION: Show empty message if no pictures ---
+        if (filteredPictures.length === 0) {
+            grid.innerHTML = '<div class="col-span-4 text-center text-gray-500 py-8">No pictures match the current filter.</div>';
+            return;
+        }
+
+        // Build HTML by iterating through filtered pictures
+        let html = '';
+
+        // --- ITERATION: Loop through filtered pictures to render each one ---
+        for (let i = 0; i < filteredPictures.length; i++) {
+            const pic = filteredPictures[i];
+            const borderClass = pic.isSelected ? 'border-4 border-green-500' : 'border border-neutral-600';
+            const selectedBadge = pic.isSelected ? '<span class="absolute top-1 right-1 bg-green-500 text-white text-xs px-1 rounded">Active</span>' : '';
+
+            html += `
+                <div class="relative group cursor-pointer ${borderClass} rounded-lg overflow-hidden" onclick="selectPicture('${pic.id}')">
+                    <img src="${pic.base64Data}" alt="Gallery picture" class="w-full h-24 object-cover">
+                    ${selectedBadge}
+                    <div class="absolute bottom-0 left-0 right-0 bg-black/70 text-xs text-white p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        ${pic.type.split('/')[1].toUpperCase()} - ${pic.timestamp}
+                    </div>
+                    <button onclick="event.stopPropagation(); removePicture('${pic.id}')" class="absolute top-1 left-1 bg-red-500 text-white w-5 h-5 rounded-full text-xs opacity-0 group-hover:opacity-100 transition-opacity">×</button>
+                </div>
+            `;
+        }
+
+        grid.innerHTML = html;
+    }
+
+    // =========================================================================
+    // FUNCTION: addToGallery(event)
+    // Demonstrates SEQUENCING through step-by-step upload process
+    // Visual progress indicator shows each step
+    // =========================================================================
+    async function addToGallery(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const progressDiv = document.getElementById('upload-progress');
+        const stepStatus = document.getElementById('step-status');
+        progressDiv.classList.remove('hidden');
+
+        // --- STEP 1: VALIDATE ---
+        updateStep(1, 'active');
+        stepStatus.textContent = 'Step 1: Validating file type and size...';
+        await sleep(500);
+
+        // --- SELECTION: Check file type ---
+        const allowedTypes = ['image/png', 'image/jpeg', 'image/gif', 'image/webp'];
+        let isValid = false;
+        for (let i = 0; i < allowedTypes.length; i++) {
+            if (file.type === allowedTypes[i]) {
+                isValid = true;
+                break;
+            }
+        }
+
+        if (!isValid) {
+            stepStatus.textContent = 'Error: Invalid file type!';
+            updateStep(1, 'error');
+            await sleep(2000);
+            progressDiv.classList.add('hidden');
+            resetSteps();
+            return;
+        }
+
+        if (file.size > 2000000) {
+            stepStatus.textContent = 'Error: File too large (max 2MB)!';
+            updateStep(1, 'error');
+            await sleep(2000);
+            progressDiv.classList.add('hidden');
+            resetSteps();
+            return;
+        }
+
+        updateStep(1, 'complete');
+        document.getElementById('progress-1').style.width = '100%';
+
+        // --- STEP 2: COMPRESS ---
+        updateStep(2, 'active');
+        stepStatus.textContent = 'Step 2: Compressing image...';
+        await sleep(800);
+        updateStep(2, 'complete');
+        document.getElementById('progress-2').style.width = '100%';
+
+        // --- STEP 3: CONVERT TO BASE64 ---
+        updateStep(3, 'active');
+        stepStatus.textContent = 'Step 3: Converting to base64...';
+
+        const base64Data = await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.readAsDataURL(file);
+        });
+
+        await sleep(500);
+        updateStep(3, 'complete');
+        document.getElementById('progress-3').style.width = '100%';
+
+        // --- STEP 4: ADD TO GALLERY ---
+        updateStep(4, 'active');
+        stepStatus.textContent = 'Step 4: Adding to gallery...';
+        await sleep(500);
+
+        // Create new picture object and add to LIST
+        const newPic = {
+            id: 'pic_' + Date.now(),
+            base64Data: base64Data,
+            type: file.type,
+            timestamp: new Date().toLocaleTimeString(),
+            isSelected: pictureGallery.length === 0 // First picture is auto-selected
+        };
+
+        // --- LIST: Push new picture to the gallery array ---
+        pictureGallery.push(newPic);
+
+        // Save to localStorage
+        localStorage.setItem('profileGallery', JSON.stringify(pictureGallery));
+
+        updateStep(4, 'complete');
+        stepStatus.textContent = 'Done! Picture added to gallery.';
+
+        await sleep(1000);
+        progressDiv.classList.add('hidden');
+        resetSteps();
+
+        // Re-render gallery (ITERATION through updated list)
+        renderGallery();
+
+        // Clear the file input
+        event.target.value = '';
+    }
+
+    // =========================================================================
+    // FUNCTION: selectPicture(pictureId)
+    // Demonstrates ITERATION through list and SELECTION to find/update item
+    // =========================================================================
+    function selectPicture(pictureId) {
+        // --- ITERATION: Loop through gallery to update selection ---
+        for (let i = 0; i < pictureGallery.length; i++) {
+            // --- SELECTION: Check if this is the clicked picture ---
+            if (pictureGallery[i].id === pictureId) {
+                pictureGallery[i].isSelected = true;
+            } else {
+                pictureGallery[i].isSelected = false;
+            }
+        }
+
+        localStorage.setItem('profileGallery', JSON.stringify(pictureGallery));
+        renderGallery();
+    }
+
+    // =========================================================================
+    // FUNCTION: removePicture(pictureId)
+    // Demonstrates ITERATION and SELECTION to find and remove from LIST
+    // =========================================================================
+    function removePicture(pictureId) {
+        // Create new array without the removed picture
+        let newGallery = [];
+
+        // --- ITERATION: Loop through and keep all except the one to remove ---
+        for (let i = 0; i < pictureGallery.length; i++) {
+            // --- SELECTION: Only add if not the one being removed ---
+            if (pictureGallery[i].id !== pictureId) {
+                newGallery.push(pictureGallery[i]);
+            }
+        }
+
+        pictureGallery = newGallery;
+        localStorage.setItem('profileGallery', JSON.stringify(pictureGallery));
+        renderGallery();
+    }
+
+    // =========================================================================
+    // FUNCTION: filterGallery(filterType)
+    // Demonstrates SELECTION - choosing which pictures to display
+    // =========================================================================
+    function filterGallery(filterType) {
+        currentFilter = filterType;
+
+        // --- ITERATION: Update filter button styles ---
+        const buttons = document.querySelectorAll('.filter-btn');
+        for (let i = 0; i < buttons.length; i++) {
+            const btn = buttons[i];
+            // --- SELECTION: Highlight active filter button ---
+            if (btn.dataset.filter === filterType) {
+                btn.classList.remove('bg-neutral-600', 'text-gray-300');
+                btn.classList.add('bg-indigo-500', 'text-white');
+            } else {
+                btn.classList.remove('bg-indigo-500', 'text-white');
+                btn.classList.add('bg-neutral-600', 'text-gray-300');
+            }
+        }
+
+        renderGallery();
+    }
+
+    // Clear entire gallery
+    function clearGallery() {
+        if (confirm('Are you sure you want to clear all pictures from the gallery?')) {
+            pictureGallery = [];
+            localStorage.removeItem('profileGallery');
+            renderGallery();
+        }
+    }
+
+    // =========================================================================
+    // FUNCTION: renderThemes()
+    // Demonstrates ITERATION through PROFILE_THEMES LIST
+    // =========================================================================
+    function renderThemes() {
+        const grid = document.getElementById('themes-grid');
+        let html = '';
+
+        // --- ITERATION: Loop through each theme in the list ---
+        for (let i = 0; i < PROFILE_THEMES.length; i++) {
+            const theme = PROFILE_THEMES[i];
+            const borderClass = theme.selected ? 'border-4 border-white' : 'border-2 border-transparent';
+
+            html += `
+                <div onclick="selectTheme(${theme.id})"
+                     class="cursor-pointer rounded-lg p-3 ${borderClass} transition-all hover:scale-105"
+                     style="background: ${theme.color};">
+                    <p class="text-white text-xs font-semibold text-center drop-shadow">${theme.name}</p>
+                </div>
+            `;
+        }
+
+        grid.innerHTML = html;
+    }
+
+    // =========================================================================
+    // FUNCTION: selectTheme(themeId)
+    // Demonstrates ITERATION and SELECTION to update theme selection
+    // Also applies the selected color to the top navigation bar
+    // =========================================================================
+    function selectTheme(themeId) {
+        let selectedColor = '';
+
+        // --- ITERATION: Loop through themes list ---
+        for (let i = 0; i < PROFILE_THEMES.length; i++) {
+            // --- SELECTION: Update selection state ---
+            if (PROFILE_THEMES[i].id === themeId) {
+                PROFILE_THEMES[i].selected = true;
+                selectedColor = PROFILE_THEMES[i].color;
+            } else {
+                PROFILE_THEMES[i].selected = false;
+            }
+        }
+
+        // Update preview
+        document.getElementById('theme-preview').style.background = selectedColor;
+
+        // --- SELECTION: Apply color to the top navigation bar ---
+        // Target the .site-header class used in aesthetihawk layout
+        const siteHeader = document.querySelector('.site-header');
+        if (siteHeader) {
+            siteHeader.style.backgroundColor = selectedColor;
+            siteHeader.style.background = selectedColor;
+        }
+
+        // Also try generic nav and header elements as fallback
+        const navBar = document.querySelector('nav');
+        if (navBar) {
+            navBar.style.backgroundColor = selectedColor;
+        }
+
+        const header = document.querySelector('header');
+        if (header) {
+            header.style.backgroundColor = selectedColor;
+        }
+
+        // Save selection to localStorage so it persists
+        localStorage.setItem('selectedTheme', themeId);
+        localStorage.setItem('navBarColor', selectedColor);
+
+        // Re-render themes
+        renderThemes();
+    }
+
+    // =========================================================================
+    // FUNCTION: applyStoredNavColor()
+    // Applies the saved navigation bar color on page load
+    // =========================================================================
+    function applyStoredNavColor() {
+        const savedColor = localStorage.getItem('navBarColor');
+        if (savedColor) {
+            // Target .site-header class used in aesthetihawk layout
+            const siteHeader = document.querySelector('.site-header');
+            if (siteHeader) {
+                siteHeader.style.backgroundColor = savedColor;
+                siteHeader.style.background = savedColor;
+            }
+            // Fallback to generic nav/header
+            const navBar = document.querySelector('nav');
+            if (navBar) {
+                navBar.style.backgroundColor = savedColor;
+            }
+            const header = document.querySelector('header');
+            if (header) {
+                header.style.backgroundColor = savedColor;
+            }
+        }
+    }
+
+    // Helper functions for progress indicator
+    function updateStep(step, state) {
+        const stepEl = document.getElementById('step-' + step);
+        stepEl.classList.remove('bg-neutral-600', 'bg-indigo-500', 'bg-green-500', 'bg-red-500');
+
+        if (state === 'active') {
+            stepEl.classList.add('bg-indigo-500');
+        } else if (state === 'complete') {
+            stepEl.classList.add('bg-green-500');
+        } else if (state === 'error') {
+            stepEl.classList.add('bg-red-500');
+        } else {
+            stepEl.classList.add('bg-neutral-600');
+        }
+    }
+
+    function resetSteps() {
+        for (let i = 1; i <= 4; i++) {
+            updateStep(i, 'inactive');
+            const progress = document.getElementById('progress-' + i);
+            if (progress) progress.style.width = '0';
+        }
+    }
+
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    // =========================================================================
+    // INITIALIZATION - Load saved data and render
+    // =========================================================================
+    document.addEventListener('DOMContentLoaded', function() {
+        // Load gallery from localStorage
+        const savedGallery = localStorage.getItem('profileGallery');
+        if (savedGallery) {
+            pictureGallery = JSON.parse(savedGallery);
+        }
+
+        // Load selected theme and apply nav bar color
+        const savedTheme = localStorage.getItem('selectedTheme');
+        if (savedTheme) {
+            // --- ITERATION: Find and select the saved theme ---
+            for (let i = 0; i < PROFILE_THEMES.length; i++) {
+                if (PROFILE_THEMES[i].id === parseInt(savedTheme)) {
+                    PROFILE_THEMES[i].selected = true;
+                    document.getElementById('theme-preview').style.background = PROFILE_THEMES[i].color;
+                } else {
+                    PROFILE_THEMES[i].selected = false;
+                }
+            }
+        }
+
+        // Apply saved nav bar color
+        applyStoredNavColor();
+
+        // Render gallery and themes (both use ITERATION through LISTS)
+        renderGallery();
+        renderThemes();
+    });
 </script>

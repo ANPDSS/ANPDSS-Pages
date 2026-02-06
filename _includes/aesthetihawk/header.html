@@ -522,4 +522,18 @@
     </header>
 
     <script type="module" src="{{ site.baseurl }}/assets/js/api/login.js"></script>
+
+    <!-- Apply saved navigation bar color from profile settings -->
+    <script>
+        (function() {
+            const savedColor = localStorage.getItem('navBarColor');
+            if (savedColor) {
+                const header = document.querySelector('.site-header');
+                if (header) {
+                    header.style.backgroundColor = savedColor;
+                    header.style.background = savedColor;
+                }
+            }
+        })();
+    </script>
 </body>
