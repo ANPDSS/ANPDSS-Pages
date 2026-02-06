@@ -256,7 +256,7 @@ The system uses a **Jekyll static frontend** communicating with a **Flask (Pytho
 
 ### How Transactional Data Flows
 
-**Logging a Mood (Aditya):**
+**Logging a Mood (Shayan):**
 <div class="flow-container">
     <div class="flow-step">User submits score + tags</div>
     <span class="flow-arrow">&#8594;</span>
