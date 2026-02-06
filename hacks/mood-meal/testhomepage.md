@@ -1,11 +1,9 @@
 ---
 layout: post
 title: "MoodLife - Complete Wellness App"
-description: "Personalized mood tracking, meal recommendations, activities, and music in one unified experience"
 permalink: /mood-meal1/
 microblog: True
 author: ANPDSS
-date: 2025-12-05
 categories: [CSP, MoodLife, Wellness]
 tags: [mood-tracking, meals, activities, music, wellness]
 ---
@@ -51,9 +49,10 @@ body {
 .logo {
       font-size: 1.3rem;
       font-weight: bold;
-      background: linear-gradient(45deg, #2196F3, #4eff9e);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      background: rgba(0, 0, 0, 0.6);
+      color: white;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
     }
 .nav-links {
       display: flex;
@@ -62,7 +61,7 @@ body {
     }
 .nav-btn {
       padding: 0.5rem 1rem;
-      background: transparent;
+      background: rgba(0, 0, 0, 0.6);
       color: #2196F3;
       border: 1px solid #2196F3;
       border-radius: 6px;
@@ -80,9 +79,9 @@ body {
     }
 .nav-btn-accent {
       padding: 0.5rem 1rem;
-      background: linear-gradient(135deg, #2196F3, #1976D2);
+      background: rgba(0, 0, 0, 0.6);
       color: white;
-      border: none;
+      border: 1px solid #2196F3;
       border-radius: 6px;
       cursor: pointer;
       transition: all 0.3s ease;
@@ -90,7 +89,7 @@ body {
       font-weight: 500;
     }
 .nav-btn-accent:hover {
-      background: linear-gradient(135deg, #1976D2, #1565C0);
+      background: #2196F3;
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
     }
@@ -522,7 +521,7 @@ table th, table td {
 <body>
 
   <!-- Top Navigation -->
-  <nav class="top-nav">
+  <nav class="top-nav" id="moodlife-nav">
     <div class="logo">🌟 MoodLife</div>
     <div class="nav-links">
       <button class="nav-btn active" data-section="home">🏠 Home</button>
@@ -533,6 +532,74 @@ table th, table td {
       <a href="{{ site.baseurl }}/login" class="nav-btn-accent" style="text-decoration: none;">🔐 Login</a>
     </div>
   </nav>
+
+  <!-- CSS for Live Color Animations -->
+  <style>
+    @keyframes waterFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .top-nav.live-color-water { background: linear-gradient(90deg, #0077be, #00a8e8, #00d4ff, #00a8e8, #0077be) !important; background-size: 200% 100% !important; animation: waterFlow 3s ease-in-out infinite !important; }
+    .top-nav.live-color-fire { background: linear-gradient(90deg, #ff4500, #ff6a00, #ffa500, #ff6a00, #ff4500) !important; background-size: 200% 100% !important; animation: waterFlow 2s ease-in-out infinite !important; }
+    .top-nav.live-color-aurora { background: linear-gradient(90deg, #00ff87, #60efff, #ff00ea, #60efff, #00ff87) !important; background-size: 200% 100% !important; animation: waterFlow 4s ease-in-out infinite !important; }
+    .top-nav.live-color-ocean { background: linear-gradient(90deg, #1a2980, #26d0ce, #1a2980) !important; background-size: 200% 100% !important; animation: waterFlow 3.5s ease-in-out infinite !important; }
+    .top-nav.live-color-sunset { background: linear-gradient(90deg, #f12711, #f5af19, #f12711) !important; background-size: 200% 100% !important; animation: waterFlow 3s ease-in-out infinite !important; }
+    .top-nav.live-color-forest { background: linear-gradient(90deg, #134e5e, #71b280, #134e5e) !important; background-size: 200% 100% !important; animation: waterFlow 4s ease-in-out infinite !important; }
+    .top-nav.live-color-neon { background: linear-gradient(90deg, #ff00ff, #00ffff, #ff00ff) !important; background-size: 200% 100% !important; animation: waterFlow 2.5s ease-in-out infinite !important; }
+    .top-nav.live-color-lava { background: linear-gradient(90deg, #8b0000, #ff4500, #ffd700, #ff4500, #8b0000) !important; background-size: 200% 100% !important; animation: waterFlow 2s ease-in-out infinite !important; }
+    .top-nav.live-color-ice { background: linear-gradient(90deg, #e0ffff, #87ceeb, #4169e1, #87ceeb, #e0ffff) !important; background-size: 200% 100% !important; animation: waterFlow 3s ease-in-out infinite !important; }
+    .top-nav.live-color-galaxy { background: linear-gradient(90deg, #0f0c29, #302b63, #24243e, #302b63, #0f0c29) !important; background-size: 200% 100% !important; animation: waterFlow 5s ease-in-out infinite !important; }
+  </style>
+
+  <!-- Apply saved navigation bar color immediately after nav is created -->
+  <script>
+    // Live color definitions matching profile.html
+    const liveColorStyles = {
+      'live-color-water': 'linear-gradient(90deg, #0077be, #00a8e8, #00d4ff, #00a8e8, #0077be)',
+      'live-color-fire': 'linear-gradient(90deg, #ff4500, #ff6a00, #ffa500, #ff6a00, #ff4500)',
+      'live-color-aurora': 'linear-gradient(90deg, #00ff87, #60efff, #ff00ea, #60efff, #00ff87)',
+      'live-color-ocean': 'linear-gradient(90deg, #1a2980, #26d0ce, #1a2980)',
+      'live-color-sunset': 'linear-gradient(90deg, #f12711, #f5af19, #f12711)',
+      'live-color-forest': 'linear-gradient(90deg, #134e5e, #71b280, #134e5e)',
+      'live-color-neon': 'linear-gradient(90deg, #ff00ff, #00ffff, #ff00ff)',
+      'live-color-lava': 'linear-gradient(90deg, #8b0000, #ff4500, #ffd700, #ff4500, #8b0000)',
+      'live-color-ice': 'linear-gradient(90deg, #e0ffff, #87ceeb, #4169e1, #87ceeb, #e0ffff)',
+      'live-color-galaxy': 'linear-gradient(90deg, #0f0c29, #302b63, #24243e, #302b63, #0f0c29)'
+    };
+
+    (function() {
+      const navBarType = localStorage.getItem('navBarType') || 'solid';
+      const styleTag = document.createElement('style');
+
+      if (navBarType === 'live') {
+        const liveClass = localStorage.getItem('navBarLiveClass');
+        if (liveClass && liveColorStyles[liveClass]) {
+          styleTag.textContent = `
+            .top-nav, nav.top-nav, #moodlife-nav {
+              background: ${liveColorStyles[liveClass]} !important;
+              background-size: 200% 100% !important;
+              animation: waterFlow 3s ease-in-out infinite !important;
+            }
+          `;
+          document.head.appendChild(styleTag);
+        }
+      } else if (navBarType === 'gradient') {
+        const gradient = localStorage.getItem('navBarGradient');
+        if (gradient) {
+          styleTag.textContent = '.top-nav, nav.top-nav, #moodlife-nav { background: ' + gradient + ' !important; }';
+          document.head.appendChild(styleTag);
+        }
+      } else {
+        const savedColor = localStorage.getItem('navBarColor');
+        if (savedColor) {
+          styleTag.textContent = '.top-nav, nav.top-nav, #moodlife-nav { background: ' + savedColor + ' !important; background-color: ' + savedColor + ' !important; }';
+          document.head.appendChild(styleTag);
+        }
+      }
+    })();
+  </script>
 
   <!-- Toast Notification -->
   <div class="toast" id="toast"></div>

@@ -20,31 +20,69 @@ active_tab: profile
 
 <!-- Profile Picture Change Modal -->
 <div id="change-pfp" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" style="visibility: hidden;">
-    <div class="bg-neutral-800 rounded-lg p-6 w-96 border border-neutral-700">
+    <div class="bg-neutral-800 rounded-lg p-6 w-[450px] border border-neutral-700">
         <h3 class="text-xl font-semibold mb-4">Change Profile Picture</h3>
-        <form id="pfpChangeForm">
-            <div class="mb-4">
-                <label for="profilePictureInput" class="block text-sm font-medium text-gray-300 mb-2">
-                    Select an image file
-                </label>
-                <p class="text-xs text-gray-400 mb-2">Images will be automatically resized and compressed. Max 1MB after compression.</p>
-                <input type="file" id="profilePictureInput" accept="image/*"
-                    class="w-full px-4 py-2 rounded-lg border border-gray-600 bg-neutral-700 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+
+        <!-- Tab Buttons -->
+        <div class="flex mb-4 border-b border-neutral-600">
+            <button type="button" id="tab-upload" onclick="switchPfpTab('upload')"
+                class="flex-1 py-2 text-center text-white bg-indigo-500 rounded-tl-lg font-medium">
+                Upload from Computer
+            </button>
+            <button type="button" id="tab-gallery" onclick="switchPfpTab('gallery')"
+                class="flex-1 py-2 text-center text-gray-400 bg-neutral-700 rounded-tr-lg font-medium hover:text-white">
+                Select from Gallery
+            </button>
+        </div>
+
+        <!-- Upload Tab Content -->
+        <div id="pfp-upload-tab">
+            <form id="pfpChangeForm">
+                <div class="mb-4">
+                    <label for="profilePictureInput" class="block text-sm font-medium text-gray-300 mb-2">
+                        Select an image file
+                    </label>
+                    <p class="text-xs text-gray-400 mb-2">Images will be automatically resized and compressed. Max 1MB after compression.</p>
+                    <input type="file" id="profilePictureInput" accept="image/*"
+                        class="w-full px-4 py-2 rounded-lg border border-gray-600 bg-neutral-700 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div id="pfpPreview" class="mb-4 flex justify-center">
+                    <!-- Preview will appear here -->
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="closePfpModal()"
+                        class="px-4 py-2 bg-neutral-600 text-white rounded-lg hover:bg-neutral-500">
+                        Cancel
+                    </button>
+                    <button type="submit" id="pfpUploadBtn"
+                        class="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600">
+                        Upload
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Gallery Tab Content -->
+        <div id="pfp-gallery-tab" class="hidden">
+            <p class="text-sm text-gray-400 mb-3">Select a picture from your gallery to use as your profile picture.</p>
+            <div id="pfp-gallery-grid" class="grid grid-cols-4 gap-3 mb-4 max-h-[200px] overflow-y-auto">
+                <!-- Gallery pictures will be rendered here -->
+                <p class="col-span-4 text-center text-gray-500 py-4">No pictures in gallery. Add some first!</p>
             </div>
-            <div id="pfpPreview" class="mb-4 flex justify-center">
-                <!-- Preview will appear here -->
+            <div id="pfp-gallery-preview" class="mb-4 flex justify-center">
+                <!-- Selected gallery picture preview -->
             </div>
             <div class="flex justify-end space-x-3">
-                <button type="button" id="pfpCancelBtn"
+                <button type="button" onclick="closePfpModal()"
                     class="px-4 py-2 bg-neutral-600 text-white rounded-lg hover:bg-neutral-500">
                     Cancel
                 </button>
-                <button type="submit" id="pfpUploadBtn"
-                    class="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600">
-                    Upload
+                <button type="button" id="pfpGallerySelectBtn" onclick="useGalleryPicture()" disabled
+                    class="px-4 py-2 bg-gray-500 text-white rounded-lg cursor-not-allowed">
+                    Use Selected Picture
                 </button>
             </div>
-        </form>
+        </div>
     </div>
 </div>
 
@@ -206,19 +244,115 @@ active_tab: profile
     <h2 class="text-xl font-semibold mb-4">Navigation Bar Color</h2>
     <p class="text-gray-400 text-sm mb-4">Select a color for the top navigation bar. The color you choose will be applied to the header.</p>
 
-    <!-- Theme Grid (ITERATION through THEMES LIST) -->
-    <div id="themes-grid" class="grid grid-cols-5 gap-3 mb-4">
-        <!-- Themes will be rendered here by JavaScript -->
+    <!-- Solid Colors Section -->
+    <h3 class="text-lg font-medium mb-3 text-gray-300">Solid Colors</h3>
+    <div id="themes-grid" class="grid grid-cols-5 gap-3 mb-6">
+        <!-- Solid themes will be rendered here by JavaScript -->
+    </div>
+
+    <!-- Live Colors Section -->
+    <h3 class="text-lg font-medium mb-3 text-gray-300">Live Colors (Animated)</h3>
+    <p class="text-gray-500 text-xs mb-3">These colors have moving/flowing animations like water.</p>
+    <div id="live-colors-grid" class="grid grid-cols-5 gap-3 mb-6">
+        <!-- Live colors will be rendered here by JavaScript -->
+    </div>
+
+    <!-- Gradient Colors Section -->
+    <h3 class="text-lg font-medium mb-3 text-gray-300">Gradient Colors</h3>
+    <div id="gradient-colors-grid" class="grid grid-cols-5 gap-3 mb-6">
+        <!-- Gradient colors will be rendered here by JavaScript -->
     </div>
 
     <!-- Preview showing current selection -->
     <div class="mt-4">
         <p class="text-sm text-gray-400 mb-2">Current Selection:</p>
         <div id="theme-preview" class="p-4 rounded-lg border-2 border-white/30" style="background: #667eea;">
-            <p class="text-white font-semibold text-center">Navigation Bar Preview</p>
+            <p class="text-white font-semibold text-center drop-shadow-lg">Navigation Bar Preview</p>
         </div>
     </div>
 </div>
+
+<!-- CSS for Live Color Animations -->
+<style>
+    /* Water-like flowing animation */
+    @keyframes waterFlow {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    /* Pulse/breathing animation */
+    @keyframes pulse {
+        0%, 100% { filter: brightness(1); }
+        50% { filter: brightness(1.3); }
+    }
+
+    /* Wave animation */
+    @keyframes wave {
+        0% { background-position: 0% 0%; }
+        100% { background-position: 200% 0%; }
+    }
+
+    .live-color-water {
+        background: linear-gradient(90deg, #0077be, #00a8e8, #00d4ff, #00a8e8, #0077be);
+        background-size: 200% 100%;
+        animation: waterFlow 3s ease-in-out infinite;
+    }
+
+    .live-color-fire {
+        background: linear-gradient(90deg, #ff4500, #ff6a00, #ffa500, #ff6a00, #ff4500);
+        background-size: 200% 100%;
+        animation: waterFlow 2s ease-in-out infinite;
+    }
+
+    .live-color-aurora {
+        background: linear-gradient(90deg, #00ff87, #60efff, #ff00ea, #60efff, #00ff87);
+        background-size: 200% 100%;
+        animation: waterFlow 4s ease-in-out infinite;
+    }
+
+    .live-color-ocean {
+        background: linear-gradient(90deg, #1a2980, #26d0ce, #1a2980);
+        background-size: 200% 100%;
+        animation: waterFlow 3.5s ease-in-out infinite;
+    }
+
+    .live-color-sunset {
+        background: linear-gradient(90deg, #f12711, #f5af19, #f12711);
+        background-size: 200% 100%;
+        animation: waterFlow 3s ease-in-out infinite;
+    }
+
+    .live-color-forest {
+        background: linear-gradient(90deg, #134e5e, #71b280, #134e5e);
+        background-size: 200% 100%;
+        animation: waterFlow 4s ease-in-out infinite;
+    }
+
+    .live-color-neon {
+        background: linear-gradient(90deg, #ff00ff, #00ffff, #ff00ff);
+        background-size: 200% 100%;
+        animation: waterFlow 2.5s ease-in-out infinite;
+    }
+
+    .live-color-lava {
+        background: linear-gradient(90deg, #8b0000, #ff4500, #ffd700, #ff4500, #8b0000);
+        background-size: 200% 100%;
+        animation: waterFlow 2s ease-in-out infinite;
+    }
+
+    .live-color-ice {
+        background: linear-gradient(90deg, #e0ffff, #87ceeb, #4169e1, #87ceeb, #e0ffff);
+        background-size: 200% 100%;
+        animation: waterFlow 3s ease-in-out infinite;
+    }
+
+    .live-color-galaxy {
+        background: linear-gradient(90deg, #0f0c29, #302b63, #24243e, #302b63, #0f0c29);
+        background-size: 200% 100%;
+        animation: waterFlow 5s ease-in-out infinite;
+    }
+</style>
 
 <div class="flex justify-between items-center mb-8">
     <button id="saveChangesBtn" disabled
@@ -444,13 +578,7 @@ active_tab: profile
             });
         }
 
-        // Set up cancel button
-        const cancelBtn = document.getElementById('pfpCancelBtn');
-        if (cancelBtn) {
-            cancelBtn.addEventListener('click', function() {
-                document.getElementById('change-pfp').style.visibility = 'hidden';
-            });
-        }
+        // Cancel button now uses onclick="closePfpModal()" directly in HTML
     });
 
     // Close modal on Escape key
@@ -1046,6 +1174,42 @@ active_tab: profile
         { id: 10, name: 'Gray', color: '#6b7280', selected: false }
     ];
 
+    // =========================================================================
+    // LIST: Live/Animated colors that look like flowing water
+    // Each has a CSS class for the animation
+    // =========================================================================
+    const LIVE_COLORS = [
+        { id: 'live-1', name: 'Water', cssClass: 'live-color-water', selected: false },
+        { id: 'live-2', name: 'Fire', cssClass: 'live-color-fire', selected: false },
+        { id: 'live-3', name: 'Aurora', cssClass: 'live-color-aurora', selected: false },
+        { id: 'live-4', name: 'Ocean', cssClass: 'live-color-ocean', selected: false },
+        { id: 'live-5', name: 'Sunset', cssClass: 'live-color-sunset', selected: false },
+        { id: 'live-6', name: 'Forest', cssClass: 'live-color-forest', selected: false },
+        { id: 'live-7', name: 'Neon', cssClass: 'live-color-neon', selected: false },
+        { id: 'live-8', name: 'Lava', cssClass: 'live-color-lava', selected: false },
+        { id: 'live-9', name: 'Ice', cssClass: 'live-color-ice', selected: false },
+        { id: 'live-10', name: 'Galaxy', cssClass: 'live-color-galaxy', selected: false }
+    ];
+
+    // =========================================================================
+    // LIST: Gradient colors (static gradients)
+    // =========================================================================
+    const GRADIENT_COLORS = [
+        { id: 'grad-1', name: 'Sunset', gradient: 'linear-gradient(135deg, #f093fb, #f5576c)', selected: false },
+        { id: 'grad-2', name: 'Ocean', gradient: 'linear-gradient(135deg, #4facfe, #00f2fe)', selected: false },
+        { id: 'grad-3', name: 'Forest', gradient: 'linear-gradient(135deg, #11998e, #38ef7d)', selected: false },
+        { id: 'grad-4', name: 'Purple', gradient: 'linear-gradient(135deg, #667eea, #764ba2)', selected: false },
+        { id: 'grad-5', name: 'Peach', gradient: 'linear-gradient(135deg, #ffecd2, #fcb69f)', selected: false },
+        { id: 'grad-6', name: 'Night', gradient: 'linear-gradient(135deg, #0c0c0c, #434343)', selected: false },
+        { id: 'grad-7', name: 'Berry', gradient: 'linear-gradient(135deg, #8e2de2, #4a00e0)', selected: false },
+        { id: 'grad-8', name: 'Flame', gradient: 'linear-gradient(135deg, #ff416c, #ff4b2b)', selected: false },
+        { id: 'grad-9', name: 'Sky', gradient: 'linear-gradient(135deg, #a1c4fd, #c2e9fb)', selected: false },
+        { id: 'grad-10', name: 'Mint', gradient: 'linear-gradient(135deg, #d4fc79, #96e6a1)', selected: false }
+    ];
+
+    // Track which type of color is currently selected
+    let selectedColorType = 'solid'; // 'solid', 'live', or 'gradient'
+
     // Current filter state
     let currentFilter = 'all';
 
@@ -1102,8 +1266,8 @@ active_tab: profile
         // --- ITERATION: Loop through filtered pictures to render each one ---
         for (let i = 0; i < filteredPictures.length; i++) {
             const pic = filteredPictures[i];
-            const borderClass = pic.isSelected ? 'border-4 border-green-500' : 'border border-neutral-600';
-            const selectedBadge = pic.isSelected ? '<span class="absolute top-1 right-1 bg-green-500 text-white text-xs px-1 rounded">Active</span>' : '';
+            const borderClass = 'border border-neutral-600';
+            const selectedBadge = '';
 
             html += `
                 <div class="relative group cursor-pointer ${borderClass} rounded-lg overflow-hidden" onclick="selectPicture('${pic.id}')">
@@ -1299,13 +1463,13 @@ active_tab: profile
 
     // =========================================================================
     // FUNCTION: renderThemes()
-    // Demonstrates ITERATION through PROFILE_THEMES LIST
+    // Renders solid colors, live colors, and gradient colors
     // =========================================================================
     function renderThemes() {
+        // Render solid colors
         const grid = document.getElementById('themes-grid');
         let html = '';
 
-        // --- ITERATION: Loop through each theme in the list ---
         for (let i = 0; i < PROFILE_THEMES.length; i++) {
             const theme = PROFILE_THEMES[i];
             const borderClass = theme.selected ? 'border-4 border-white' : 'border-2 border-transparent';
@@ -1318,57 +1482,372 @@ active_tab: profile
                 </div>
             `;
         }
-
         grid.innerHTML = html;
+
+        // Render live colors
+        const liveGrid = document.getElementById('live-colors-grid');
+        let liveHtml = '';
+
+        for (let i = 0; i < LIVE_COLORS.length; i++) {
+            const live = LIVE_COLORS[i];
+            const borderClass = live.selected ? 'border-4 border-white' : 'border-2 border-transparent';
+
+            liveHtml += `
+                <div onclick="selectLiveColor('${live.id}')"
+                     class="cursor-pointer rounded-lg p-3 ${borderClass} transition-all hover:scale-105 ${live.cssClass}">
+                    <p class="text-white text-xs font-semibold text-center drop-shadow-lg">${live.name}</p>
+                </div>
+            `;
+        }
+        liveGrid.innerHTML = liveHtml;
+
+        // Render gradient colors
+        const gradientGrid = document.getElementById('gradient-colors-grid');
+        let gradientHtml = '';
+
+        for (let i = 0; i < GRADIENT_COLORS.length; i++) {
+            const grad = GRADIENT_COLORS[i];
+            const borderClass = grad.selected ? 'border-4 border-white' : 'border-2 border-transparent';
+
+            gradientHtml += `
+                <div onclick="selectGradientColor('${grad.id}')"
+                     class="cursor-pointer rounded-lg p-3 ${borderClass} transition-all hover:scale-105"
+                     style="background: ${grad.gradient};">
+                    <p class="text-white text-xs font-semibold text-center drop-shadow-lg">${grad.name}</p>
+                </div>
+            `;
+        }
+        gradientGrid.innerHTML = gradientHtml;
+    }
+
+    // Clear all selections from all color types
+    function clearAllSelections() {
+        for (let i = 0; i < PROFILE_THEMES.length; i++) {
+            PROFILE_THEMES[i].selected = false;
+        }
+        for (let i = 0; i < LIVE_COLORS.length; i++) {
+            LIVE_COLORS[i].selected = false;
+        }
+        for (let i = 0; i < GRADIENT_COLORS.length; i++) {
+            GRADIENT_COLORS[i].selected = false;
+        }
     }
 
     // =========================================================================
     // FUNCTION: selectTheme(themeId)
-    // Demonstrates ITERATION and SELECTION to update theme selection
-    // Also applies the selected color to the top navigation bar
+    // Select a solid color theme
     // =========================================================================
     function selectTheme(themeId) {
+        clearAllSelections();
+        selectedColorType = 'solid';
+
         let selectedColor = '';
 
-        // --- ITERATION: Loop through themes list ---
         for (let i = 0; i < PROFILE_THEMES.length; i++) {
-            // --- SELECTION: Update selection state ---
             if (PROFILE_THEMES[i].id === themeId) {
                 PROFILE_THEMES[i].selected = true;
                 selectedColor = PROFILE_THEMES[i].color;
-            } else {
-                PROFILE_THEMES[i].selected = false;
             }
         }
 
         // Update preview
-        document.getElementById('theme-preview').style.background = selectedColor;
+        const preview = document.getElementById('theme-preview');
+        preview.style.background = selectedColor;
+        preview.className = 'p-4 rounded-lg border-2 border-white/30';
 
-        // --- SELECTION: Apply color to the top navigation bar ---
-        // Target the .site-header class used in aesthetihawk layout
-        const siteHeader = document.querySelector('.site-header');
-        if (siteHeader) {
-            siteHeader.style.backgroundColor = selectedColor;
-            siteHeader.style.background = selectedColor;
-        }
+        // Apply to navigation bar
+        applyNavBarStyle(selectedColor, null);
 
-        // Also try generic nav and header elements as fallback
-        const navBar = document.querySelector('nav');
-        if (navBar) {
-            navBar.style.backgroundColor = selectedColor;
-        }
-
-        const header = document.querySelector('header');
-        if (header) {
-            header.style.backgroundColor = selectedColor;
-        }
-
-        // Save selection to localStorage so it persists
+        // Save to localStorage
         localStorage.setItem('selectedTheme', themeId);
         localStorage.setItem('navBarColor', selectedColor);
+        localStorage.setItem('navBarType', 'solid');
+        localStorage.removeItem('navBarLiveClass');
+        localStorage.removeItem('navBarGradient');
 
-        // Re-render themes
+        enableSaveButton();
         renderThemes();
+    }
+
+    // =========================================================================
+    // FUNCTION: selectLiveColor(liveId)
+    // Select an animated/live color
+    // =========================================================================
+    function selectLiveColor(liveId) {
+        clearAllSelections();
+        selectedColorType = 'live';
+
+        let selectedLive = null;
+
+        for (let i = 0; i < LIVE_COLORS.length; i++) {
+            if (LIVE_COLORS[i].id === liveId) {
+                LIVE_COLORS[i].selected = true;
+                selectedLive = LIVE_COLORS[i];
+            }
+        }
+
+        if (!selectedLive) return;
+
+        // Update preview
+        const preview = document.getElementById('theme-preview');
+        preview.style.background = '';
+        preview.className = 'p-4 rounded-lg border-2 border-white/30 ' + selectedLive.cssClass;
+
+        // Apply to navigation bar
+        applyNavBarStyle(null, selectedLive.cssClass);
+
+        // Save to localStorage
+        localStorage.setItem('navBarType', 'live');
+        localStorage.setItem('navBarLiveClass', selectedLive.cssClass);
+        localStorage.removeItem('selectedTheme');
+        localStorage.removeItem('navBarColor');
+        localStorage.removeItem('navBarGradient');
+
+        enableSaveButton();
+        renderThemes();
+    }
+
+    // =========================================================================
+    // FUNCTION: selectGradientColor(gradId)
+    // Select a gradient color
+    // =========================================================================
+    function selectGradientColor(gradId) {
+        clearAllSelections();
+        selectedColorType = 'gradient';
+
+        let selectedGrad = null;
+
+        for (let i = 0; i < GRADIENT_COLORS.length; i++) {
+            if (GRADIENT_COLORS[i].id === gradId) {
+                GRADIENT_COLORS[i].selected = true;
+                selectedGrad = GRADIENT_COLORS[i];
+            }
+        }
+
+        if (!selectedGrad) return;
+
+        // Update preview
+        const preview = document.getElementById('theme-preview');
+        preview.style.background = selectedGrad.gradient;
+        preview.className = 'p-4 rounded-lg border-2 border-white/30';
+
+        // Apply to navigation bar
+        applyNavBarStyle(selectedGrad.gradient, null);
+
+        // Save to localStorage
+        localStorage.setItem('navBarType', 'gradient');
+        localStorage.setItem('navBarGradient', selectedGrad.gradient);
+        localStorage.removeItem('selectedTheme');
+        localStorage.removeItem('navBarColor');
+        localStorage.removeItem('navBarLiveClass');
+
+        enableSaveButton();
+        renderThemes();
+    }
+
+    // =========================================================================
+    // FUNCTION: applyNavBarStyle(colorOrGradient, liveClass)
+    // Apply the selected style to navigation bar elements
+    // =========================================================================
+    function applyNavBarStyle(colorOrGradient, liveClass) {
+        const siteHeader = document.querySelector('.site-header');
+        const navBar = document.querySelector('nav');
+        const header = document.querySelector('header');
+
+        // Remove any existing live color classes
+        const allLiveClasses = LIVE_COLORS.map(l => l.cssClass);
+
+        [siteHeader, navBar, header].forEach(el => {
+            if (el) {
+                allLiveClasses.forEach(cls => el.classList.remove(cls));
+
+                if (liveClass) {
+                    el.classList.add(liveClass);
+                    el.style.removeProperty('background');
+                    el.style.removeProperty('background-color');
+                } else if (colorOrGradient) {
+                    el.style.setProperty('background', colorOrGradient, 'important');
+                }
+            }
+        });
+    }
+
+    // Enable the save button
+    function enableSaveButton() {
+        const saveButton = document.getElementById('saveChangesBtn');
+        if (saveButton) {
+            saveButton.disabled = false;
+            // Remove both possible gray class variants for consistency
+            saveButton.classList.remove('bg-neutral-300', 'text-gray-500', 'text-neutral-500', 'cursor-not-allowed');
+            saveButton.classList.add('bg-indigo-500', 'text-white', 'hover:bg-indigo-600');
+        }
+    }
+
+    // =========================================================================
+    // PROFILE PICTURE MODAL - Tab switching and gallery selection
+    // =========================================================================
+
+    let selectedGalleryPicture = null;
+
+    // Switch between Upload and Gallery tabs
+    function switchPfpTab(tab) {
+        const uploadTab = document.getElementById('pfp-upload-tab');
+        const galleryTab = document.getElementById('pfp-gallery-tab');
+        const tabUploadBtn = document.getElementById('tab-upload');
+        const tabGalleryBtn = document.getElementById('tab-gallery');
+
+        if (tab === 'upload') {
+            uploadTab.classList.remove('hidden');
+            galleryTab.classList.add('hidden');
+            tabUploadBtn.classList.remove('bg-neutral-700', 'text-gray-400');
+            tabUploadBtn.classList.add('bg-indigo-500', 'text-white');
+            tabGalleryBtn.classList.remove('bg-indigo-500', 'text-white');
+            tabGalleryBtn.classList.add('bg-neutral-700', 'text-gray-400');
+        } else {
+            uploadTab.classList.add('hidden');
+            galleryTab.classList.remove('hidden');
+            tabGalleryBtn.classList.remove('bg-neutral-700', 'text-gray-400');
+            tabGalleryBtn.classList.add('bg-indigo-500', 'text-white');
+            tabUploadBtn.classList.remove('bg-indigo-500', 'text-white');
+            tabUploadBtn.classList.add('bg-neutral-700', 'text-gray-400');
+
+            // Render gallery pictures in the modal
+            renderPfpGallery();
+        }
+
+        // Reset selection
+        selectedGalleryPicture = null;
+        document.getElementById('pfp-gallery-preview').innerHTML = '';
+        updateGallerySelectButton();
+    }
+
+    // Render gallery pictures in the PFP modal
+    function renderPfpGallery() {
+        const grid = document.getElementById('pfp-gallery-grid');
+
+        // --- SELECTION: Check if gallery is empty ---
+        if (pictureGallery.length === 0) {
+            grid.innerHTML = '<p class="col-span-4 text-center text-gray-500 py-4">No pictures in gallery. Add some first!</p>';
+            return;
+        }
+
+        let html = '';
+
+        // --- ITERATION: Loop through gallery pictures ---
+        for (let i = 0; i < pictureGallery.length; i++) {
+            const pic = pictureGallery[i];
+            const selectedClass = selectedGalleryPicture === pic.id ? 'border-4 border-green-500' : 'border-2 border-neutral-600';
+
+            html += `
+                <div onclick="selectGalleryForPfp('${pic.id}')"
+                     class="cursor-pointer rounded-lg overflow-hidden ${selectedClass} hover:border-indigo-400 transition-all">
+                    <img src="${pic.base64Data}" alt="Gallery" class="w-full h-16 object-cover">
+                </div>
+            `;
+        }
+
+        grid.innerHTML = html;
+    }
+
+    // Select a gallery picture to use as profile picture
+    function selectGalleryForPfp(picId) {
+        selectedGalleryPicture = picId;
+
+        // Find the picture data
+        let selectedPic = null;
+        for (let i = 0; i < pictureGallery.length; i++) {
+            if (pictureGallery[i].id === picId) {
+                selectedPic = pictureGallery[i];
+                break;
+            }
+        }
+
+        // Update preview
+        const preview = document.getElementById('pfp-gallery-preview');
+        if (selectedPic) {
+            preview.innerHTML = `<img src="${selectedPic.base64Data}" alt="Selected" class="w-24 h-24 rounded-full object-cover border-4 border-green-500">`;
+        }
+
+        // Re-render to show selection
+        renderPfpGallery();
+
+        // Enable the select button
+        updateGallerySelectButton();
+    }
+
+    // Update the gallery select button state
+    function updateGallerySelectButton() {
+        const btn = document.getElementById('pfpGallerySelectBtn');
+        if (selectedGalleryPicture) {
+            btn.disabled = false;
+            btn.classList.remove('bg-gray-500', 'cursor-not-allowed');
+            btn.classList.add('bg-indigo-500', 'hover:bg-indigo-600', 'cursor-pointer');
+        } else {
+            btn.disabled = true;
+            btn.classList.add('bg-gray-500', 'cursor-not-allowed');
+            btn.classList.remove('bg-indigo-500', 'hover:bg-indigo-600', 'cursor-pointer');
+        }
+    }
+
+    // Use the selected gallery picture as profile picture
+    async function useGalleryPicture() {
+        if (!selectedGalleryPicture) return;
+
+        // Find the picture
+        let selectedPic = null;
+        for (let i = 0; i < pictureGallery.length; i++) {
+            if (pictureGallery[i].id === selectedGalleryPicture) {
+                selectedPic = pictureGallery[i];
+                break;
+            }
+        }
+
+        if (!selectedPic) return;
+
+        // Extract just the base64 part (remove data URL prefix if present)
+        let base64Data = selectedPic.base64Data;
+        if (base64Data.includes(',')) {
+            base64Data = base64Data.split(',')[1];
+        }
+
+        try {
+            // Send to backend
+            const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+                ? 'http://localhost:8309'
+                : 'https://moodlife.opencodingsociety.com';
+
+            const response = await fetch(pythonURI + '/api/id/pfp', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ pfp: base64Data })
+            });
+
+            if (response.ok) {
+                // Update display
+                const pfpImage = document.getElementById('currentPfpImage');
+                const pfpPlaceholder = document.getElementById('currentPfpPlaceholder');
+                if (pfpImage) {
+                    pfpImage.src = selectedPic.base64Data;
+                    pfpImage.style.display = 'block';
+                    if (pfpPlaceholder) pfpPlaceholder.style.display = 'none';
+                }
+
+                closePfpModal();
+                alert('Profile picture updated!');
+            } else {
+                alert('Failed to update profile picture');
+            }
+        } catch (error) {
+            console.error('Error setting profile picture:', error);
+            alert('Error updating profile picture');
+        }
+    }
+
+    // Close the PFP modal
+    function closePfpModal() {
+        document.getElementById('change-pfp').style.visibility = 'hidden';
+        selectedGalleryPicture = null;
     }
 
     // =========================================================================
@@ -1376,22 +1855,22 @@ active_tab: profile
     // Applies the saved navigation bar color on page load
     // =========================================================================
     function applyStoredNavColor() {
-        const savedColor = localStorage.getItem('navBarColor');
-        if (savedColor) {
-            // Target .site-header class used in aesthetihawk layout
-            const siteHeader = document.querySelector('.site-header');
-            if (siteHeader) {
-                siteHeader.style.backgroundColor = savedColor;
-                siteHeader.style.background = savedColor;
+        const navBarType = localStorage.getItem('navBarType') || 'solid';
+
+        if (navBarType === 'live') {
+            const liveClass = localStorage.getItem('navBarLiveClass');
+            if (liveClass) {
+                applyNavBarStyle(null, liveClass);
             }
-            // Fallback to generic nav/header
-            const navBar = document.querySelector('nav');
-            if (navBar) {
-                navBar.style.backgroundColor = savedColor;
+        } else if (navBarType === 'gradient') {
+            const gradient = localStorage.getItem('navBarGradient');
+            if (gradient) {
+                applyNavBarStyle(gradient, null);
             }
-            const header = document.querySelector('header');
-            if (header) {
-                header.style.backgroundColor = savedColor;
+        } else {
+            const savedColor = localStorage.getItem('navBarColor');
+            if (savedColor) {
+                applyNavBarStyle(savedColor, null);
             }
         }
     }
@@ -1434,16 +1913,38 @@ active_tab: profile
             pictureGallery = JSON.parse(savedGallery);
         }
 
-        // Load selected theme and apply nav bar color
-        const savedTheme = localStorage.getItem('selectedTheme');
-        if (savedTheme) {
-            // --- ITERATION: Find and select the saved theme ---
-            for (let i = 0; i < PROFILE_THEMES.length; i++) {
-                if (PROFILE_THEMES[i].id === parseInt(savedTheme)) {
-                    PROFILE_THEMES[i].selected = true;
-                    document.getElementById('theme-preview').style.background = PROFILE_THEMES[i].color;
-                } else {
-                    PROFILE_THEMES[i].selected = false;
+        // Load selected color and apply to preview
+        const navBarType = localStorage.getItem('navBarType') || 'solid';
+        const preview = document.getElementById('theme-preview');
+
+        if (navBarType === 'live') {
+            const liveClass = localStorage.getItem('navBarLiveClass');
+            if (liveClass) {
+                for (let i = 0; i < LIVE_COLORS.length; i++) {
+                    if (LIVE_COLORS[i].cssClass === liveClass) {
+                        LIVE_COLORS[i].selected = true;
+                        preview.className = 'p-4 rounded-lg border-2 border-white/30 ' + liveClass;
+                    }
+                }
+            }
+        } else if (navBarType === 'gradient') {
+            const gradient = localStorage.getItem('navBarGradient');
+            if (gradient) {
+                for (let i = 0; i < GRADIENT_COLORS.length; i++) {
+                    if (GRADIENT_COLORS[i].gradient === gradient) {
+                        GRADIENT_COLORS[i].selected = true;
+                        preview.style.background = gradient;
+                    }
+                }
+            }
+        } else {
+            const savedTheme = localStorage.getItem('selectedTheme');
+            if (savedTheme) {
+                for (let i = 0; i < PROFILE_THEMES.length; i++) {
+                    if (PROFILE_THEMES[i].id === parseInt(savedTheme)) {
+                        PROFILE_THEMES[i].selected = true;
+                        preview.style.background = PROFILE_THEMES[i].color;
+                    }
                 }
             }
         }

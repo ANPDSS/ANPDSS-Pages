@@ -440,10 +440,20 @@
             display: block;
             padding: 5px 10px;
             margin-left: 20px;
+            background-color: rgba(0, 0, 0, 0.6);
+            border-radius: 6px;
         }
 
         .site-nav .page-link:not(:last-child) {
             margin-right: 0;
+        }
+
+        /* Black box styling for nav links for better readability */
+        #loginArea {
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 5px 12px;
+            border-radius: 6px;
+            color: white !important;
         }
 
         @media screen and (min-width: 1000px) {
@@ -467,13 +477,19 @@
             }
 
             .site-nav .page-link {
-                display: inline;
-                padding: 0;
-                margin-left: auto;
+                display: inline-block;
+                padding: 6px 12px;
+                margin-left: 10px;
+                background-color: rgba(0, 0, 0, 0.6);
+                border-radius: 6px;
             }
 
             .site-nav .page-link:not(:last-child) {
-                margin-left: 20px;
+                margin-left: 10px;
+            }
+
+            #loginArea {
+                margin-left: 10px;
             }
         }
     </style>
@@ -523,17 +539,76 @@
 
     <script type="module" src="{{ site.baseurl }}/assets/js/api/login.js"></script>
 
+    <!-- CSS for Live Color Animations -->
+    <style>
+        @keyframes waterFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .live-color-water { background: linear-gradient(90deg, #0077be, #00a8e8, #00d4ff, #00a8e8, #0077be); background-size: 200% 100%; animation: waterFlow 3s ease-in-out infinite; }
+        .live-color-fire { background: linear-gradient(90deg, #ff4500, #ff6a00, #ffa500, #ff6a00, #ff4500); background-size: 200% 100%; animation: waterFlow 2s ease-in-out infinite; }
+        .live-color-aurora { background: linear-gradient(90deg, #00ff87, #60efff, #ff00ea, #60efff, #00ff87); background-size: 200% 100%; animation: waterFlow 4s ease-in-out infinite; }
+        .live-color-ocean { background: linear-gradient(90deg, #1a2980, #26d0ce, #1a2980); background-size: 200% 100%; animation: waterFlow 3.5s ease-in-out infinite; }
+        .live-color-sunset { background: linear-gradient(90deg, #f12711, #f5af19, #f12711); background-size: 200% 100%; animation: waterFlow 3s ease-in-out infinite; }
+        .live-color-forest { background: linear-gradient(90deg, #134e5e, #71b280, #134e5e); background-size: 200% 100%; animation: waterFlow 4s ease-in-out infinite; }
+        .live-color-neon { background: linear-gradient(90deg, #ff00ff, #00ffff, #ff00ff); background-size: 200% 100%; animation: waterFlow 2.5s ease-in-out infinite; }
+        .live-color-lava { background: linear-gradient(90deg, #8b0000, #ff4500, #ffd700, #ff4500, #8b0000); background-size: 200% 100%; animation: waterFlow 2s ease-in-out infinite; }
+        .live-color-ice { background: linear-gradient(90deg, #e0ffff, #87ceeb, #4169e1, #87ceeb, #e0ffff); background-size: 200% 100%; animation: waterFlow 3s ease-in-out infinite; }
+        .live-color-galaxy { background: linear-gradient(90deg, #0f0c29, #302b63, #24243e, #302b63, #0f0c29); background-size: 200% 100%; animation: waterFlow 5s ease-in-out infinite; }
+    </style>
+
     <!-- Apply saved navigation bar color from profile settings -->
     <script>
+        // Apply immediately when script runs
         (function() {
-            const savedColor = localStorage.getItem('navBarColor');
-            if (savedColor) {
-                const header = document.querySelector('.site-header');
-                if (header) {
-                    header.style.backgroundColor = savedColor;
-                    header.style.background = savedColor;
+            const navBarType = localStorage.getItem('navBarType') || 'solid';
+            const header = document.querySelector('.site-header');
+            if (!header) return;
+
+            if (navBarType === 'live') {
+                const liveClass = localStorage.getItem('navBarLiveClass');
+                if (liveClass) {
+                    header.classList.add(liveClass);
+                }
+            } else if (navBarType === 'gradient') {
+                const gradient = localStorage.getItem('navBarGradient');
+                if (gradient) {
+                    header.style.setProperty('background', gradient, 'important');
+                }
+            } else {
+                const savedColor = localStorage.getItem('navBarColor');
+                if (savedColor) {
+                    header.style.setProperty('background-color', savedColor, 'important');
+                    header.style.setProperty('background', savedColor, 'important');
                 }
             }
         })();
+
+        // Also apply on DOMContentLoaded to ensure it works
+        document.addEventListener('DOMContentLoaded', function() {
+            const navBarType = localStorage.getItem('navBarType') || 'solid';
+            const header = document.querySelector('.site-header');
+            if (!header) return;
+
+            if (navBarType === 'live') {
+                const liveClass = localStorage.getItem('navBarLiveClass');
+                if (liveClass) {
+                    header.classList.add(liveClass);
+                }
+            } else if (navBarType === 'gradient') {
+                const gradient = localStorage.getItem('navBarGradient');
+                if (gradient) {
+                    header.style.setProperty('background', gradient, 'important');
+                }
+            } else {
+                const savedColor = localStorage.getItem('navBarColor');
+                if (savedColor) {
+                    header.style.setProperty('background-color', savedColor, 'important');
+                    header.style.setProperty('background', savedColor, 'important');
+                }
+            }
+        });
     </script>
 </body>
