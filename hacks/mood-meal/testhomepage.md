@@ -1418,6 +1418,7 @@ table th, table td {
       };
     }
 
+    // CB Selection: Determine mood category based on score thresholds
     function getMoodCategory(score) {
       if (score <= 40) return 'Stressed/Anxious';
       if (score <= 60) return 'Tired/Low Energy';
@@ -1425,6 +1426,7 @@ table th, table td {
       return 'Energetic/Excited';
     }
 
+    // CB Constructs: Sequencing (step-by-step save flow), Selection (if/else), Lists (mood tags array)
     async function saveMood() {
       // If low mood, show a joke first
       if (state.currentMood.score < 40) {
@@ -1702,6 +1704,7 @@ table th, table td {
     }
 
 
+    // CB Constructs: Lists (moods array), Iteration (.map loop), Selection (if empty check), Sequencing
     async function loadMoodHistory() {
       const tbody = document.getElementById('history-tbody');
       const loadingDiv = document.getElementById('history-loading');
@@ -1728,19 +1731,22 @@ table th, table td {
       try {
         const response = await fetch(`${pythonURI}/api/moodmeal/mood`, fetchOptions);
 
+        // Selection: Check if response was successful
         if (!response.ok) {
           throw new Error('Failed to load mood history');
         }
 
+        // List: API returns array of mood entries
         const moods = await response.json();
         loadingDiv.style.display = 'none';
 
+        // Selection: Check if moods list is empty
         if (moods.length === 0) {
           tbody.innerHTML = '<tr><td colspan="4" style="padding: 2rem; text-align: center; color: #666;">No mood entries yet. Save your first mood!</td></tr>';
           return;
         }
 
-        // Populate table
+        // Iteration: Loop through moods array using .map() to build table rows
         tbody.innerHTML = moods.map(mood => {
           const date = new Date(mood.timestamp);
           const dateStr = date.toLocaleDateString();

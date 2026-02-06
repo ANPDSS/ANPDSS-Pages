@@ -4,6 +4,15 @@ permalink: /friends
 title: Friends
 search_exclude: true
 ---
+<!--
+  Friends System Frontend
+
+  Programming Constructs (CollegeBoard Requirements):
+  - Sequencing: Step-by-step flow through friend requests, search, and list display
+  - Selection: if/else for checking friendship status, request states, user validation
+  - Iteration: Loops for rendering friend lists, recommendations, and search results
+  - Lists: Arrays storing friends, pendingRequests, recommendations, searchResults
+-->
 
 <html lang="en">
 <head>
@@ -523,13 +532,16 @@ search_exclude: true
         };
 
         // Load recommendations
+        // CB Constructs: Lists (recommendations array), Iteration (.map loop), Selection (if/else for mood emoji)
         async function loadRecommendations() {
             const grid = document.getElementById('recommendationsGrid');
             grid.innerHTML = '<div class="loading"><div class="spinner"></div>Loading recommendations...</div>';
 
             try {
+                // List: Fetch array of friend recommendations from API
                 const data = await getFriendRecommendations(20);
 
+                // Selection: Check if recommendations list is empty
                 if (data.recommendations.length === 0) {
                     grid.innerHTML = `
                         <div class="empty-state">
@@ -540,6 +552,7 @@ search_exclude: true
                     return;
                 }
 
+                // Iteration: Loop through recommendations array using .map()
                 grid.innerHTML = data.recommendations.map(user => {
                     const initial = user.name.charAt(0).toUpperCase();
                     const moodCategories = user.mood_compatibility?.shared_mood_categories || [];
@@ -684,13 +697,16 @@ search_exclude: true
         };
 
         // Load friends list
+        // CB Constructs: Lists (friends array), Iteration (.map loop), Selection (if empty check)
         async function loadFriends() {
             const grid = document.getElementById('friendsGrid');
             grid.innerHTML = '<div class="loading"><div class="spinner"></div>Loading friends...</div>';
 
             try {
+                // List: Fetch array of friends from API
                 const data = await getFriendsList();
 
+                // Selection: Check if friends list is empty
                 if (data.friends.length === 0) {
                     grid.innerHTML = `
                         <div class="empty-state">
@@ -701,6 +717,7 @@ search_exclude: true
                     return;
                 }
 
+                // Iteration: Loop through friends array using .map()
                 grid.innerHTML = data.friends.map(friend => {
                     const initial = friend.name.charAt(0).toUpperCase();
                     return `
@@ -755,6 +772,7 @@ search_exclude: true
         };
 
         // Load friend requests
+        // CB Constructs: Lists (received/sent arrays), Iteration (.map/.filter), Selection (if/else checks)
         async function loadRequests() {
             const receivedDiv = document.getElementById('receivedRequests');
             const sentDiv = document.getElementById('sentRequests');
@@ -763,12 +781,14 @@ search_exclude: true
             sentDiv.innerHTML = '<div class="loading"><div class="spinner"></div>Loading...</div>';
 
             try {
+                // Lists: Fetch received and sent request arrays from API
                 const data = await getFriendRequests();
 
-                // Received requests
+                // Selection: Check if received requests list is empty
                 if (data.received.length === 0) {
                     receivedDiv.innerHTML = '<p style="color: #999;">No pending requests</p>';
                 } else {
+                    // Iteration: Loop through received requests using .map()
                     receivedDiv.innerHTML = data.received.map(req => {
                         const initial = req.sender_name ? req.sender_name.charAt(0).toUpperCase() : '?';
                         return `

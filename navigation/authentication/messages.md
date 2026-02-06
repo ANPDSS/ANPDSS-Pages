@@ -4,6 +4,15 @@ permalink: /messages
 title: Messages
 search_exclude: true
 ---
+<!--
+  Private Messaging Frontend
+
+  Programming Constructs (CollegeBoard Requirements):
+  - Sequencing: Step-by-step flow through message send, receive, and display
+  - Selection: if/else for checking message ownership, read status, friend validation
+  - Iteration: Loops for rendering conversations list and message history
+  - Lists: Arrays storing messages, conversations, and unread counts
+-->
 
 <html lang="en">
 <head>
@@ -277,7 +286,9 @@ search_exclude: true
         friendId = urlParams.get('friend');
 
         // Load conversation
+        // CB Constructs: Lists (messages array), Iteration (.map loop), Selection (if/else for sent/received)
         async function loadConversation() {
+            // Selection: Check if friend ID is provided
             if (!friendId) {
                 document.getElementById('messagesContainer').innerHTML = `
                     <div class="empty-state">
@@ -292,21 +303,24 @@ search_exclude: true
             container.innerHTML = '<div class="loading"><div class="spinner"></div>Loading conversation...</div>';
 
             try {
+                // Sequencing: Step 1 - Fetch conversation data
+                // List: API returns array of messages
                 const data = await getConversation(friendId);
 
-                // Get current user ID
+                // Sequencing: Step 2 - Get current user ID for comparison
                 const userResponse = await fetch(`${pythonURI}/api/id`, {
                     credentials: 'include'
                 });
                 const userData = await userResponse.json();
                 currentUserId = userData.id;
 
-                // Update header
+                // Sequencing: Step 3 - Update header with friend info
                 friendName = data.conversation_with.name;
                 document.getElementById('conversationTitle').textContent = friendName;
                 document.getElementById('conversationSubtitle').textContent = `@${data.conversation_with.uid}`;
 
-                // Display messages
+                // Sequencing: Step 4 - Display messages
+                // Selection: Check if messages list is empty
                 if (data.messages.length === 0) {
                     container.innerHTML = `
                         <div class="empty-state">
@@ -315,6 +329,7 @@ search_exclude: true
                         </div>
                     `;
                 } else {
+                    // Iteration: Loop through messages array using .map()
                     container.innerHTML = data.messages.map(msg => {
                         const isSent = msg.sender_id === currentUserId;
                         const deleteBtn = isSent ? `<button class="delete-button" onclick="deleteMessage(${msg.id})">Delete</button>` : '';
