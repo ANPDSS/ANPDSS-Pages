@@ -280,17 +280,17 @@ The system uses a **Jekyll static frontend** communicating with a **Flask (Pytho
     <div class="flow-step">Parse &amp; filter JSON response</div>
 </div>
 
-**Mood Input &amp; Preferences (Shayan):**
+**Facial Mood Scanner (Shayan):**
 <div class="flow-container">
     <div class="flow-step">Camera captures face</div>
     <span class="flow-arrow">&#8594;</span>
-    <div class="flow-step">Gemini analyzes facial expression</div>
+    <div class="flow-step">face-api.js analyzes expression</div>
     <span class="flow-arrow">&#8594;</span>
-    <div class="flow-step">Auto-set mood score (0&#8211;100)</div>
+    <div class="flow-step">Convert expression data to mood score (0&#8211;100)</div>
     <span class="flow-arrow">&#8594;</span>
-    <div class="flow-step">POST /api/moodmeal/preferences</div>
+    <div class="flow-step">POST /api/moodmeal/mood</div>
     <span class="flow-arrow">&#8594;</span>
-    <div class="flow-step">Store dietary, music, activity prefs</div>
+    <div class="flow-step">Mood stored with timestamp</div>
 </div>
 
 **Weather &amp; Outfit Lookup (Darshan):**
