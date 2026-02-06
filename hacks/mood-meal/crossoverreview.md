@@ -303,9 +303,7 @@ The system uses a **Jekyll static frontend** communicating with a **Flask (Pytho
     <span class="flow-arrow">&#8594;</span>
     <div class="flow-step">Parse temperature &amp; conditions</div>
     <span class="flow-arrow">&#8594;</span>
-    <div class="flow-step">get_outfit_for_temperature()</div>
-    <span class="flow-arrow">&#8594;</span>
-    <div class="flow-step">Return outfit suggestion</div>
+    <div class="flow-step">Display User's Weather()</div>
 </div>
 
 **Friend Requests (Perry):**
