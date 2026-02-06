@@ -1,15 +1,14 @@
 /**
  * Face Mood Detector Module
- * Handles camera access, face detection, and expression analysis using face-api.js
  *
- * PROGRAMMING CONSTRUCTS USED:
- * - Sequencing: Async/await ensures code runs in order (initialize -> startCamera -> detect)
- * - Selection: if/else statements validate camera support, face detection, and errors
- * - Iteration: forEach loop stops camera tracks; reduce finds largest face
- * - Lists: ERROR_CODES object stores error types; detections array holds detected faces
+ * CollegeBoard Programming Constructs:
+ * - Sequencing: Step-by-step flow (initialize -> startCamera -> detect -> analyze)
+ * - Selection: if/else for validation, error handling, face size checks
+ * - Iteration: forEach to stop camera tracks, reduce to find largest face
+ * - Lists: ERROR_CODES object, detections array of detected faces
  */
 
-// List: Error codes for different detection failure scenarios
+// LIST: Error codes for different detection scenarios
 export const ERROR_CODES = {
   NO_FACE_DETECTED: 'NO_FACE_DETECTED',
   FACE_TOO_SMALL: 'FACE_TOO_SMALL',
@@ -22,16 +21,12 @@ export const ERROR_CODES = {
   BROWSER_NOT_SUPPORTED: 'BROWSER_NOT_SUPPORTED'
 };
 
-// Class that handles face detection and mood analysis from camera feed
 export class FaceMoodDetector {
-  // Constructor initializes video/canvas elements and configuration options
   constructor(videoElement, canvasElement, options = {}) {
     this.video = videoElement;
     this.canvas = canvasElement;
     this.stream = null;
     this.modelsLoaded = false;
-
-    // Sequencing: Set default options then override with user-provided options
     this.options = {
       modelPath: options.modelPath || 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/',
       minConfidence: options.minConfidence || 0.3,
@@ -40,88 +35,59 @@ export class FaceMoodDetector {
     };
   }
 
-  /**
-   * Check if browser supports camera access
-   * @returns {Object} { supported, message }
-   */
+  // SELECTION: Check browser camera support
   static checkBrowserSupport() {
-    // Selection: Check if browser has camera API support
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      return {
-        supported: false,
-        message: 'Camera access not supported in this browser'
-      };
+      return { supported: false, message: 'Camera access not supported in this browser' };
     }
     return { supported: true };
   }
 
-  /**
-   * Initialize face-api.js models
-   * @param {Function} progressCallback - Optional callback for loading progress
-   * @returns {Promise<Object>} { success, error }
-   */
+  // SEQUENCING: Load models step by step
   async initialize(progressCallback) {
     try {
-      // Check if face-api is available
+      // Step 1: Check if face-api library exists
       if (typeof faceapi === 'undefined') {
-        return {
-          success: false,
-          error: ERROR_CODES.MODELS_NOT_LOADED,
-          message: 'face-api.js library not loaded'
-        };
+        return { success: false, error: ERROR_CODES.MODELS_NOT_LOADED, message: 'face-api.js library not loaded' };
       }
 
-      // Load models (tiny face detector for speed + expression model)
+      // Step 2: Load face detector model
       if (progressCallback) progressCallback('Loading face detection models...', 0);
-
       await faceapi.nets.tinyFaceDetector.loadFromUri(this.options.modelPath);
+
+      // Step 3: Load expression model
       if (progressCallback) progressCallback('Face detection ready...', 50);
-
       await faceapi.nets.faceExpressionNet.loadFromUri(this.options.modelPath);
-      if (progressCallback) progressCallback('Expression detection ready...', 100);
 
+      // Step 4: Mark as ready
+      if (progressCallback) progressCallback('Expression detection ready...', 100);
       this.modelsLoaded = true;
 
       return { success: true };
     } catch (error) {
-      return {
-        success: false,
-        error: ERROR_CODES.MODELS_NOT_LOADED,
-        message: `Failed to load models: ${error.message}`
-      };
+      return { success: false, error: ERROR_CODES.MODELS_NOT_LOADED, message: `Failed to load models: ${error.message}` };
     }
   }
 
-  /**
-   * Start camera stream
-   * @returns {Promise<Object>} { success, error, message }
-   */
+  // SEQUENCING + SELECTION: Start camera with error handling
   async startCamera() {
     try {
-      // Check browser support first
+      // Step 1: Check browser support
       const browserSupport = FaceMoodDetector.checkBrowserSupport();
       if (!browserSupport.supported) {
-        return {
-          success: false,
-          error: ERROR_CODES.BROWSER_NOT_SUPPORTED,
-          message: browserSupport.message
-        };
+        return { success: false, error: ERROR_CODES.BROWSER_NOT_SUPPORTED, message: browserSupport.message };
       }
 
-      // Request camera access with constraints
+      // Step 2: Request camera access
       this.stream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          width: { ideal: 640 },
-          height: { ideal: 480 },
-          facingMode: 'user'
-        },
+        video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: 'user' },
         audio: false
       });
 
-      // Attach stream to video element
+      // Step 3: Attach stream to video
       this.video.srcObject = this.stream;
 
-      // Wait for video to be ready
+      // Step 4: Wait for video ready
       await new Promise((resolve) => {
         this.video.onloadedmetadata = () => {
           this.video.play();
@@ -129,68 +95,52 @@ export class FaceMoodDetector {
         };
       });
 
-      // Set canvas dimensions to match video
+      // Step 5: Set canvas dimensions
       this.canvas.width = this.video.videoWidth;
       this.canvas.height = this.video.videoHeight;
 
       return { success: true };
     } catch (error) {
+      // SELECTION: Different error types
       const isDenied = error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError';
-
       return {
         success: false,
         error: isDenied ? ERROR_CODES.PERMISSION_DENIED : ERROR_CODES.CAMERA_ERROR,
-        message: isDenied
-          ? 'Camera permission denied. Please allow camera access in your browser settings.'
-          : `Camera error: ${error.message}`
+        message: isDenied ? 'Camera permission denied. Please allow camera access.' : `Camera error: ${error.message}`
       };
     }
   }
 
-  /**
-   * Detect face and expression in current video frame
-   * @returns {Promise<Object>} { success, detection, expressions, error, message }
-   */
+  // LISTS + ITERATION + SELECTION: Main detection function
   async detectExpression() {
     if (!this.modelsLoaded) {
-      return {
-        success: false,
-        error: ERROR_CODES.MODELS_NOT_LOADED,
-        message: 'Models not loaded. Call initialize() first.'
-      };
+      return { success: false, error: ERROR_CODES.MODELS_NOT_LOADED, message: 'Models not loaded. Call initialize() first.' };
     }
 
     try {
-      // Detect all faces with expressions
+      // LIST: Array of detected faces with expressions
       const detections = await faceapi
         .detectAllFaces(this.video, new faceapi.TinyFaceDetectorOptions())
         .withFaceExpressions();
 
-      // Clear canvas
       const ctx = this.canvas.getContext('2d');
       ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-      // Check if any faces detected
+      // SELECTION: Check if any faces detected
       if (!detections || detections.length === 0) {
-        return {
-          success: false,
-          error: ERROR_CODES.NO_FACE_DETECTED,
-          message: 'No face detected. Please face the camera directly.'
-        };
+        return { success: false, error: ERROR_CODES.NO_FACE_DETECTED, message: 'No face detected. Please face the camera directly.' };
       }
 
-      // Selection: Check for multiple faces
+      // SELECTION: Handle multiple faces
       if (detections.length > 1) {
-        // Iteration: Use reduce to find the largest face (closest to camera)
+        // ITERATION: Use reduce to find largest face in the list
         const largestFace = detections.reduce((max, current) => {
           const maxArea = max.detection.box.area;
           const currentArea = current.detection.box.area;
           return currentArea > maxArea ? current : max;
         });
 
-        // Draw bounding box for largest face
         this.drawDetectionBox(largestFace.detection);
-
         return {
           success: true,
           detection: largestFace.detection,
@@ -200,106 +150,59 @@ export class FaceMoodDetector {
         };
       }
 
-      // Single face detected
       const detection = detections[0];
-
-      // Check face size (too small = too far away)
       const faceBox = detection.detection.box;
+
+      // SELECTION: Check face size
       if (faceBox.width < this.options.minFaceSize || faceBox.height < this.options.minFaceSize) {
-        return {
-          success: false,
-          error: ERROR_CODES.FACE_TOO_SMALL,
-          message: 'Face too small. Please move closer to the camera.'
-        };
+        return { success: false, error: ERROR_CODES.FACE_TOO_SMALL, message: 'Face too small. Please move closer to the camera.' };
       }
 
-      // Check detection confidence (poor lighting or unclear face)
+      // SELECTION: Check detection confidence
       if (detection.detection.score < this.options.minConfidence) {
-        return {
-          success: false,
-          error: ERROR_CODES.POOR_LIGHTING,
-          message: 'Unclear face detection. Try improving lighting or adjusting camera angle.'
-        };
+        return { success: false, error: ERROR_CODES.POOR_LIGHTING, message: 'Unclear face detection. Try improving lighting.' };
       }
 
-      // Draw bounding box
       this.drawDetectionBox(detection.detection);
-
-      return {
-        success: true,
-        detection: detection.detection,
-        expressions: detection.expressions
-      };
+      return { success: true, detection: detection.detection, expressions: detection.expressions };
     } catch (error) {
-      return {
-        success: false,
-        error: ERROR_CODES.CAMERA_ERROR,
-        message: `Detection error: ${error.message}`
-      };
+      return { success: false, error: ERROR_CODES.CAMERA_ERROR, message: `Detection error: ${error.message}` };
     }
   }
 
-  /**
-   * Draw detection bounding box on canvas
-   * @param {Object} detection - face-api detection object
-   */
   drawDetectionBox(detection) {
     const ctx = this.canvas.getContext('2d');
     const box = detection.box;
-
-    // Draw box
     ctx.strokeStyle = '#4eff9e';
     ctx.lineWidth = 3;
     ctx.strokeRect(box.x, box.y, box.width, box.height);
-
-    // Draw confidence score
     ctx.fillStyle = '#4eff9e';
     ctx.font = '16px Arial';
-    ctx.fillText(
-      `${Math.round(detection.score * 100)}%`,
-      box.x,
-      box.y > 20 ? box.y - 5 : box.y + box.height + 20
-    );
+    ctx.fillText(`${Math.round(detection.score * 100)}%`, box.x, box.y > 20 ? box.y - 5 : box.y + box.height + 20);
   }
 
-  /**
-   * Capture current video frame to image
-   * @returns {string} Base64 data URL of captured image
-   */
   captureFrame() {
     const captureCanvas = document.createElement('canvas');
     captureCanvas.width = this.video.videoWidth;
     captureCanvas.height = this.video.videoHeight;
-
     const ctx = captureCanvas.getContext('2d');
     ctx.drawImage(this.video, 0, 0);
-
     return captureCanvas.toDataURL('image/jpeg', 0.9);
   }
 
-  /**
-   * Stop camera stream
-   */
-  // Stops the camera and releases all media resources
+  // ITERATION: Loop through tracks to stop camera
   stopCamera() {
     if (this.stream) {
-      // Iteration: Loop through each track and stop it
       this.stream.getTracks().forEach(track => track.stop());
       this.stream = null;
     }
-
     if (this.video.srcObject) {
       this.video.srcObject = null;
     }
   }
 
-  /**
-   * Cleanup all resources
-   */
   cleanup() {
     this.stopCamera();
-
-    // Clear canvas
     if (this.canvas) {
       const ctx = this.canvas.getContext('2d');
       ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
