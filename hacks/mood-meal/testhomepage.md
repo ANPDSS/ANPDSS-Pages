@@ -528,7 +528,6 @@ table th, table td {
       <button class="nav-btn" data-section="history">📊 History</button>
       <button class="nav-btn" id="friends-btn">👥 Friends</button>
       <a href="{{ site.baseurl }}/profile" class="nav-btn" style="text-decoration: none;">👤 Profile</a>
-      <a href="#weather-section" class="nav-btn-accent" onclick="scrollToWeather(event)">Weather & Outfit Below</a>
       <a href="{{ site.baseurl }}/login" class="nav-btn-accent" style="text-decoration: none;">🔐 Login</a>
     </div>
   </nav>
