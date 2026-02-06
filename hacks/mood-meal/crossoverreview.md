@@ -256,7 +256,7 @@ The system uses a **Jekyll static frontend** communicating with a **Flask (Pytho
 
 ### How Transactional Data Flows
 
-**Logging a Mood:**
+**Logging a Mood (Aditya):**
 <div class="flow-container">
     <div class="flow-step">User submits score + tags</div>
     <span class="flow-arrow">&#8594;</span>
@@ -267,7 +267,7 @@ The system uses a **Jekyll static frontend** communicating with a **Flask (Pytho
     <div class="flow-step">Stored with timestamp</div>
 </div>
 
-**Generating a Plan:**
+**Generating a Plan (Aditya):**
 <div class="flow-container">
     <div class="flow-step">POST /api/moodmeal/plan</div>
     <span class="flow-arrow">&#8594;</span>
@@ -280,18 +280,48 @@ The system uses a **Jekyll static frontend** communicating with a **Flask (Pytho
     <div class="flow-step">Parse &amp; filter JSON response</div>
 </div>
 
-**Friend Recommendation:**
+**Mood Input &amp; Preferences (Shayan):**
 <div class="flow-container">
-    <div class="flow-step">GET /api/friend/recommendations</div>
+    <div class="flow-step">Camera captures face</div>
     <span class="flow-arrow">&#8594;</span>
-    <div class="flow-step">Load all users&#8217; moods &amp; preferences</div>
+    <div class="flow-step">Gemini analyzes facial expression</div>
     <span class="flow-arrow">&#8594;</span>
-    <div class="flow-step">calculate_similarity_score() for each pair</div>
+    <div class="flow-step">Auto-set mood score (0&#8211;100)</div>
     <span class="flow-arrow">&#8594;</span>
-    <div class="flow-step">Return ranked list</div>
+    <div class="flow-step">POST /api/moodmeal/preferences</div>
+    <span class="flow-arrow">&#8594;</span>
+    <div class="flow-step">Store dietary, music, activity prefs</div>
 </div>
 
-**Private Messaging:**
+**Weather &amp; Outfit Lookup (Darshan):**
+<div class="flow-container">
+    <div class="flow-step">User enters location</div>
+    <span class="flow-arrow">&#8594;</span>
+    <div class="flow-step">GET /api/outfit/weather/current</div>
+    <span class="flow-arrow">&#8594;</span>
+    <div class="flow-step">OpenWeather API call</div>
+    <span class="flow-arrow">&#8594;</span>
+    <div class="flow-step">Parse temperature &amp; conditions</div>
+    <span class="flow-arrow">&#8594;</span>
+    <div class="flow-step">get_outfit_for_temperature()</div>
+    <span class="flow-arrow">&#8594;</span>
+    <div class="flow-step">Return outfit suggestion</div>
+</div>
+
+**Friend Requests (Perry):**
+<div class="flow-container">
+    <div class="flow-step">POST /api/friend/request</div>
+    <span class="flow-arrow">&#8594;</span>
+    <div class="flow-step">Verify not already friends</div>
+    <span class="flow-arrow">&#8594;</span>
+    <div class="flow-step">Create pending request</div>
+    <span class="flow-arrow">&#8594;</span>
+    <div class="flow-step">Receiver accepts or rejects</div>
+    <span class="flow-arrow">&#8594;</span>
+    <div class="flow-step">Bidirectional friend pair created</div>
+</div>
+
+**Private Messaging (Neil):**
 <div class="flow-container">
     <div class="flow-step">POST /api/message/send</div>
     <span class="flow-arrow">&#8594;</span>
@@ -300,6 +330,21 @@ The system uses a **Jekyll static frontend** communicating with a **Flask (Pytho
     <div class="flow-step">Store message with read status</div>
     <span class="flow-arrow">&#8594;</span>
     <div class="flow-step">GET /api/message/conversation/&lt;id&gt;</div>
+    <span class="flow-arrow">&#8594;</span>
+    <div class="flow-step">Track unread count</div>
+</div>
+
+**Admin &amp; Database Management (Sathwik):**
+<div class="flow-container">
+    <div class="flow-step">Admin navigates to /db/viewer</div>
+    <span class="flow-arrow">&#8594;</span>
+    <div class="flow-step">Verify admin privileges</div>
+    <span class="flow-arrow">&#8594;</span>
+    <div class="flow-step">Query all tables &amp; schemas</div>
+    <span class="flow-arrow">&#8594;</span>
+    <div class="flow-step">Resolve foreign keys to usernames</div>
+    <span class="flow-arrow">&#8594;</span>
+    <div class="flow-step">Render admin dashboard</div>
 </div>
 
 ### Key API Transactions
@@ -359,92 +404,105 @@ def build_gemini_prompt(mood, preferences, weather=None, refresh=False, feedback
 
 <div class="team-card">
 <h4>Sathwik</h4>
-<div class="role">Assistant Scrum Master / Deployment Lead</div>
-<div class="superpower">Production Pipeline &#8212; keeps the app running reliably from Docker to AWS</div>
+<div class="role">Assistant Scrum Master / Admin &amp; Database Management Lead</div>
+<div class="superpower">System Control &#8212; built the admin backbone that keeps every table and user in check</div>
 <ul>
 <li>Assists with sprint tracking and team coordination</li>
-<li>Dockerfile setup: Python 3.11, Gunicorn with 5 workers, port 8309</li>
-<li>Docker Compose orchestration with volume mounts for persistent data</li>
-<li>Environment variable configuration (API keys, DB credentials, CORS origins)</li>
-<li>CORS configuration for <code>localhost:4500</code>, <code>localhost:4600</code>, <code>anpdss.github.io</code></li>
-<li>Production vs. development environment switching (SQLite &#8596; MySQL)</li>
-<li>Server monitoring, Nginx reverse proxy setup</li>
+<li>Admin API (<code>api/admin_api.py</code>): check status, list users, grant/revoke privileges</li>
+<li>Superadmin system with persistent JSON storage (<code>moodmeal_admins.json</code>)</li>
+<li>Database viewer route (<code>/db/viewer</code>) &#8212; inspect all tables, schemas, and row counts</li>
+<li>User-to-username resolution across mood, friend, message, and post tables</li>
+<li>Profile picture system (<code>api/pfp.py</code>): Base64 upload, storage, and image serving</li>
+<li>Backend database initialization scripts and schema management</li>
 </ul>
 <details><summary><strong>Code Snippet</strong></summary>
 
-```dockerfile
-# Dockerfile
-FROM python:3.11
-WORKDIR /app
-COPY . /app
-RUN pip install --no-cache-dir -r requirements.txt && pip install gunicorn
-ENV FLASK_ENV=production \
-    GUNICORN_CMD_ARGS="--workers=5 --threads=2 --bind=0.0.0.0:8309 --timeout=30"
-EXPOSE 8309
-CMD ["gunicorn", "main:app"]
+```python
+# Admin privilege control (api/admin_api.py)
+SUPERADMIN_UID = "Shayanb1"
+
+def is_moodmeal_admin(uid):
+    if uid == SUPERADMIN_UID:
+        return True
+    admins = load_moodmeal_admins()
+    return uid in admins
+
+class AdminMakeAdmin(Resource):
+    @token_required()
+    def post(self):
+        current_user = g.current_user
+        if current_user.uid != SUPERADMIN_UID:
+            return {"message": "Only superadmin can modify admin status"}, 403
+        # Grant or revoke admin for target user
 ```
 </details>
 </div>
 
 <div class="team-card">
 <h4>Neil</h4>
-<div class="role">Frontend Developer / API Creator</div>
-<div class="superpower">Full-Stack Bridge &#8212; designs the APIs that connect user interfaces to backend intelligence</div>
+<div class="role">Frontend Developer / Messaging Lead</div>
+<div class="superpower">Real-Time Communication &#8212; connects friends through private messaging and conversation tracking</div>
 <ul>
-<li>Mood CRUD endpoints (<code>api/moodmeal_api.py</code>): create, read, update, delete mood entries</li>
-<li>Preference endpoints: save and retrieve user dietary, music, and activity preferences</li>
-<li>Mood statistics API (<code>GET /api/moodmeal/mood/stats</code>) &#8212; average score, tag frequency, trends</li>
-<li>Frontend mood logging interface and preference builder forms</li>
-<li>API response formatting and error handling across endpoints</li>
-<li>Integration testing between frontend forms and backend endpoints</li>
+<li>Private messaging system (<code>api/message_api.py</code>): send, read, conversation history</li>
+<li>Friendship verification middleware (messages restricted to friends only)</li>
+<li>Unread message count tracking and conversation sorting</li>
+<li>Message read status updates (<code>PUT /api/message/read/&lt;id&gt;</code>)</li>
+<li>Frontend chat interface and conversation list UI</li>
+<li>Integration testing between messaging frontend and backend endpoints</li>
 </ul>
 <details><summary><strong>Code Snippet</strong></summary>
 
 ```python
-# Mood statistics endpoint (api/moodmeal_api.py)
-class MoodStatsAPI(Resource):
+# Private messaging endpoint (api/message_api.py)
+class SendMessage(Resource):
     @token_required()
-    def get(self):
+    def post(self):
         current_user = g.current_user
-        moods = MoodMealMood.query.filter_by(_user_id=current_user.id).all()
-        if not moods:
-            return {"message": "No mood data found"}, 404
-        avg_score = sum(m.mood_score for m in moods) / len(moods)
-        # Iteration: collect all tags across entries
-        all_tags = [tag for m in moods for tag in (m.mood_tags or [])]
-        return {"average_score": avg_score, "total_entries": len(moods), "common_tags": all_tags}
+        data = request.get_json()
+        receiver_id = data.get("receiver_id")
+        content = data.get("content")
+        # Selection: verify friendship before allowing message
+        if not Friend.are_friends(current_user.id, receiver_id):
+            return {"message": "You can only message friends"}, 403
+        message = PrivateMessage(current_user.id, receiver_id, content)
+        message.create()
+        return {"message": "Message sent", "id": message.id}, 201
 ```
 </details>
 </div>
 
 <div class="team-card">
 <h4>Perry</h4>
-<div class="role">Frontend Developer / Friends Feature Lead</div>
-<div class="superpower">Social Connections &#8212; matches users by mood and taste for meaningful friendships</div>
+<div class="role">Frontend Developer / Friend Requests Lead</div>
+<div class="superpower">Social Connections &#8212; manages the friend request lifecycle from send to accept</div>
 <ul>
-<li>Friend system backend (<code>api/friend_api.py</code>): request, accept, reject, unfriend</li>
-<li><strong>Friend Recommendation Algorithm</strong> &#8212; weighted similarity scoring across 5 dimensions</li>
-<li>Private messaging system (<code>api/message_api.py</code>): send, read, conversation history</li>
-<li>Friendship verification middleware (messages restricted to friends only)</li>
-<li>Frontend friend list, request UI, and chat interface</li>
-<li>Unread message count tracking and conversation sorting</li>
+<li>Friend request system (<code>api/friend_api.py</code>): send, accept, reject, unfriend</li>
+<li>Bidirectional friend pair creation with <code>CHECK(_user_id1 &lt; _user_id2)</code> preventing duplicates</li>
+<li>Friend list retrieval and search endpoints</li>
+<li>Request status management (pending, accepted, rejected)</li>
+<li>Frontend friend list, request UI, and friend search interface</li>
+<li>Friend model (<code>model/friend.py</code>): Friend + FriendRequest with bidirectional pairs</li>
 </ul>
 <details><summary><strong>Code Snippet</strong></summary>
 
 ```python
-# Friend recommendation algorithm (api/friend_api.py)
-class FriendRecommendationAlgorithm:
-    @staticmethod
-    def calculate_similarity_score(user_moods, other_moods, user_prefs, other_prefs):
-        scores = {}
-        # Mood score similarity (25% weight)
-        user_avg = sum(m.mood_score for m in user_moods) / len(user_moods)
-        other_avg = sum(m.mood_score for m in other_moods) / len(other_moods)
-        scores['mood_score'] = max(0, 1 - abs(user_avg - other_avg) / 100)
-        # Music overlap (20%), Activities (20%), Cuisines (20%)
-        scores['music'] = calculate_list_overlap(user_prefs.music, other_prefs.music)
-        total = (scores['mood_score'] * 0.25 + scores['music'] * 0.20 + ...)
-        return total
+# Friend request handling (api/friend_api.py)
+class FriendRequestAPI(Resource):
+    @token_required()
+    def post(self):
+        current_user = g.current_user
+        data = request.get_json()
+        receiver_id = data.get("receiver_id")
+        # Selection: check if already friends or request exists
+        if Friend.are_friends(current_user.id, receiver_id):
+            return {"message": "Already friends"}, 400
+        if FriendRequest.query.filter_by(
+            _sender_id=current_user.id, _receiver_id=receiver_id, _status="pending"
+        ).first():
+            return {"message": "Request already pending"}, 400
+        request_obj = FriendRequest(current_user.id, receiver_id)
+        request_obj.create()
+        return {"message": "Friend request sent"}, 201
 ```
 </details>
 </div>
@@ -483,35 +541,31 @@ def get_outfit_for_temperature(temp):
 
 <div class="team-card">
 <h4>Shayan</h4>
-<div class="role">Backend Lead / Admin UI Developer</div>
-<div class="superpower">System Control &#8212; built the admin backbone that keeps every table and user in check</div>
+<div class="role">Backend Lead / Mood Input &amp; Preferences Developer</div>
+<div class="superpower">Emotion Detection &#8212; captures mood through facial scanning and personalizes the experience with user preferences</div>
 <ul>
-<li>Admin API (<code>api/admin_api.py</code>): check status, list users, grant/revoke privileges</li>
-<li>Superadmin system with persistent JSON storage (<code>moodmeal_admins.json</code>)</li>
-<li>Database viewer route (<code>/db/viewer</code>) &#8212; inspect all tables, schemas, and row counts</li>
-<li>User-to-username resolution across mood, friend, message, and post tables</li>
-<li>Profile picture system (<code>api/pfp.py</code>): Base64 upload, storage, and image serving</li>
-<li>Backend database initialization scripts and schema management</li>
+<li>Facial mood scanner &#8212; camera-based emotion detection using Gemini image analysis</li>
+<li>Mood CRUD endpoints (<code>api/moodmeal_api.py</code>): create, read, update, delete mood entries</li>
+<li>Mood auto-categorization: Stressed (0&#8211;40), Tired (41&#8211;60), Happy (61&#8211;80), Energetic (81&#8211;100)</li>
+<li>Preference system (<code>POST /api/moodmeal/preferences</code>): dietary, allergies, cuisines, music, activities</li>
+<li>Mood statistics API (<code>GET /api/moodmeal/mood/stats</code>) &#8212; average score, tag frequency, trends</li>
+<li>Frontend mood logging interface, facial scanner UI, and preference builder forms</li>
 </ul>
 <details><summary><strong>Code Snippet</strong></summary>
 
 ```python
-# Admin privilege control (api/admin_api.py)
-SUPERADMIN_UID = "Shayanb1"
-
-def is_moodmeal_admin(uid):
-    if uid == SUPERADMIN_UID:
-        return True
-    admins = load_moodmeal_admins()
-    return uid in admins
-
-class AdminMakeAdmin(Resource):
+# Mood statistics endpoint (api/moodmeal_api.py)
+class MoodStatsAPI(Resource):
     @token_required()
-    def post(self):
+    def get(self):
         current_user = g.current_user
-        if current_user.uid != SUPERADMIN_UID:
-            return {"message": "Only superadmin can modify admin status"}, 403
-        # Grant or revoke admin for target user
+        moods = MoodMealMood.query.filter_by(_user_id=current_user.id).all()
+        if not moods:
+            return {"message": "No mood data found"}, 404
+        avg_score = sum(m.mood_score for m in moods) / len(moods)
+        # Iteration: collect all tags across entries
+        all_tags = [tag for m in moods for tag in (m.mood_tags or [])]
+        return {"average_score": avg_score, "total_entries": len(moods), "common_tags": all_tags}
 ```
 </details>
 </div>
@@ -540,37 +594,37 @@ class AdminMakeAdmin(Resource):
 
 <div class="team-card">
 <h4>Sathwik &#8212; AP CSP Alignment</h4>
-<div class="role">Deployment</div>
+<div class="role">Admin & Database Management</div>
 <ul>
-<li><strong>The Internet:</strong> Docker containerization on port 8309, Nginx reverse proxy, CORS origins list</li>
-<li><strong>Sequencing:</strong> Build pipeline: install deps &#8594; configure env &#8594; launch Gunicorn &#8594; serve on 0.0.0.0</li>
-<li><strong>Selection:</strong> <code>if FLASK_ENV == production</code> uses MySQL; otherwise SQLite for dev</li>
-<li><strong>List:</strong> CORS allowed origins array, Gunicorn worker/thread config parameters</li>
-<li><strong>Impact:</strong> Production deployment ensures app availability; environment isolation protects data</li>
+<li><strong>Sequencing:</strong> Admin check pipeline: extract UID from token &#8594; load admin list from JSON &#8594; verify privileges &#8594; grant or deny access</li>
+<li><strong>Selection:</strong> <code>if uid == SUPERADMIN_UID</code> grants full access; <code>if uid in admins</code> allows admin endpoints; role checks for protected routes</li>
+<li><strong>Iteration:</strong> Database viewer iterates all tables, columns, and rows to build admin display; loops through users to resolve foreign keys to usernames</li>
+<li><strong>List:</strong> <code>admins_set</code> storing admin UIDs; table schema column list in DB viewer; user list for privilege management</li>
+<li><strong>Procedure:</strong> <code>is_moodmeal_admin(uid)</code>, <code>load_moodmeal_admins()</code>, <code>save_moodmeal_admins(set)</code> with parameter and return values</li>
 </ul>
 </div>
 
 <div class="team-card">
 <h4>Neil &#8212; AP CSP Alignment</h4>
-<div class="role">API Creator</div>
+<div class="role">Messaging</div>
 <ul>
-<li><strong>Data Storage:</strong> Full CRUD on <code>moodmeal_moods</code> table: create, read, update, delete entries</li>
-<li><strong>Iteration:</strong> Stats endpoint iterates all mood entries to compute averages and tag frequencies</li>
-<li><strong>Selection:</strong> <code>if not moods</code> returns 404; mood score range &#8594; auto-category assignment</li>
-<li><strong>Procedure:</strong> <code>MoodStatsAPI.get()</code> with query filtering by user ID and optional limit param</li>
-<li><strong>List:</strong> <code>mood_tags[]</code> array, mood history list, aggregated <code>all_tags[]</code> from all entries</li>
+<li><strong>Sequencing:</strong> Message flow: user composes message &#8594; POST /api/message/send &#8594; verify friendship &#8594; store with read status &#8594; recipient retrieves via GET conversation</li>
+<li><strong>Selection:</strong> <code>if not Friend.are_friends()</code> blocks message from sending; <code>if message.read == False</code> increments unread count; sender vs. receiver display logic</li>
+<li><strong>Iteration:</strong> Loops through conversation messages to render chat history; iterates unread messages to compute badge count; cycles through friend list to sort by recent activity</li>
+<li><strong>List:</strong> Conversation history array, unread message IDs list, friend conversation list sorted by timestamp</li>
+<li><strong>Data Storage:</strong> <code>PrivateMessage</code> model stores sender, receiver, content, read status, and timestamp in database</li>
 </ul>
 </div>
 
 <div class="team-card">
 <h4>Perry &#8212; AP CSP Alignment</h4>
-<div class="role">Friends Feature</div>
+<div class="role">Friend Requests</div>
 <ul>
-<li><strong>Algorithm:</strong> Jaccard index (<code>intersection/union</code>) for list overlap; weighted 5-factor similarity score</li>
-<li><strong>Iteration:</strong> Loops through all users to compute pairwise similarity; iterates preference lists for overlap</li>
-<li><strong>Selection:</strong> <code>if not Friend.are_friends()</code> blocks messages; <code>if status == 'pending'</code> allows accept/reject</li>
-<li><strong>List:</strong> <code>scores{}</code> dict per pair, friend recommendations ranked list, conversation history array</li>
-<li><strong>Data Storage:</strong> Bidirectional friend pairs with <code>CHECK(_user_id1 &lt; _user_id2)</code> preventing duplicates</li>
+<li><strong>Sequencing:</strong> Friend request lifecycle: send request &#8594; check for existing friendship &#8594; check for duplicate pending request &#8594; create request &#8594; receiver accepts/rejects &#8594; create bidirectional pair</li>
+<li><strong>Selection:</strong> <code>if Friend.are_friends()</code> returns already friends; <code>if status == 'pending'</code> allows accept/reject; <code>if request exists</code> prevents duplicates</li>
+<li><strong>Iteration:</strong> Loops through friend requests to filter by pending/accepted/rejected status; iterates friend list for search and display</li>
+<li><strong>List:</strong> Pending requests list, accepted friends list, friend search results array, request status history</li>
+<li><strong>Data Storage:</strong> Bidirectional friend pairs with <code>CHECK(_user_id1 &lt; _user_id2)</code> preventing duplicates; FriendRequest model tracks sender, receiver, and status</li>
 </ul>
 </div>
 
@@ -588,13 +642,13 @@ class AdminMakeAdmin(Resource):
 
 <div class="team-card">
 <h4>Shayan &#8212; AP CSP Alignment</h4>
-<div class="role">Backend & Admin</div>
+<div class="role">Mood Input & Preferences</div>
 <ul>
-<li><strong>Data Storage:</strong> Admin list persisted in JSON file; PFP stored as Base64 in database</li>
-<li><strong>Selection:</strong> <code>if uid == SUPERADMIN_UID</code> grants full access; role checks for admin endpoints</li>
-<li><strong>Iteration:</strong> Database viewer iterates all tables, columns, and rows to build admin display</li>
-<li><strong>Procedure:</strong> <code>is_moodmeal_admin(uid)</code>, <code>load_moodmeal_admins()</code>, <code>save_moodmeal_admins(set)</code></li>
-<li><strong>List:</strong> <code>admins_set</code> storing admin UIDs; table schema column list in DB viewer</li>
+<li><strong>Sequencing:</strong> Mood input pipeline: camera captures face &#8594; Gemini analyzes expression &#8594; auto-set mood score &#8594; user confirms or adjusts &#8594; save preferences &#8594; store in database</li>
+<li><strong>Selection:</strong> Mood score range &#8594; auto-category assignment (0&#8211;40 = Stressed, 41&#8211;60 = Tired, 61&#8211;80 = Happy, 81&#8211;100 = Energetic); <code>if not moods</code> returns 404</li>
+<li><strong>Iteration:</strong> Stats endpoint iterates all mood entries to compute averages and tag frequencies; loops through preference arrays to build user profile</li>
+<li><strong>List:</strong> <code>mood_tags[]</code> array, mood history list, aggregated <code>all_tags[]</code> from all entries, dietary/cuisine/music preference arrays</li>
+<li><strong>Procedure:</strong> <code>MoodStatsAPI.get()</code> with query filtering by user ID; facial scanner function with camera input and mood score return</li>
 </ul>
 </div>
 
