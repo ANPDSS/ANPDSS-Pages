@@ -174,13 +174,13 @@ MoodLife is a **personalized wellness platform** that uses AI-powered mood detec
     <span class="flow-arrow">&#8594;</span>
     <div class="flow-step">Log Mood (0&#8211;100)</div>
     <span class="flow-arrow">&#8594;</span>
+    <div class="flow-step">Check Weather</div>
+    <span class="flow-arrow">&#8594;</span>
     <div class="flow-step">Get AI Plan</div>
     <span class="flow-arrow">&#8594;</span>
-    <div class="flow-step">Browse Recommendations</div>
+    <div class="flow-step">Browse Reccomendations</div>
     <span class="flow-arrow">&#8594;</span>
-    <div class="flow-step">Connect with Friends</div>
-    <span class="flow-arrow">&#8594;</span>
-    <div class="flow-step">Check Weather &amp; Outfit</div>
+    <div class="flow-step"> Connect With Other Users</div>
     <span class="flow-arrow">&#8594;</span>
     <div class="flow-step">Track Progress</div>
 </div>
