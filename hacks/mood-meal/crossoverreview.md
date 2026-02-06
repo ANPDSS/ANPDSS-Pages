@@ -518,67 +518,9 @@ class AdminMakeAdmin(Resource):
 
 </div>
 
----
 
-## Meeting AP CSP College Board Requirements
 
-Our project directly addresses multiple College Board AP CSP requirements through its design and implementation:
 
-<div class="csp-grid">
-
-<div class="csp-card">
-<h4>Input (Big Idea 3)</h4>
-<p>Users provide input through mood score sliders, mood tag selectors, preference checkboxes (dietary, allergies, cuisines, music, activities), chat text fields, friend request buttons, and profile picture file uploads. The weather API accepts coordinate and ZIP code inputs.</p>
-</div>
-
-<div class="csp-card">
-<h4>Persistent Data Storage (Big Idea 3)</h4>
-<p>All user data persists in a relational database via SQLAlchemy: mood entries (<code>moodmeal_moods</code>), preferences (<code>moodmeal_preferences</code>), friend relationships (<code>friends</code>), messages (<code>private_messages</code>), and profile pictures (<code>pfps</code>). Data survives across sessions through authenticated API calls.</p>
-</div>
-
-<div class="csp-card">
-<h4>Sequencing (Big Idea 3)</h4>
-<p>The plan generation pipeline executes in strict order: fetch mood entry &#8594; load user preferences &#8594; query weather API &#8594; build Gemini prompt &#8594; call Gemini &#8594; parse response &#8594; filter by limits &#8594; return JSON. Each step depends on the previous step&#8217;s output.</p>
-</div>
-
-<div class="csp-card">
-<h4>Selection (Big Idea 3)</h4>
-<p>Conditionals drive core logic throughout: <code>if mood_score &lt;= 40</code> categorizes as Stressed, <code>if not Friend.are_friends()</code> blocks messaging, <code>if uid == SUPERADMIN_UID</code> grants admin access, <code>if temp_min &lt;= temp &lt;= temp_max</code> selects outfits. JWT validation uses selection for 401/403/500 responses.</p>
-</div>
-
-<div class="csp-card">
-<h4>Iteration (Big Idea 3)</h4>
-<p>Loops process data at every level: the friend algorithm iterates all users to compute similarity scores, <code>filter_recommendations_by_limit()</code> loops through recommendation categories, mood validation iterates <code>VALID_MOOD_CATEGORIES</code>, and the outfit selector iterates temperature ranges to find a match.</p>
-</div>
-
-<div class="csp-card">
-<h4>Lists / Collections (Big Idea 3)</h4>
-<p>Arrays and dictionaries are central to the data model: <code>mood_tags[]</code>, <code>dietary[]</code>, <code>allergies[]</code>, <code>cuisines[]</code>, <code>music[]</code>, <code>activities[]</code>, <code>OUTFIT_RECOMMENDATIONS[]</code>, and <code>VALID_MOOD_CATEGORIES[]</code>. The friend algorithm stores weighted <code>scores{}</code> dictionaries per user pair.</p>
-</div>
-
-<div class="csp-card">
-<h4>Procedures / Functions (Big Idea 3)</h4>
-<p>Modular functions with parameters and return values: <code>build_gemini_prompt(mood, preferences, weather)</code>, <code>calculate_similarity_score(user_moods, other_moods, user_prefs, other_prefs)</code>, <code>get_outfit_for_temperature(temp)</code>, <code>validate_mood_category(category)</code>, and <code>is_moodmeal_admin(uid)</code>.</p>
-</div>
-
-<div class="csp-card">
-<h4>Algorithms (Big Idea 3)</h4>
-<p>The friend recommendation algorithm implements a weighted multi-factor similarity score using Jaccard index (<code>intersection/union</code>) for list overlap and normalized difference for mood scores. The outfit selector uses a linear search through sorted temperature ranges. Gemini prompt construction is itself an algorithmic pipeline.</p>
-</div>
-
-<div class="csp-card">
-<h4>The Internet (Big Idea 4)</h4>
-<p>The app operates over HTTP/HTTPS with RESTful APIs (GET, POST, PUT, DELETE). JWT tokens authenticate requests across origins. CORS headers control cross-domain access. External APIs are consumed: Google Gemini for AI recommendations and OpenWeather for weather data. Docker containers expose services on port 8309 behind Nginx.</p>
-</div>
-
-<div class="csp-card">
-<h4>Impact of Computing (Big Idea 5)</h4>
-<p>MoodLife promotes mental wellness awareness by helping users track emotional patterns over time. The friend recommendation system connects people with shared emotional experiences. Guest/unauthenticated users are not tracked, demonstrating data minimization. The admin system implements role-based access control to protect user data.</p>
-</div>
-
-</div>
-
----
 
 ## Individual AP CSP Requirements by Team Member
 
@@ -658,19 +600,10 @@ Our project directly addresses multiple College Board AP CSP requirements throug
 
 </div>
 
----
 
-### Create Performance Task Alignment
 
-The project structure maps directly to the CPT requirements:
-- **Program Purpose:** Help users track mood and receive AI-personalized wellness recommendations (meals, music, activities, clothing)
-- **Program Function:** Mood logging, preference configuration, Gemini-powered plan generation, friend connections, private messaging, weather-aware outfit suggestions
-- **Input -> Output:** Mood score + tags (input) -> categorized mood entry (output); preferences + mood (input) -> personalized Gemini plan (output); coordinates (input) -> weather + outfit (output)
-- **List Usage:** `mood_tags[]` array stores user-selected emotional tags, iterated to build Gemini prompts and compute tag frequency statistics
-- **Procedure with Parameter:** `build_gemini_prompt(mood, preferences, weather, refresh, feedback)` takes 5 parameters, assembles a context-rich prompt using selection and iteration, and returns a formatted string
-- **Algorithm with Sequencing + Selection + Iteration:** Friend recommendation algorithm sequences through user loading, iterates all user pairs to compute similarity, selects weighted scores based on mood/preference overlap (Jaccard index), and returns a sorted ranked list
 
----
+
 
 ## Crossover Feedback We Received
 
