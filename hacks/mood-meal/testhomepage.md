@@ -790,8 +790,7 @@ table th, table td {
           </div>
         </div>
 
-  <!-- Weather Stats Grid -->
-  <h3 style="margin-bottom: 1rem;">📊 Weather Details</h3>
+  <!-- Main Weather Stats (always visible) -->
         <div class="weather-display">
           <div class="weather-stat">
             <div class="icon">🌡️</div>
@@ -808,6 +807,37 @@ table th, table td {
             <div class="label">Humidity</div>
             <div class="value" id="humidity">--%</div>
           </div>
+        </div>
+
+  <!-- Comfort Index (always visible) -->
+  <div style="background: #1e1e1e; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; border: 1px solid #333;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div>
+              <h4 style="margin: 0; color: #e0e0e0;">🎯 Comfort Index</h4>
+              <p style="color: #666; margin: 0.25rem 0 0 0; font-size: 0.9rem;">Based on temperature, humidity, and wind</p>
+            </div>
+            <div style="text-align: center;">
+              <div id="comfort-score" style="font-size: 2.5rem; font-weight: 700; color: #e0e0e0;">--</div>
+              <div id="comfort-label" style="color: #666; font-size: 0.85rem;">Calculating...</div>
+            </div>
+            <div id="comfort-bar" style="width: 100%; height: 8px; background: #333; border-radius: 4px; overflow: hidden; margin-top: 0.5rem;">
+              <div id="comfort-fill" style="height: 100%; width: 0%; background: #555; transition: width 0.5s ease; border-radius: 4px;"></div>
+            </div>
+          </div>
+        </div>
+
+  <!-- More Details Button -->
+  <button id="more-details-btn" onclick="toggleMoreDetails()" style="width: 100%; padding: 1rem 1.5rem; background: #1e1e1e; border: 1px solid #444; border-radius: 10px; color: #e0e0e0; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 1rem;">
+    <span id="more-details-text">More Details</span>
+    <span id="more-details-arrow" style="transition: transform 0.3s ease;">▼</span>
+  </button>
+
+  <!-- Extra details (hidden until button is clicked) -->
+  <div id="more-details-section" style="display: none;">
+
+  <!-- Additional Weather Stats -->
+  <h3 style="margin-bottom: 1rem;">📊 Additional Weather Details</h3>
+        <div class="weather-display">
           <div class="weather-stat">
             <div class="icon">💨</div>
             <div class="label">Wind Speed</div>
@@ -822,23 +852,6 @@ table th, table td {
             <div class="icon">📊</div>
             <div class="label">Pressure</div>
             <div class="value" id="pressure">-- hPa</div>
-          </div>
-        </div>
-
-  <!-- Comfort Index -->
-  <div style="background: #1e1e1e; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; border: 1px solid #333;">
-          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-            <div>
-              <h4 style="margin: 0; color: #e0e0e0;">🎯 Comfort Index</h4>
-              <p style="color: #666; margin: 0.25rem 0 0 0; font-size: 0.9rem;">Based on temperature, humidity, and wind</p>
-            </div>
-            <div style="text-align: center;">
-              <div id="comfort-score" style="font-size: 2.5rem; font-weight: 700; color: #e0e0e0;">--</div>
-              <div id="comfort-label" style="color: #666; font-size: 0.85rem;">Calculating...</div>
-            </div>
-            <div id="comfort-bar" style="width: 100%; height: 8px; background: #333; border-radius: 4px; overflow: hidden; margin-top: 0.5rem;">
-              <div id="comfort-fill" style="height: 100%; width: 0%; background: #555; transition: width 0.5s ease; border-radius: 4px;"></div>
-            </div>
           </div>
         </div>
 
@@ -863,7 +876,6 @@ table th, table td {
   <div style="background: #1e1e1e; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; border: 1px solid #333;">
           <h4 style="margin: 0 0 1rem 0; color: #e0e0e0;">🎯 Weather-Based Activity Suggestions</h4>
           <div id="weather-activities" style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
-            <!-- Activities will be populated here -->
           </div>
         </div>
 
@@ -913,6 +925,8 @@ table th, table td {
             </div>
           </div>
         </div>
+
+  </div><!-- end #more-details-section -->
 
   </div>
 
@@ -2424,6 +2438,22 @@ table th, table td {
       const weatherSection = document.getElementById('weather-section');
       if (weatherSection) {
         weatherSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    // Toggle More Details
+    function toggleMoreDetails() {
+      const section = document.getElementById('more-details-section');
+      const arrow = document.getElementById('more-details-arrow');
+      const text = document.getElementById('more-details-text');
+      if (section.style.display === 'none' || !section.style.display) {
+        section.style.display = 'block';
+        arrow.style.transform = 'rotate(180deg)';
+        text.textContent = 'Less Details';
+      } else {
+        section.style.display = 'none';
+        arrow.style.transform = 'rotate(0deg)';
+        text.textContent = 'More Details';
       }
     }
 
