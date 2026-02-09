@@ -1191,6 +1191,7 @@ table th, table td {
   <div style="display:flex; gap:0.5rem; margin-bottom:1rem;">
           <button class="btn btn-secondary" id="friends-tab-btn" onclick="loadFriendsTab()">Friends List</button>
           <button class="btn btn-secondary" id="messages-tab-btn" onclick="loadMessagesTab()">Messages</button>
+          <button class="btn btn-secondary" id="groups-tab-btn" onclick="loadGroupsTab()">Groups</button>
         </div>
 
   <!-- Friends List Container (replaces iframe) -->
@@ -1201,11 +1202,15 @@ table th, table td {
   <div id="messages-list-container" style="height:55vh; border-radius:8px; overflow-y:auto; border:1px solid #222; background:#0a0a0a; padding:1rem; display:none;">
           <div style="color:#bbb; text-align:center; padding:2rem;">Click Messages to load.</div>
         </div>
+  <!-- Groups Container -->
+  <div id="groups-list-container" style="height:55vh; border-radius:8px; overflow-y:auto; border:1px solid #222; background:#0a0a0a; padding:1rem; display:none;">
+          <div style="color:#bbb; text-align:center; padding:2rem;">Click Groups to load.</div>
+        </div>
   <!-- Message compose area -->
   <div id="message-compose" style="display:none; margin-top:0.5rem;">
           <div style="display:flex; gap:0.5rem;">
             <input type="text" id="message-input" placeholder="Type a message..." style="flex:1; padding:0.75rem; border-radius:8px; border:1px solid #444; background:rgba(0,0,0,0.5); color:#fff; font-size:1rem;">
-            <button class="btn btn-primary" onclick="sendDirectMessage()">Send</button>
+            <button class="btn btn-primary" onclick="handleSendMessage()">Send</button>
           </div>
         </div>
 
@@ -1261,6 +1266,14 @@ table th, table td {
       conversations: [],
       activeMessages: [],
       activeConversationId: null
+    };
+
+    // ========== GROUP CHAT STATE ==========
+    const groupChatState = {
+      groups: [],
+      activeGroupId: null,
+      activeGroupMessages: [],
+      activeGroupName: null
     };
 
     // Admin functionality is handled server-side only (not exposed on frontend)
@@ -2033,10 +2046,16 @@ table th, table td {
 
     async function loadFriendsTab() {
       // CB: Sequencing - activate tab, fetch data, process response, render list
+      groupChatState.activeGroupId = null;
+      messagingState.activeConversationId = null;
       document.getElementById('friends-tab-btn')?.classList.add('active');
       document.getElementById('messages-tab-btn')?.classList.remove('active');
+      document.getElementById('groups-tab-btn').style.opacity = '0.6';
+      document.getElementById('friends-tab-btn').style.opacity = '1';
+      document.getElementById('messages-tab-btn').style.opacity = '0.6';
       document.getElementById('friends-list-container').style.display = 'block';
       document.getElementById('messages-list-container').style.display = 'none';
+      document.getElementById('groups-list-container').style.display = 'none';
       document.getElementById('message-compose').style.display = 'none';
 
       const container = document.getElementById('friends-list-container');
@@ -2213,10 +2232,16 @@ table th, table td {
 
     async function loadMessagesTab() {
       // CB: Sequencing - activate tab, fetch conversations, process, render
+      groupChatState.activeGroupId = null;
+      messagingState.activeConversationId = null;
       document.getElementById('messages-tab-btn')?.classList.add('active');
       document.getElementById('friends-tab-btn')?.classList.remove('active');
+      document.getElementById('groups-tab-btn').style.opacity = '0.6';
+      document.getElementById('friends-tab-btn').style.opacity = '0.6';
+      document.getElementById('messages-tab-btn').style.opacity = '1';
       document.getElementById('messages-list-container').style.display = 'block';
       document.getElementById('friends-list-container').style.display = 'none';
+      document.getElementById('groups-list-container').style.display = 'none';
       document.getElementById('message-compose').style.display = 'none';
 
       const container = document.getElementById('messages-list-container');
@@ -2430,6 +2455,360 @@ table th, table td {
       } catch (e) {
         console.error('Send message error:', e);
         showToast('Failed to send message.');
+      }
+    }
+
+    // ========== GROUP CHAT FUNCTIONS ==========
+
+    function handleSendMessage() {
+      if (groupChatState.activeGroupId) {
+        sendGroupMessage();
+      } else {
+        sendDirectMessage();
+      }
+    }
+
+    async function loadGroupsTab() {
+      // Reset other states
+      messagingState.activeConversationId = null;
+      groupChatState.activeGroupId = null;
+
+      // Switch containers
+      document.getElementById('friends-list-container').style.display = 'none';
+      document.getElementById('messages-list-container').style.display = 'none';
+      document.getElementById('groups-list-container').style.display = 'block';
+      document.getElementById('message-compose').style.display = 'none';
+
+      // Update active tab styling
+      document.getElementById('friends-tab-btn').style.opacity = '0.6';
+      document.getElementById('messages-tab-btn').style.opacity = '0.6';
+      document.getElementById('groups-tab-btn').style.opacity = '1';
+
+      const container = document.getElementById('groups-list-container');
+      container.innerHTML = '<div style="text-align:center; padding:2rem;"><div class="loading"></div> Loading groups...</div>';
+
+      const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+        ? 'http://localhost:8309'
+        : 'https://moodlife.opencodingsociety.com';
+
+      try {
+        const resp = await fetch(`${pythonURI}/api/group/list`, {
+          method: 'GET',
+          credentials: 'include',
+          headers: { 'X-Origin': 'client' }
+        });
+
+        if (!resp.ok) throw new Error('Failed to fetch groups');
+        const data = await resp.json();
+        groupChatState.groups = data.groups || [];
+
+        if (groupChatState.groups.length === 0) {
+          container.innerHTML = `
+            <div style="text-align:center; padding:2rem; color:#bbb;">
+              <p>No group chats yet.</p>
+              <button class="btn btn-primary" onclick="showCreateGroupUI()" style="margin-top:1rem;">Create Group</button>
+            </div>`;
+          return;
+        }
+
+        let html = '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">' +
+          '<h3 style="margin:0; color:#fff;">Group Chats</h3>' +
+          '<button class="btn btn-primary" onclick="showCreateGroupUI()" style="font-size:0.85rem;">+ New Group</button>' +
+          '</div>';
+
+        html += groupChatState.groups.map(g => {
+          const hasUnread = g.unread_count > 0;
+          const borderColor = hasUnread ? '#4eff9e' : '#333';
+          const unreadBadge = hasUnread ? `<span style="background:#4eff9e; color:#000; border-radius:50%; width:22px; height:22px; display:inline-flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700;">${g.unread_count}</span>` : '';
+          const lastMsg = g.last_message ? (g.last_message_sender + ': ' + g.last_message.substring(0, 40) + (g.last_message.length > 40 ? '...' : '')) : 'No messages yet';
+          const timeStr = g.last_message_time ? new Date(g.last_message_time).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '';
+
+          return `
+            <div onclick="openGroupConversation(${g.id}, '${g.name.replace(/'/g, "\\'")}')" style="display:flex; align-items:center; gap:0.75rem; padding:0.75rem; border:1px solid ${borderColor}; border-radius:10px; margin-bottom:0.5rem; cursor:pointer; background:rgba(255,255,255,0.03); transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
+              <div style="width:42px; height:42px; border-radius:50%; background:linear-gradient(135deg,#4eff9e,#2196F3); display:flex; align-items:center; justify-content:center; font-weight:700; color:#000; font-size:1.1rem; flex-shrink:0;">${g.name.charAt(0).toUpperCase()}</div>
+              <div style="flex:1; min-width:0;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <span style="font-weight:600; color:#fff;">${g.name}</span>
+                  ${unreadBadge}
+                </div>
+                <div style="color:#888; font-size:0.8rem; margin-top:0.2rem;">${g.member_count} members</div>
+                <div style="color:#aaa; font-size:0.8rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:0.2rem;">${lastMsg}</div>
+              </div>
+              <div style="color:#666; font-size:0.7rem; flex-shrink:0;">${timeStr}</div>
+            </div>`;
+        }).join('');
+
+        container.innerHTML = html;
+
+      } catch (e) {
+        console.error('Error loading groups:', e);
+        container.innerHTML = '<div style="text-align:center; padding:2rem; color:#f66;">Failed to load groups. Please try again.</div>';
+      }
+    }
+
+    async function openGroupConversation(groupId, groupName) {
+      groupChatState.activeGroupId = groupId;
+      groupChatState.activeGroupName = groupName;
+      messagingState.activeConversationId = null;
+
+      const container = document.getElementById('groups-list-container');
+      container.innerHTML = '<div style="text-align:center; padding:2rem;"><div class="loading"></div> Loading messages...</div>';
+
+      const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+        ? 'http://localhost:8309'
+        : 'https://moodlife.opencodingsociety.com';
+
+      try {
+        const resp = await fetch(`${pythonURI}/api/group/${groupId}/messages`, {
+          method: 'GET',
+          credentials: 'include',
+          headers: { 'X-Origin': 'client' }
+        });
+
+        if (!resp.ok) throw new Error('Failed to fetch group messages');
+        const data = await resp.json();
+        groupChatState.activeGroupMessages = data.messages || [];
+
+        renderGroupMessages(container, groupName);
+
+        // Show compose area
+        document.getElementById('message-compose').style.display = 'block';
+        document.getElementById('message-input').placeholder = `Message ${groupName}...`;
+
+      } catch (e) {
+        console.error('Error loading group conversation:', e);
+        container.innerHTML = '<div style="text-align:center; padding:2rem; color:#f66;">Failed to load messages.</div>';
+      }
+    }
+
+    function renderGroupMessages(container, groupName) {
+      const headerHtml = `
+        <div style="display:flex; align-items:center; gap:0.75rem; padding-bottom:0.75rem; border-bottom:1px solid #333; margin-bottom:0.75rem;">
+          <button onclick="loadGroupsTab()" style="background:none; border:none; color:#4eff9e; font-size:1.2rem; cursor:pointer;">&#8592; Back</button>
+          <span style="font-weight:600; color:#fff; font-size:1.1rem;">${groupName}</span>
+          <button onclick="showGroupInfo(${groupChatState.activeGroupId})" style="background:none; border:none; color:#888; font-size:0.85rem; cursor:pointer; margin-left:auto;">Members</button>
+        </div>`;
+
+      const messagesHtml = groupChatState.activeGroupMessages.length === 0
+        ? '<div style="text-align:center; padding:2rem; color:#888;">No messages yet. Start the conversation!</div>'
+        : groupChatState.activeGroupMessages.map(msg => {
+          const isSent = msg.sender_uid === (window.currentUserUid || '');
+          const alignment = isSent ? 'flex-end' : 'flex-start';
+          const bgColor = isSent ? 'rgba(78, 255, 158, 0.15)' : '#1a1a1a';
+          const borderClr = isSent ? '#4eff9e' : '#333';
+          const timeStr = msg.created_at ? new Date(msg.created_at).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '';
+          const senderLabel = !isSent ? `<div style="color:#4a9eff; font-size:0.75rem; font-weight:600; margin-bottom:0.25rem;">${msg.sender_name || msg.sender_uid}</div>` : '';
+
+          return `
+            <div style="display:flex; justify-content:${alignment}; margin-bottom:0.5rem;">
+              <div style="max-width:70%; padding:0.6rem 0.85rem; border-radius:12px; background:${bgColor}; border:1px solid ${borderClr};">
+                ${senderLabel}
+                <div style="color:#e0e0e0; word-wrap:break-word;">${msg.content}</div>
+                <div style="color:#666; font-size:0.7rem; margin-top:0.25rem; text-align:right;">${timeStr}</div>
+              </div>
+            </div>`;
+        }).join('');
+
+      container.innerHTML = headerHtml + messagesHtml;
+      container.scrollTop = container.scrollHeight;
+    }
+
+    async function sendGroupMessage() {
+      const input = document.getElementById('message-input');
+      const content = input.value.trim();
+      if (!content) { showToast('Message cannot be empty'); return; }
+      if (!groupChatState.activeGroupId) { showToast('No active group'); return; }
+
+      const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+        ? 'http://localhost:8309'
+        : 'https://moodlife.opencodingsociety.com';
+
+      try {
+        const resp = await fetch(`${pythonURI}/api/group/${groupChatState.activeGroupId}/send`, {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json', 'X-Origin': 'client' },
+          body: JSON.stringify({ content })
+        });
+
+        if (!resp.ok) throw new Error('Failed to send');
+        const newMsg = await resp.json();
+        groupChatState.activeGroupMessages.push(newMsg);
+
+        input.value = '';
+        const container = document.getElementById('groups-list-container');
+        renderGroupMessages(container, groupChatState.activeGroupName);
+        showToast('Message sent!');
+
+      } catch (e) {
+        console.error('Send group message error:', e);
+        showToast('Failed to send message.');
+      }
+    }
+
+    function showCreateGroupUI() {
+      const container = document.getElementById('groups-list-container');
+
+      // Use the already loaded friends list, or fetch it
+      const friends = friendsState.friendsList || [];
+
+      let friendCheckboxes = '';
+      if (friends.length === 0) {
+        friendCheckboxes = '<p style="color:#888;">Add some friends first to create a group!</p>';
+      } else {
+        friendCheckboxes = friends.map(f => `
+          <label style="display:flex; align-items:center; gap:0.5rem; padding:0.5rem; border:1px solid #333; border-radius:8px; margin-bottom:0.4rem; cursor:pointer; background:rgba(255,255,255,0.03);" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
+            <input type="checkbox" class="group-member-checkbox" value="${f.id}" style="accent-color:#4eff9e;">
+            <div style="width:32px; height:32px; border-radius:50%; background:#333; display:flex; align-items:center; justify-content:center; font-weight:600; color:#4eff9e; font-size:0.85rem;">${(f.name || f.uid || '?').charAt(0).toUpperCase()}</div>
+            <span style="color:#fff;">${f.name || f.uid}</span>
+          </label>
+        `).join('');
+      }
+
+      container.innerHTML = `
+        <div>
+          <div style="display:flex; align-items:center; gap:0.75rem; padding-bottom:0.75rem; border-bottom:1px solid #333; margin-bottom:1rem;">
+            <button onclick="loadGroupsTab()" style="background:none; border:none; color:#4eff9e; font-size:1.2rem; cursor:pointer;">&#8592; Back</button>
+            <span style="font-weight:600; color:#fff; font-size:1.1rem;">Create Group Chat</span>
+          </div>
+          <input type="text" id="new-group-name" placeholder="Group name..." style="width:100%; padding:0.75rem; border-radius:8px; border:1px solid #444; background:rgba(0,0,0,0.5); color:#fff; font-size:1rem; margin-bottom:1rem; box-sizing:border-box;">
+          <p style="color:#bbb; margin-bottom:0.5rem; font-size:0.9rem;">Select friends to add:</p>
+          <div style="max-height:30vh; overflow-y:auto; margin-bottom:1rem;">
+            ${friendCheckboxes}
+          </div>
+          <button class="btn btn-primary" onclick="createGroup()" style="width:100%;">Create Group</button>
+        </div>`;
+
+      // If friends weren't loaded yet, fetch them
+      if (friends.length === 0) {
+        loadFriendsForGroupCreation();
+      }
+    }
+
+    async function loadFriendsForGroupCreation() {
+      const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+        ? 'http://localhost:8309'
+        : 'https://moodlife.opencodingsociety.com';
+
+      try {
+        const resp = await fetch(`${pythonURI}/api/friend/list`, {
+          method: 'GET',
+          credentials: 'include',
+          headers: { 'X-Origin': 'client' }
+        });
+        if (resp.ok) {
+          const data = await resp.json();
+          friendsState.friendsList = data.friends || data || [];
+          showCreateGroupUI(); // Re-render with friends loaded
+        }
+      } catch (e) {
+        console.warn('Could not load friends for group creation:', e);
+      }
+    }
+
+    async function createGroup() {
+      const nameInput = document.getElementById('new-group-name');
+      const name = nameInput ? nameInput.value.trim() : '';
+
+      if (!name) { showToast('Please enter a group name'); return; }
+
+      const checkboxes = document.querySelectorAll('.group-member-checkbox:checked');
+      const memberIds = Array.from(checkboxes).map(cb => parseInt(cb.value));
+
+      if (memberIds.length === 0) { showToast('Select at least one friend'); return; }
+
+      const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+        ? 'http://localhost:8309'
+        : 'https://moodlife.opencodingsociety.com';
+
+      try {
+        const resp = await fetch(`${pythonURI}/api/group/create`, {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json', 'X-Origin': 'client' },
+          body: JSON.stringify({ name, member_ids: memberIds })
+        });
+
+        if (!resp.ok) {
+          const err = await resp.json().catch(() => ({}));
+          showToast(err.message || 'Failed to create group');
+          return;
+        }
+
+        const group = await resp.json();
+        showToast('Group created!');
+        openGroupConversation(group.id, group.name);
+
+      } catch (e) {
+        console.error('Create group error:', e);
+        showToast('Failed to create group.');
+      }
+    }
+
+    async function showGroupInfo(groupId) {
+      const container = document.getElementById('groups-list-container');
+
+      const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+        ? 'http://localhost:8309'
+        : 'https://moodlife.opencodingsociety.com';
+
+      try {
+        const resp = await fetch(`${pythonURI}/api/group/detail/${groupId}`, {
+          method: 'GET',
+          credentials: 'include',
+          headers: { 'X-Origin': 'client' }
+        });
+
+        if (!resp.ok) throw new Error('Failed to fetch group info');
+        const group = await resp.json();
+
+        const membersHtml = group.members.map(m => `
+          <div style="display:flex; align-items:center; gap:0.5rem; padding:0.5rem; border-bottom:1px solid #222;">
+            <div style="width:32px; height:32px; border-radius:50%; background:#333; display:flex; align-items:center; justify-content:center; font-weight:600; color:#4eff9e; font-size:0.85rem;">${(m.user_name || '?').charAt(0).toUpperCase()}</div>
+            <span style="color:#fff; flex:1;">${m.user_name || m.user_uid}</span>
+            <span style="color:#888; font-size:0.75rem;">${m.role}</span>
+          </div>
+        `).join('');
+
+        container.innerHTML = `
+          <div>
+            <div style="display:flex; align-items:center; gap:0.75rem; padding-bottom:0.75rem; border-bottom:1px solid #333; margin-bottom:1rem;">
+              <button onclick="openGroupConversation(${groupId}, '${group.name.replace(/'/g, "\\'")}')" style="background:none; border:none; color:#4eff9e; font-size:1.2rem; cursor:pointer;">&#8592; Back</button>
+              <span style="font-weight:600; color:#fff; font-size:1.1rem;">${group.name} - Members</span>
+            </div>
+            <div style="margin-bottom:1rem;">${membersHtml}</div>
+            <button class="btn btn-secondary" onclick="leaveGroup(${groupId})" style="width:100%; background:rgba(255,100,100,0.2); border-color:#f66; color:#f66;">Leave Group</button>
+          </div>`;
+
+        document.getElementById('message-compose').style.display = 'none';
+
+      } catch (e) {
+        console.error('Error loading group info:', e);
+        showToast('Failed to load group info.');
+      }
+    }
+
+    async function leaveGroup(groupId) {
+      if (!confirm('Are you sure you want to leave this group?')) return;
+
+      const pythonURI = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+        ? 'http://localhost:8309'
+        : 'https://moodlife.opencodingsociety.com';
+
+      try {
+        const resp = await fetch(`${pythonURI}/api/group/${groupId}/members`, {
+          method: 'DELETE',
+          credentials: 'include',
+          headers: { 'X-Origin': 'client' }
+        });
+
+        if (!resp.ok) throw new Error('Failed to leave group');
+        showToast('Left group');
+        loadGroupsTab();
+
+      } catch (e) {
+        console.error('Leave group error:', e);
+        showToast('Failed to leave group.');
       }
     }
 
