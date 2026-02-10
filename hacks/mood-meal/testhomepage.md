@@ -604,9 +604,9 @@ table th, table td {
   <div class="toast" id="toast"></div>
 
   <!-- Global Loader (shown while Gemini / plan is generating recommendations) -->
-  <div class="modal" id="global-loader" aria-hidden="true" style="z-index:4000;">
-    <img id="loader-bg-image" src="/ANPDSS-Pages/images/happy.png" alt="" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); max-width:80vw; max-height:80vh; opacity:0.25; pointer-events:none;">
-    <div class="modal-content" style="max-width:420px; text-align:center; position:relative; z-index:1;">
+  <div class="modal" id="global-loader" aria-hidden="true" style="z-index:4000; background:rgba(0,0,0,0.6);">
+    <img src="/ANPDSS-Pages/images/happy.png" alt="" style="position:fixed; top:0; left:0; width:100vw; height:100vh; object-fit:cover; opacity:0.4; pointer-events:none; z-index:0;">
+    <div class="modal-content" style="max-width:420px; text-align:center; position:relative; z-index:2;">
       <div class="loading" style="width:36px; height:36px; border-width:4px; border-top-color: #4eff9e; margin: 0 auto;"></div>
       <h3 id="global-loader-msg" style="color:#fff; margin-top:1rem;">Generating recommendations...</h3>
       <p style="color:#bbb; margin-top:0.5rem; font-size:0.95rem;">This may take a few seconds while the AI responds.</p>
