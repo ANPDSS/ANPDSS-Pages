@@ -377,6 +377,234 @@ search_exclude: true
             background: rgba(33, 150, 243, 0.1);
             transform: translateX(-5px);
         }
+
+        /* Group chat panel */
+        .group-chat-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .group-chat-overlay.active {
+            display: flex;
+        }
+
+        .group-chat-panel {
+            background: #111;
+            border: 1px solid #2a2a2a;
+            border-radius: 15px;
+            width: 600px;
+            max-width: 95vw;
+            height: 75vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .group-chat-header {
+            padding: 15px 20px;
+            background: #1a1a1a;
+            border-bottom: 1px solid #2a2a2a;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .group-chat-header h3 {
+            color: #fff;
+            margin: 0;
+        }
+
+        .group-chat-header .member-count {
+            color: #999;
+            font-size: 0.85em;
+        }
+
+        .group-chat-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .group-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .group-message {
+            max-width: 70%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            background: rgba(33, 150, 243, 0.1);
+            border: 1px solid #2a2a2a;
+        }
+
+        .group-message.own {
+            align-self: flex-end;
+            background: rgba(33, 150, 243, 0.25);
+            border-color: #2196F3;
+        }
+
+        .group-message .msg-sender {
+            font-size: 0.8em;
+            color: #2196F3;
+            margin-bottom: 4px;
+        }
+
+        .group-message.own .msg-sender {
+            text-align: right;
+        }
+
+        .group-message .msg-content {
+            color: #fff;
+            word-break: break-word;
+        }
+
+        .group-message .msg-time {
+            font-size: 0.75em;
+            color: #666;
+            margin-top: 4px;
+            text-align: right;
+        }
+
+        .group-chat-input {
+            padding: 15px;
+            border-top: 1px solid #2a2a2a;
+            display: flex;
+            gap: 10px;
+        }
+
+        .group-chat-input input {
+            flex: 1;
+            padding: 10px 15px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1em;
+        }
+
+        .group-chat-input input:focus {
+            outline: none;
+            border-color: #2196F3;
+        }
+
+        /* Group invite card */
+        .invite-card {
+            background: rgba(33, 150, 243, 0.08);
+            border: 1px solid #2a2a2a;
+            border-left: 4px solid #4eff9e;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+        }
+
+        /* Create group form */
+        .create-group-form {
+            background: rgba(33, 150, 243, 0.05);
+            border: 1px solid #2a2a2a;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .create-group-form h3 {
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .create-group-form input {
+            width: calc(100% - 130px);
+            padding: 10px 15px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1em;
+            margin-right: 10px;
+        }
+
+        .create-group-form input:focus {
+            outline: none;
+            border-color: #2196F3;
+        }
+
+        /* Members list in group detail panel */
+        .members-panel {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .members-panel.active {
+            display: flex;
+        }
+
+        .members-panel-inner {
+            background: #111;
+            border: 1px solid #2a2a2a;
+            border-radius: 15px;
+            width: 420px;
+            max-width: 95vw;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 25px;
+        }
+
+        .members-panel-inner h3 {
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .member-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .member-row:last-child {
+            border-bottom: none;
+        }
+
+        .member-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .member-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2196F3, #4eff9e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .member-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
     </style>
 </head>
 <body>
@@ -401,6 +629,9 @@ search_exclude: true
             </button>
             <button class="tab" onclick="switchTab('messages')">
                 Messages <span class="badge" id="messageBadge" style="display:none;">0</span>
+            </button>
+            <button class="tab" id="groupsTab" onclick="switchTab('groups')">
+                Groups <span class="badge" id="groupInviteBadge" style="display:none;">0</span>
             </button>
         </div>
 
@@ -479,6 +710,74 @@ search_exclude: true
                     </div>
                 </div>
             </div>
+
+            <!-- Groups Tab -->
+            <div id="groups" class="tab-content">
+                <h2>Groups</h2>
+
+                <!-- Create Group Form -->
+                <div class="create-group-form">
+                    <h3>Create a New Group</h3>
+                    <input type="text" id="newGroupName" placeholder="Enter group name..." maxlength="100">
+                    <button class="btn btn-primary" onclick="createNewGroup()">Create Group</button>
+                </div>
+
+                <!-- Pending Group Invites -->
+                <div style="margin-bottom: 30px;">
+                    <h3>Group Invites</h3>
+                    <div id="groupInvitesList">
+                        <div class="loading"><div class="spinner"></div>Loading invites...</div>
+                    </div>
+                </div>
+
+                <!-- My Groups -->
+                <div>
+                    <h3>My Groups</h3>
+                    <div id="myGroupsList" class="user-grid">
+                        <div class="loading"><div class="spinner"></div>Loading groups...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Group Chat Overlay -->
+    <div class="group-chat-overlay" id="groupChatOverlay">
+        <div class="group-chat-panel">
+            <div class="group-chat-header">
+                <div>
+                    <h3 id="groupChatTitle">Group Chat</h3>
+                    <span class="member-count" id="groupChatMemberCount"></span>
+                </div>
+                <div class="group-chat-actions">
+                    <button class="btn btn-secondary" style="padding:6px 12px; font-size:0.85em;" onclick="openMembersPanel()">Members</button>
+                    <button class="btn btn-danger" style="padding:6px 12px; font-size:0.85em;" id="groupLeaveOrDeleteBtn"></button>
+                    <button class="btn" style="padding:6px 12px; font-size:0.85em; background:#333; color:#fff;" onclick="closeGroupChat()">✕</button>
+                </div>
+            </div>
+            <div class="group-messages" id="groupMessagesContainer">
+                <div class="loading"><div class="spinner"></div>Loading messages...</div>
+            </div>
+            <div class="group-chat-input">
+                <input type="text" id="groupMessageInput" placeholder="Type a message..." maxlength="5000"
+                       onkeydown="if(event.key==='Enter') sendGroupMsg()">
+                <button class="btn btn-primary" onclick="sendGroupMsg()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Members Panel Overlay -->
+    <div class="members-panel" id="membersPanelOverlay">
+        <div class="members-panel-inner">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <h3 id="membersPanelTitle">Members</h3>
+                <button class="btn" style="padding:6px 12px; background:#333; color:#fff;" onclick="closeMembersPanel()">✕</button>
+            </div>
+            <div id="membersPanelContent"></div>
+            <div style="margin-top:15px;" id="inviteFriendSection">
+                <h4 style="color:#bbb; margin-bottom:10px;">Invite a Friend</h4>
+                <div id="invitableFriendsList"></div>
+            </div>
         </div>
     </div>
 
@@ -495,6 +794,20 @@ search_exclude: true
             getConversations,
             getUnreadCount
         } from '{{ site.baseurl }}/assets/js/api/friends.js';
+
+        import {
+            createGroup,
+            getMyGroups,
+            getGroupDetail,
+            deleteGroup,
+            inviteToGroup,
+            getGroupInvites,
+            respondToGroupInvite,
+            leaveGroup,
+            removeGroupMember,
+            sendGroupMessage,
+            getGroupMessages
+        } from '{{ site.baseurl }}/assets/js/api/groups.js';
 
         // Backend API URL for profile pictures
         let pythonURI;
@@ -528,6 +841,8 @@ search_exclude: true
                 loadRequests();
             } else if (tabName === 'messages' && !window.messagesLoaded) {
                 loadMessages();
+            } else if (tabName === 'groups') {
+                loadGroups();
             }
         };
 
@@ -567,6 +882,16 @@ search_exclude: true
                         else moodEmoji = '😄';
                     }
 
+                    // Selection: show correct button based on friendship status
+                    let addBtn = '';
+                    if (user.is_friend) {
+                        addBtn = '<button class="btn btn-success" disabled>Already Friends</button>';
+                    } else if (user.has_pending_request) {
+                        addBtn = '<button class="btn btn-secondary" disabled>Request Pending</button>';
+                    } else {
+                        addBtn = `<button class="btn btn-primary" onclick="sendRequest(${user.id})">Add Friend</button>`;
+                    }
+
                     return `
                         <div class="user-card">
                             <div class="user-header">
@@ -593,9 +918,7 @@ search_exclude: true
                                     ).join('') : ''}
                                 </div>
                             ` : ''}
-                            <button class="btn btn-primary" onclick="sendRequest(${user.id})">
-                                Add Friend
-                            </button>
+                            ${addBtn}
                         </div>
                     `;
                 }).join('');
@@ -616,7 +939,8 @@ search_exclude: true
             try {
                 await sendFriendRequest(userId);
                 alert('Friend request sent successfully!');
-                loadRecommendations(); // Reload to update UI
+                window.recommendationsLoaded = false;
+                loadRecommendations(); // Reload to update button states
             } catch (error) {
                 alert('Error: ' + error.message);
             }
@@ -967,11 +1291,414 @@ search_exclude: true
             }
         }
 
+        // =============================================
+        // GROUPS FEATURE
+        // =============================================
+
+        // State
+        window.activeGroupId = null;
+        window.activeGroupIsCreator = false;
+        window.activeGroupData = null;
+        window.groupMsgPollInterval = null;
+
+        // Create a new group
+        window.createNewGroup = async function() {
+            const nameInput = document.getElementById('newGroupName');
+            const name = nameInput.value.trim();
+            if (!name) {
+                alert('Please enter a group name.');
+                return;
+            }
+            try {
+                await createGroup(name);
+                nameInput.value = '';
+                alert(`Group "${name}" created!`);
+                loadGroups();
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        };
+
+        // Load groups tab content
+        async function loadGroups() {
+            await Promise.all([loadGroupInvites(), loadMyGroups()]);
+        }
+
+        // Load pending group invites
+        async function loadGroupInvites() {
+            const container = document.getElementById('groupInvitesList');
+            try {
+                const data = await getGroupInvites();
+                const badge = document.getElementById('groupInviteBadge');
+
+                if (data.invites.length === 0) {
+                    container.innerHTML = '<p style="color:#999;">No pending group invites</p>';
+                    badge.style.display = 'none';
+                } else {
+                    badge.textContent = data.invites.length;
+                    badge.style.display = 'inline-block';
+
+                    container.innerHTML = data.invites.map(inv => `
+                        <div class="invite-card">
+                            <strong>${inv.inviter_name}</strong> (@${inv.inviter_uid}) invited you to join
+                            <strong>${inv.group_name}</strong>
+                            <div class="request-actions" style="margin-top:10px;">
+                                <button class="btn btn-success" onclick="acceptGroupInvite(${inv.id})">Accept</button>
+                                <button class="btn btn-danger" onclick="declineGroupInvite(${inv.id})">Decline</button>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                container.innerHTML = `<p style="color:#dc3545;">Error: ${error.message}</p>`;
+            }
+        }
+
+        // Load my groups list
+        async function loadMyGroups() {
+            const container = document.getElementById('myGroupsList');
+            container.innerHTML = '<div class="loading"><div class="spinner"></div>Loading groups...</div>';
+            try {
+                const data = await getMyGroups();
+
+                if (data.groups.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <h3>No groups yet</h3>
+                            <p>Create a group above or wait to be invited by a friend!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = data.groups.map(group => `
+                    <div class="user-card">
+                        <div class="user-header">
+                            <div class="user-avatar-initial">${group.name.charAt(0).toUpperCase()}</div>
+                            <div class="user-info">
+                                <h3>${group.name}</h3>
+                                <p>${group.member_count} member${group.member_count !== 1 ? 's' : ''}</p>
+                                <p style="color:#999; font-size:0.85em;">
+                                    ${group.is_creator ? 'You are the creator' : `Created by ${group.creator_name}`}
+                                </p>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="openGroupChat(${group.id})">Open Chat</button>
+                    </div>
+                `).join('');
+            } catch (error) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>Error loading groups</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Accept group invite
+        window.acceptGroupInvite = async function(inviteId) {
+            try {
+                await respondToGroupInvite(inviteId, 'accept');
+                alert('Joined the group!');
+                loadGroups();
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        };
+
+        // Decline group invite
+        window.declineGroupInvite = async function(inviteId) {
+            try {
+                await respondToGroupInvite(inviteId, 'decline');
+                loadGroups();
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        };
+
+        // Open group chat panel
+        window.openGroupChat = async function(groupId) {
+            window.activeGroupId = groupId;
+            document.getElementById('groupChatOverlay').classList.add('active');
+            const messagesContainer = document.getElementById('groupMessagesContainer');
+            messagesContainer.innerHTML = '<div class="loading"><div class="spinner"></div>Loading...</div>';
+
+            try {
+                const group = await getGroupDetail(groupId);
+                window.activeGroupData = group;
+                window.activeGroupIsCreator = group.is_creator;
+
+                document.getElementById('groupChatTitle').textContent = group.name;
+                document.getElementById('groupChatMemberCount').textContent =
+                    `${group.member_count} member${group.member_count !== 1 ? 's' : ''}`;
+
+                const leaveDeleteBtn = document.getElementById('groupLeaveOrDeleteBtn');
+                if (group.is_creator) {
+                    leaveDeleteBtn.textContent = 'Delete Group';
+                    leaveDeleteBtn.className = 'btn btn-danger';
+                    leaveDeleteBtn.onclick = confirmDeleteGroup;
+                } else {
+                    leaveDeleteBtn.textContent = 'Leave Group';
+                    leaveDeleteBtn.className = 'btn btn-secondary';
+                    leaveDeleteBtn.onclick = confirmLeaveGroup;
+                }
+
+                await refreshGroupMessages();
+
+                // Poll for new messages every 5 seconds
+                if (window.groupMsgPollInterval) clearInterval(window.groupMsgPollInterval);
+                window.groupMsgPollInterval = setInterval(refreshGroupMessages, 5000);
+            } catch (error) {
+                messagesContainer.innerHTML = `<p style="color:#dc3545;">Error: ${error.message}</p>`;
+            }
+        };
+
+        async function refreshGroupMessages() {
+            if (!window.activeGroupId) return;
+            const container = document.getElementById('groupMessagesContainer');
+            const wasAtBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 80;
+
+            try {
+                const data = await getGroupMessages(window.activeGroupId, 100);
+                if (data.messages.length === 0) {
+                    container.innerHTML = '<p style="color:#999; text-align:center; margin-top:20px;">No messages yet. Say hello!</p>';
+                    return;
+                }
+
+                container.innerHTML = data.messages.map(msg => {
+                    const isOwn = window._currentUserId && msg.sender_id === window._currentUserId;
+                    return `
+                        <div class="group-message ${isOwn ? 'own' : ''}">
+                            <div class="msg-sender">${msg.sender_name} (@${msg.sender_uid})</div>
+                            <div class="msg-content">${escapeHtml(msg.content)}</div>
+                            <div class="msg-time">${msg.created_at}</div>
+                        </div>
+                    `;
+                }).join('');
+
+                if (wasAtBottom) {
+                    container.scrollTop = container.scrollHeight;
+                }
+            } catch (error) {
+                // Silently ignore poll errors
+            }
+        }
+
+        // Send group message
+        window.sendGroupMsg = async function() {
+            const input = document.getElementById('groupMessageInput');
+            const content = input.value.trim();
+            if (!content || !window.activeGroupId) return;
+
+            try {
+                await sendGroupMessage(window.activeGroupId, content);
+                input.value = '';
+                await refreshGroupMessages();
+                const container = document.getElementById('groupMessagesContainer');
+                container.scrollTop = container.scrollHeight;
+            } catch (error) {
+                alert('Error sending message: ' + error.message);
+            }
+        };
+
+        // Close group chat
+        window.closeGroupChat = function() {
+            document.getElementById('groupChatOverlay').classList.remove('active');
+            if (window.groupMsgPollInterval) {
+                clearInterval(window.groupMsgPollInterval);
+                window.groupMsgPollInterval = null;
+            }
+            window.activeGroupId = null;
+            window.activeGroupData = null;
+        };
+
+        // Open members panel
+        window.openMembersPanel = async function() {
+            if (!window.activeGroupId) return;
+            document.getElementById('membersPanelOverlay').classList.add('active');
+
+            try {
+                const group = await getGroupDetail(window.activeGroupId);
+                window.activeGroupData = group;
+
+                document.getElementById('membersPanelTitle').textContent = `${group.name} — Members`;
+
+                const content = document.getElementById('membersPanelContent');
+                content.innerHTML = group.members.map(m => {
+                    const isCreator = (m.user_id === group.creator_id);
+                    const removeBtn = group.is_creator && !isCreator
+                        ? `<button class="btn btn-danger" style="padding:4px 10px; font-size:0.8em;" onclick="kickMember(${m.user_id}, '${m.user_name}')">Remove</button>`
+                        : '';
+                    return `
+                        <div class="member-row">
+                            <div class="member-info">
+                                <div class="member-avatar">
+                                    <img src="${pythonURI}/api/id/pfp/image/${m.user_uid}"
+                                         alt="${m.user_name}"
+                                         onerror="this.style.display='none'; this.parentElement.textContent='${m.user_name.charAt(0).toUpperCase()}';">
+                                </div>
+                                <div>
+                                    <div style="color:#fff;">${m.user_name}</div>
+                                    <div style="color:#999; font-size:0.85em;">@${m.user_uid}${isCreator ? ' · Creator' : ''}</div>
+                                </div>
+                            </div>
+                            ${removeBtn}
+                        </div>
+                    `;
+                }).join('');
+
+                // Show invite section (only if under limit)
+                const inviteSection = document.getElementById('inviteFriendSection');
+                const maxTotal = 11; // 10 + creator
+                if (group.member_count >= maxTotal) {
+                    inviteSection.innerHTML = '<p style="color:#999;">Group is full (11 members max).</p>';
+                } else {
+                    inviteSection.innerHTML = '<h4 style="color:#bbb; margin-bottom:10px;">Invite a Friend</h4><div id="invitableFriendsList"></div>';
+                    await loadInvitableFriends(group);
+                }
+            } catch (error) {
+                document.getElementById('membersPanelContent').innerHTML = `<p style="color:#dc3545;">Error: ${error.message}</p>`;
+            }
+        };
+
+        async function loadInvitableFriends(group) {
+            const container = document.getElementById('invitableFriendsList');
+            if (!container) return;
+            try {
+                const data = await getFriendsList();
+                const memberIds = new Set(group.members.map(m => m.user_id));
+                const eligible = data.friends.filter(f => !memberIds.has(f.id));
+
+                if (eligible.length === 0) {
+                    container.innerHTML = '<p style="color:#999; font-size:0.9em;">All your friends are already in this group.</p>';
+                    return;
+                }
+
+                container.innerHTML = eligible.map(f => `
+                    <div class="member-row">
+                        <div class="member-info">
+                            <div class="member-avatar">
+                                <img src="${pythonURI}/api/id/pfp/image/${f.uid}"
+                                     alt="${f.name}"
+                                     onerror="this.style.display='none'; this.parentElement.textContent='${f.name.charAt(0).toUpperCase()}';">
+                            </div>
+                            <div>
+                                <div style="color:#fff;">${f.name}</div>
+                                <div style="color:#999; font-size:0.85em;">@${f.uid}</div>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" style="padding:5px 12px; font-size:0.85em;"
+                                onclick="sendGroupInvite(${f.id}, '${f.name}')">Invite</button>
+                    </div>
+                `).join('');
+            } catch (error) {
+                container.innerHTML = `<p style="color:#dc3545;">Error: ${error.message}</p>`;
+            }
+        }
+
+        window.sendGroupInvite = async function(friendId, friendName) {
+            try {
+                await inviteToGroup(window.activeGroupId, friendId);
+                alert(`Invite sent to ${friendName}!`);
+                // Reload members panel
+                await openMembersPanel();
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        };
+
+        window.kickMember = async function(memberId, memberName) {
+            if (!confirm(`Remove ${memberName} from the group?`)) return;
+            try {
+                await removeGroupMember(window.activeGroupId, memberId);
+                alert(`${memberName} removed.`);
+                await openMembersPanel();
+                // Update member count in chat header
+                const group = await getGroupDetail(window.activeGroupId);
+                document.getElementById('groupChatMemberCount').textContent =
+                    `${group.member_count} member${group.member_count !== 1 ? 's' : ''}`;
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        };
+
+        window.closeMembersPanel = function() {
+            document.getElementById('membersPanelOverlay').classList.remove('active');
+        };
+
+        async function confirmDeleteGroup() {
+            if (!confirm('Delete this group? This cannot be undone.')) return;
+            try {
+                await deleteGroup(window.activeGroupId);
+                closeGroupChat();
+                alert('Group deleted.');
+                loadGroups();
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function confirmLeaveGroup() {
+            if (!confirm('Leave this group?')) return;
+            try {
+                await leaveGroup(window.activeGroupId);
+                closeGroupChat();
+                alert('You left the group.');
+                loadGroups();
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.appendChild(document.createTextNode(text));
+            return div.innerHTML;
+        }
+
+        // Update group invite badge (for polling)
+        async function updateGroupInviteBadge() {
+            try {
+                const data = await getGroupInvites();
+                const badge = document.getElementById('groupInviteBadge');
+                if (data.invites.length > 0) {
+                    badge.textContent = data.invites.length;
+                    badge.style.display = 'inline-block';
+                } else {
+                    badge.style.display = 'none';
+                }
+            } catch (error) {
+                // Silently ignore
+            }
+        }
+
+        // =============================================
+        // INITIALIZE
+        // =============================================
+        // Fetch current user ID for message "own" detection
+        async function fetchCurrentUserId() {
+            try {
+                const response = await fetch(`${pythonURI}/api/id`, {
+                    ...fetchOptions,
+                    method: 'GET'
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    window._currentUserId = data.id || null;
+                }
+            } catch (e) {
+                // Non-critical — own message highlight won't work if this fails
+            }
+        }
+
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
+            fetchCurrentUserId();
             loadRecommendations();
             loadRequests(); // Load in background to update badge
             updateUnreadBadge();
+            updateGroupInviteBadge();
 
             // Refresh badges periodically
             setInterval(() => {
@@ -987,6 +1714,7 @@ search_exclude: true
                     }).catch(() => {});
                 }
                 updateUnreadBadge();
+                updateGroupInviteBadge();
             }, 30000); // Every 30 seconds
         });
     </script>
