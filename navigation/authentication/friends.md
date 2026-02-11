@@ -479,6 +479,7 @@ search_exclude: true
             border-top: 1px solid #2a2a2a;
             display: flex;
             gap: 10px;
+            flex-shrink: 0;
         }
 
         .group-chat-input input {
@@ -750,6 +751,7 @@ search_exclude: true
                     <span class="member-count" id="groupChatMemberCount"></span>
                 </div>
                 <div class="group-chat-actions">
+                    <button class="btn btn-secondary" style="padding:6px 12px; font-size:0.85em;" onclick="openAddPeoplePanel()">+ Add People</button>
                     <button class="btn btn-secondary" style="padding:6px 12px; font-size:0.85em;" onclick="openMembersPanel()">Members</button>
                     <button class="btn btn-danger" style="padding:6px 12px; font-size:0.85em;" id="groupLeaveOrDeleteBtn"></button>
                     <button class="btn" style="padding:6px 12px; font-size:0.85em; background:#333; color:#fff;" onclick="closeGroupChat()">✕</button>
@@ -809,13 +811,7 @@ search_exclude: true
             getGroupMessages
         } from '{{ site.baseurl }}/assets/js/api/groups.js';
 
-        // Backend API URL for profile pictures
-        let pythonURI;
-        if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
-            pythonURI = "http://localhost:8309";
-        } else {
-            pythonURI = "https://moodlife.opencodingsociety.com";
-        }
+        import { pythonURI, fetchOptions } from '{{ site.baseurl }}/assets/js/api/config.js';
 
         // Global state
         window.currentTab = 'recommendations';
@@ -1511,6 +1507,29 @@ search_exclude: true
             }
             window.activeGroupId = null;
             window.activeGroupData = null;
+        };
+
+        // Open dedicated "Add People" panel
+        window.openAddPeoplePanel = async function() {
+            if (!window.activeGroupId) return;
+            document.getElementById('membersPanelOverlay').classList.add('active');
+            document.getElementById('membersPanelTitle').textContent = 'Add People to Group';
+            document.getElementById('membersPanelContent').innerHTML = '';
+
+            const inviteSection = document.getElementById('inviteFriendSection');
+            try {
+                const group = await getGroupDetail(window.activeGroupId);
+                window.activeGroupData = group;
+                const maxTotal = 11;
+                if (group.member_count >= maxTotal) {
+                    inviteSection.innerHTML = '<p style="color:#999;">Group is full (11 members max).</p>';
+                } else {
+                    inviteSection.innerHTML = '<h4 style="color:#bbb; margin-bottom:10px;">Invite a Friend</h4><div id="invitableFriendsList"></div>';
+                    await loadInvitableFriends(group);
+                }
+            } catch (error) {
+                inviteSection.innerHTML = `<p style="color:#dc3545;">Error: ${error.message}</p>`;
+            }
         };
 
         // Open members panel
