@@ -507,34 +507,108 @@ search_exclude: true
             border-radius: 8px;
         }
 
-        /* Create group form */
-        .create-group-form {
-            background: rgba(33, 150, 243, 0.05);
-            border: 1px solid #2a2a2a;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 25px;
+        /* Groups section header */
+        .groups-page-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 28px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid #1e1e1e;
         }
 
-        .create-group-form h3 {
-            margin-bottom: 15px;
+        .groups-page-header .groups-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #2196F3, #1565C0);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3em;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(33,150,243,0.3);
+        }
+
+        .groups-page-header h2 {
+            margin: 0;
+            font-size: 1.5em;
+            font-weight: 700;
             color: #fff;
+        }
+
+        .groups-page-header p {
+            margin: 2px 0 0;
+            font-size: 0.85em;
+            color: #666;
+        }
+
+        /* Create group form */
+        .create-group-form {
+            background: linear-gradient(135deg, rgba(33,150,243,0.08), rgba(21,101,192,0.04));
+            border: 1px solid rgba(33,150,243,0.2);
+            border-radius: 14px;
+            padding: 22px 24px;
+            margin-bottom: 28px;
+        }
+
+        .create-group-form .form-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 14px;
+            font-size: 0.95em;
+            font-weight: 600;
+            color: #bbb;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .create-group-form .form-label span {
+            color: #2196F3;
+            font-size: 1.1em;
+        }
+
+        .create-group-form .form-row {
+            display: flex;
+            gap: 10px;
         }
 
         .create-group-form input {
-            width: calc(100% - 130px);
-            padding: 10px 15px;
-            background: rgba(0,0,0,0.5);
-            border: 1px solid #333;
-            border-radius: 8px;
+            flex: 1;
+            padding: 11px 16px;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid #2a2a2a;
+            border-radius: 10px;
             color: #fff;
-            font-size: 1em;
-            margin-right: 10px;
+            font-size: 0.95em;
+            transition: border-color 0.2s;
         }
 
         .create-group-form input:focus {
             outline: none;
             border-color: #2196F3;
+            background: rgba(0,0,0,0.6);
+        }
+
+        /* Section headings inside tabs */
+        .section-heading {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 0 16px;
+            font-size: 1em;
+            font-weight: 600;
+            color: #ccc;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .section-heading::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #1e1e1e;
         }
 
         /* Members list in group detail panel */
@@ -714,18 +788,26 @@ search_exclude: true
 
             <!-- Groups Tab -->
             <div id="groups" class="tab-content">
-                <h2>Groups</h2>
+                <div class="groups-page-header">
+                    <div class="groups-icon">👥</div>
+                    <div>
+                        <h2>Groups</h2>
+                        <p>Chat with multiple friends at once</p>
+                    </div>
+                </div>
 
                 <!-- Create Group Form -->
                 <div class="create-group-form">
-                    <h3>Create a New Group</h3>
-                    <input type="text" id="newGroupName" placeholder="Enter group name..." maxlength="100">
-                    <button class="btn btn-primary" onclick="createNewGroup()">Create Group</button>
+                    <div class="form-label"><span>＋</span> New Group</div>
+                    <div class="form-row">
+                        <input type="text" id="newGroupName" placeholder="Enter a group name..." maxlength="100">
+                        <button class="btn btn-primary" onclick="createNewGroup()">Create</button>
+                    </div>
                 </div>
 
                 <!-- Pending Group Invites -->
-                <div style="margin-bottom: 30px;">
-                    <h3>Group Invites</h3>
+                <div style="margin-bottom: 28px;">
+                    <h3 class="section-heading">Invites</h3>
                     <div id="groupInvitesList">
                         <div class="loading"><div class="spinner"></div>Loading invites...</div>
                     </div>
@@ -733,7 +815,7 @@ search_exclude: true
 
                 <!-- My Groups -->
                 <div>
-                    <h3>My Groups</h3>
+                    <h3 class="section-heading">My Groups</h3>
                     <div id="myGroupsList" class="user-grid">
                         <div class="loading"><div class="spinner"></div>Loading groups...</div>
                     </div>
