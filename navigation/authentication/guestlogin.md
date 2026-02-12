@@ -260,7 +260,31 @@ show_reading_time: false
     });
 
     // Function to handle both Python and Java login simultaneously
-    window.loginBoth = function () {
+    window.loginBoth = async function () {
+    // First, logout any existing session
+    try {
+        // Clear localStorage
+        localStorage.removeItem('jwt');
+        localStorage.removeItem('token');
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('jwt_python_flask');
+
+        // Call logout endpoint (don't wait for response)
+        fetch(`${pythonURI}/api/authenticate`, {
+            method: 'DELETE',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).catch(e => console.log('Logout error:', e));
+    } catch (e) {
+        console.log('Error clearing session:', e);
+    }
+
+    // Small delay to ensure logout completes
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    // Then login
     javaLogin();  // Call Java login
     pythonLogin();
 };
@@ -385,11 +409,32 @@ show_reading_time: false
                 document.getElementById("message").textContent = `Error: ${error.message}`;
             });
     }  
-    window.signup = function () {
+    window.signup = async function () {
         const signupButton = document.querySelector(".signup-card button");
         // Disable the button and change its color
         signupButton.disabled = true;
         signupButton.classList.add("disabled");
+
+        // Logout any existing session first
+        try {
+            // Clear localStorage
+            localStorage.removeItem('jwt');
+            localStorage.removeItem('token');
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('jwt_python_flask');
+
+            // Call logout endpoint
+            await fetch(`${pythonURI}/api/authenticate`, {
+                method: 'DELETE',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).catch(e => console.log('Logout error:', e));
+        } catch (e) {
+            console.log('Error clearing session:', e);
+        }
+
         // Reset status indicators
         updateBackendStatus('flask', 'pending');
         // Mark Spring as disabled for guest accounts

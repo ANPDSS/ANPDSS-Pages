@@ -74,7 +74,8 @@ guestSignupToggle.onclick = function() {
 window.handleGuestSignup = async function(event) {
   event.preventDefault();
 
-  const username = document.getElementById('guest-username').value;
+  const name = document.getElementById('guest-name').value;
+  const email = document.getElementById('guest-email').value;
   const password = document.getElementById('guest-password').value;
   const statusMessage = document.getElementById('guest-status-message');
   const submitButton = document.querySelector('.guest-submit-btn');
@@ -86,12 +87,34 @@ window.handleGuestSignup = async function(event) {
   statusMessage.style.color = '#666';
 
   const signupData = {
-    uid: username,
+    name: name,
+    email: email,
     password: password
   };
 
   try {
-    let accountExists = false;
+    // Step 0: Logout any existing user first
+    statusMessage.textContent = 'Logging out existing session...';
+    try {
+      // Clear localStorage
+      localStorage.removeItem('jwt');
+      localStorage.removeItem('token');
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('jwt_python_flask');
+
+      // Call logout endpoint
+      await fetch(`${pythonURI}/api/authenticate`, {
+        method: 'DELETE',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+    } catch (logoutError) {
+      console.log('Logout error (continuing):', logoutError);
+    }
+
+    let generatedUid = null;
 
     // Step 1: Try to create guest account using Flask backend
     statusMessage.textContent = 'Creating guest account...';
@@ -105,43 +128,44 @@ window.handleGuestSignup = async function(event) {
     });
 
     if (!signupResponse.ok) {
-      // Account might already exist, so we'll try to login instead
-      accountExists = true;
-      statusMessage.textContent = 'Account exists, logging in...';
+      // Account creation failed
+      const errorData = await signupResponse.json().catch(() => ({}));
+      throw new Error(errorData.message || 'Failed to create account');
     } else {
-      await signupResponse.json();
+      const userData = await signupResponse.json();
+      generatedUid = userData.uid;
       statusMessage.textContent = 'Account created! Logging in...';
     }
 
-    // Step 2: Login with the credentials (whether account was just created or already existed)
+    // Step 2: Login with the credentials using the generated uid or name
+    const loginData = {
+      uid: generatedUid || name,
+      password: password
+    };
+
     const loginResponse = await fetch(`${pythonURI}/api/authenticate`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       credentials: 'include',
-      body: JSON.stringify(signupData)
+      body: JSON.stringify(loginData)
     });
 
     if (!loginResponse.ok) {
-      throw new Error('Login failed - please check your credentials');
+      throw new Error('Login failed - please try again');
     }
 
     await loginResponse.json();
 
-    // Success - stay on current page
-    statusMessage.textContent = 'Success! You are now logged in.';
+    // Success - reload the page to refresh all user data
+    statusMessage.textContent = 'Success! Reloading page...';
     statusMessage.style.color = 'green';
 
-    // Hide the form after successful signup/login
+    // Reload the page after a short delay to show the success message
     setTimeout(() => {
-      guestSignupForm.style.display = 'none';
-      // Reset form
-      document.getElementById('guest-username').value = '';
-      document.getElementById('guest-password').value = '';
-      submitButton.disabled = false;
-      submitButton.textContent = 'Sign Up & Login';
-    }, 2000);
+      window.location.reload();
+    }, 1500);
 
   } catch (error) {
     console.error('Guest signup error:', error);
