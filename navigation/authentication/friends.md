@@ -680,6 +680,147 @@ search_exclude: true
             object-fit: cover;
             border-radius: 50%;
         }
+
+        /* ---- Camera Modal ---- */
+        .camera-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        .camera-overlay.active { display: flex; }
+
+        .camera-panel {
+            background: #111;
+            border: 1px solid #2a2a2a;
+            border-radius: 15px;
+            width: 480px;
+            max-width: 96vw;
+            /* Hard cap so the panel never grows taller than the viewport */
+            max-height: 92vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Fixed header — always visible */
+        .camera-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px 12px;
+            flex-shrink: 0;
+            border-bottom: 1px solid #1e1e1e;
+        }
+        .camera-header h3 { color: #fff; margin: 0; }
+
+        /* Scrollable body — video/preview/mood/caption scroll if needed */
+        .camera-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 14px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            min-height: 0;   /* required for flex children to shrink */
+        }
+
+        /* Pinned footer — buttons ALWAYS visible at the bottom */
+        .camera-footer {
+            flex-shrink: 0;
+            padding: 12px 20px 16px;
+            border-top: 1px solid #1e1e1e;
+            background: #111;
+        }
+
+        #cameraVideo {
+            width: 100%;
+            /* Cap height so it never pushes buttons off screen */
+            max-height: 46vh;
+            object-fit: cover;
+            border-radius: 10px;
+            background: #000;
+            display: block;
+        }
+
+        #cameraCanvas { display: none; }
+
+        #cameraPreview {
+            width: 100%;
+            max-height: 46vh;
+            object-fit: contain;
+            border-radius: 10px;
+            display: none;
+            border: 2px solid #2196F3;
+        }
+
+        .camera-mood-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(33,150,243,0.15);
+            border: 1px solid #2196F3;
+            border-radius: 20px;
+            padding: 5px 12px;
+            font-size: 0.85em;
+            color: #7ec8f7;
+        }
+
+        .camera-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* Make every action button fill equal width so they're easy to tap */
+        .camera-actions .btn {
+            flex: 1;
+            min-width: 100px;
+            text-align: center;
+            font-size: 1em;
+            padding: 12px 10px;
+        }
+
+        /* ---- Photo message rendering ---- */
+        .msg-photo {
+            max-width: 100%;
+            border-radius: 8px;
+            margin: 6px 0 4px;
+            display: block;
+            cursor: pointer;
+        }
+
+        .msg-mood-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(78,255,158,0.12);
+            border: 1px solid rgba(78,255,158,0.4);
+            border-radius: 20px;
+            padding: 3px 10px;
+            font-size: 0.78em;
+            color: #4eff9e;
+            margin-top: 4px;
+        }
+
+        .camera-btn {
+            padding: 10px 14px;
+            background: rgba(33,150,243,0.15);
+            border: 1px solid #2196F3;
+            border-radius: 8px;
+            color: #2196F3;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .camera-btn:hover {
+            background: rgba(33,150,243,0.3);
+        }
     </style>
 </head>
 <body>
@@ -845,8 +986,46 @@ search_exclude: true
             <div class="group-chat-input">
                 <input type="text" id="groupMessageInput" placeholder="Type a message..." maxlength="5000"
                        onkeydown="if(event.key==='Enter') sendGroupMsg()">
+                <button class="camera-btn" onclick="openCameraModal()" title="Send a photo with your mood">📷</button>
                 <button class="btn btn-primary" onclick="sendGroupMsg()">Send</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Camera Modal -->
+    <div class="camera-overlay" id="cameraOverlay">
+        <div class="camera-panel">
+
+            <!-- Fixed header -->
+            <div class="camera-header">
+                <h3>📷 Take a Photo</h3>
+                <button class="btn" style="padding:6px 14px; background:#333; color:#fff; font-size:1em;" onclick="closeCameraModal()">✕</button>
+            </div>
+
+            <!-- Scrollable body: video / preview / mood / caption -->
+            <div class="camera-body">
+                <video id="cameraVideo" autoplay playsinline></video>
+                <canvas id="cameraCanvas"></canvas>
+                <img id="cameraPreview" alt="Photo preview">
+
+                <div id="cameraMoodBadge" style="display:none;">
+                    <span class="camera-mood-badge" id="cameraMoodText">Loading mood...</span>
+                </div>
+
+                <input type="text" id="cameraCaption" placeholder="Add a caption (optional)..."
+                       style="padding:10px 14px; background:rgba(0,0,0,0.5); border:1px solid #333;
+                              border-radius:8px; color:#fff; font-size:0.95em; width:100%; box-sizing:border-box;">
+            </div>
+
+            <!-- Pinned footer: buttons always on screen -->
+            <div class="camera-footer">
+                <div class="camera-actions">
+                    <button class="btn btn-primary" id="snapBtn" onclick="snapPhoto()">📸 Snap Photo</button>
+                    <button class="btn btn-secondary" id="retakeBtn" onclick="retakePhoto()" style="display:none;">↺ Retake</button>
+                    <button class="btn btn-success" id="sendPhotoBtn" onclick="sendCameraPhoto()" style="display:none;">✉ Send Photo</button>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -890,6 +1069,7 @@ search_exclude: true
             leaveGroup,
             removeGroupMember,
             sendGroupMessage,
+            sendGroupPhotoMessage,
             getGroupMessages
         } from '{{ site.baseurl }}/assets/js/api/groups.js';
 
@@ -1370,6 +1550,155 @@ search_exclude: true
         }
 
         // =============================================
+        // CAMERA FEATURE
+        // =============================================
+
+        let _cameraStream = null;
+        let _capturedImageData = null;
+        let _capturedMoodSnapshot = null;
+
+        window.openCameraModal = async function() {
+            if (!window.activeGroupId) return;
+
+            // Reset state
+            _capturedImageData = null;
+            _capturedMoodSnapshot = null;
+            document.getElementById('cameraCaption').value = '';
+            document.getElementById('cameraPreview').style.display = 'none';
+            document.getElementById('cameraVideo').style.display = 'block';
+            document.getElementById('cameraMoodBadge').style.display = 'none';
+            document.getElementById('snapBtn').style.display = 'inline-block';
+            document.getElementById('retakeBtn').style.display = 'none';
+            document.getElementById('sendPhotoBtn').style.display = 'none';
+
+            document.getElementById('cameraOverlay').classList.add('active');
+
+            // Start webcam
+            try {
+                _cameraStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+                document.getElementById('cameraVideo').srcObject = _cameraStream;
+            } catch (err) {
+                alert('Could not access camera: ' + err.message);
+                closeCameraModal();
+            }
+        };
+
+        window.closeCameraModal = function() {
+            document.getElementById('cameraOverlay').classList.remove('active');
+            if (_cameraStream) {
+                _cameraStream.getTracks().forEach(t => t.stop());
+                _cameraStream = null;
+            }
+            _capturedImageData = null;
+            _capturedMoodSnapshot = null;
+        };
+
+        window.snapPhoto = async function() {
+            const video = document.getElementById('cameraVideo');
+            const canvas = document.getElementById('cameraCanvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+
+            _capturedImageData = canvas.toDataURL('image/jpeg', 0.85);
+
+            // Show preview, hide live feed
+            const preview = document.getElementById('cameraPreview');
+            preview.src = _capturedImageData;
+            preview.style.display = 'block';
+            video.style.display = 'none';
+
+            // Stop the camera stream to free the webcam
+            if (_cameraStream) {
+                _cameraStream.getTracks().forEach(t => t.stop());
+                _cameraStream = null;
+            }
+
+            // Fetch current user mood
+            const moodBadgeDiv = document.getElementById('cameraMoodBadge');
+            const moodText = document.getElementById('cameraMoodText');
+            moodBadgeDiv.style.display = 'block';
+            moodText.textContent = 'Fetching your mood...';
+
+            try {
+                const moodResp = await fetch(`${pythonURI}/api/moodmeal/mood?limit=1`, {
+                    ...fetchOptions, method: 'GET'
+                });
+                if (moodResp.ok) {
+                    const moodData = await moodResp.json();
+                    if (moodData.length > 0) {
+                        const m = moodData[0];
+                        _capturedMoodSnapshot = JSON.stringify({
+                            score: m.mood_score,
+                            category: m.mood_category,
+                            tags: m.mood_tags || []
+                        });
+                        const emoji = m.mood_score >= 81 ? '😄'
+                                    : m.mood_score >= 61 ? '😊'
+                                    : m.mood_score >= 41 ? '😴' : '😰';
+                        moodText.textContent = `${emoji} ${m.mood_category} · ${m.mood_score}/100`;
+                    } else {
+                        moodText.textContent = '😊 No mood logged yet';
+                        _capturedMoodSnapshot = null;
+                    }
+                } else {
+                    moodText.textContent = '😊 Mood unavailable';
+                }
+            } catch (e) {
+                moodText.textContent = '😊 Mood unavailable';
+            }
+
+            document.getElementById('snapBtn').style.display = 'none';
+            document.getElementById('retakeBtn').style.display = 'inline-block';
+            document.getElementById('sendPhotoBtn').style.display = 'inline-block';
+        };
+
+        window.retakePhoto = async function() {
+            _capturedImageData = null;
+            document.getElementById('cameraPreview').style.display = 'none';
+            document.getElementById('cameraMoodBadge').style.display = 'none';
+            document.getElementById('cameraVideo').style.display = 'block';
+            document.getElementById('snapBtn').style.display = 'inline-block';
+            document.getElementById('retakeBtn').style.display = 'none';
+            document.getElementById('sendPhotoBtn').style.display = 'none';
+
+            // Restart camera
+            try {
+                _cameraStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+                document.getElementById('cameraVideo').srcObject = _cameraStream;
+            } catch (err) {
+                alert('Could not access camera: ' + err.message);
+                closeCameraModal();
+            }
+        };
+
+        window.sendCameraPhoto = async function() {
+            if (!_capturedImageData || !window.activeGroupId) return;
+
+            const caption = document.getElementById('cameraCaption').value.trim();
+            const sendBtn = document.getElementById('sendPhotoBtn');
+            sendBtn.disabled = true;
+            sendBtn.textContent = 'Sending...';
+
+            try {
+                await sendGroupPhotoMessage(
+                    window.activeGroupId,
+                    _capturedImageData,
+                    _capturedMoodSnapshot,
+                    caption
+                );
+                closeCameraModal();
+                await refreshGroupMessages();
+                const container = document.getElementById('groupMessagesContainer');
+                container.scrollTop = container.scrollHeight;
+            } catch (error) {
+                alert('Error sending photo: ' + error.message);
+                sendBtn.disabled = false;
+                sendBtn.textContent = 'Send Photo';
+            }
+        };
+
+        // =============================================
         // GROUPS FEATURE
         // =============================================
 
@@ -1522,17 +1851,18 @@ search_exclude: true
                     leaveDeleteBtn.onclick = confirmLeaveGroup;
                 }
 
-                await refreshGroupMessages();
+                await refreshGroupMessages(true);  // show error on first load
 
-                // Poll for new messages every 5 seconds
+                // Poll for new messages every 5 seconds (silent on error)
                 if (window.groupMsgPollInterval) clearInterval(window.groupMsgPollInterval);
-                window.groupMsgPollInterval = setInterval(refreshGroupMessages, 5000);
+                window.groupMsgPollInterval = setInterval(() => refreshGroupMessages(false), 5000);
             } catch (error) {
                 messagesContainer.innerHTML = `<p style="color:#dc3545;">Error: ${error.message}</p>`;
             }
         };
 
-        async function refreshGroupMessages() {
+        // Render messages into the container. Returns true on success.
+        async function refreshGroupMessages(showError = false) {
             if (!window.activeGroupId) return;
             const container = document.getElementById('groupMessagesContainer');
             const wasAtBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 80;
@@ -1546,10 +1876,41 @@ search_exclude: true
 
                 container.innerHTML = data.messages.map(msg => {
                     const isOwn = window._currentUserId && msg.sender_id === window._currentUserId;
+
+                    // Build mood badge HTML if this message has a mood snapshot
+                    let moodBadgeHtml = '';
+                    if (msg.mood_snapshot) {
+                        try {
+                            const mood = JSON.parse(msg.mood_snapshot);
+                            const moodEmoji = mood.score >= 81 ? '😄'
+                                           : mood.score >= 61 ? '😊'
+                                           : mood.score >= 41 ? '😴'
+                                           : '😰';
+                            moodBadgeHtml = `
+                                <div class="msg-mood-badge">
+                                    ${moodEmoji} ${mood.category} &bull; ${mood.score}/100
+                                    ${mood.tags && mood.tags.length ? '&bull; ' + mood.tags.slice(0,3).join(', ') : ''}
+                                </div>`;
+                        } catch (e) { /* malformed snapshot — skip */ }
+                    }
+
+                    // Build photo HTML if this message has an image
+                    const photoHtml = msg.image_data
+                        ? `<img class="msg-photo" src="${msg.image_data}" alt="Photo"
+                                onclick="this.requestFullscreen && this.requestFullscreen()">`
+                        : '';
+
+                    // Text caption (may be empty for photo-only messages)
+                    const textHtml = msg.content
+                        ? `<div class="msg-content">${escapeHtml(msg.content)}</div>`
+                        : '';
+
                     return `
                         <div class="group-message ${isOwn ? 'own' : ''}">
                             <div class="msg-sender">${msg.sender_name} (@${msg.sender_uid})</div>
-                            <div class="msg-content">${escapeHtml(msg.content)}</div>
+                            ${photoHtml}
+                            ${moodBadgeHtml}
+                            ${textHtml}
                             <div class="msg-time">${msg.created_at}</div>
                         </div>
                     `;
@@ -1559,7 +1920,12 @@ search_exclude: true
                     container.scrollTop = container.scrollHeight;
                 }
             } catch (error) {
-                // Silently ignore poll errors
+                if (showError) {
+                    container.innerHTML = `<p style="color:#dc3545; text-align:center; margin-top:20px;">
+                        Could not load messages: ${error.message}
+                    </p>`;
+                }
+                // Polling failures are silent (don't wipe out existing messages)
             }
         }
 
@@ -1572,7 +1938,7 @@ search_exclude: true
             try {
                 await sendGroupMessage(window.activeGroupId, content);
                 input.value = '';
-                await refreshGroupMessages();
+                await refreshGroupMessages(true);
                 const container = document.getElementById('groupMessagesContainer');
                 container.scrollTop = container.scrollHeight;
             } catch (error) {

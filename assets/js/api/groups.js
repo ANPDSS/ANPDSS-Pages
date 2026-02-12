@@ -208,6 +208,33 @@ export async function removeGroupMember(groupId, memberId) {
 }
 
 /**
+ * Send a photo (with optional caption) and mood snapshot to a group
+ */
+export async function sendGroupPhotoMessage(groupId, imageData, moodSnapshot, caption = '') {
+    try {
+        const response = await fetch(`${groupAPI}/${groupId}/messages`, {
+            ...fetchOptions,
+            method: 'POST',
+            body: JSON.stringify({
+                content: caption,
+                image_data: imageData,
+                mood_snapshot: moodSnapshot
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || `Failed to send photo: ${response.status}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error sending group photo:', error);
+        throw error;
+    }
+}
+
+/**
  * Send a message to a group
  */
 export async function sendGroupMessage(groupId, content) {
