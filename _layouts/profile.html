@@ -274,25 +274,66 @@ active_tab: profile
 
 <!-- CSS for Live Color Animations -->
 <style>
-    /* Water-like flowing animation */
+    /* Flowing side-to-side */
     @keyframes waterFlow {
         0% { background-position: 0% 50%; }
         50% { background-position: 100% 50%; }
         100% { background-position: 0% 50%; }
     }
 
-    /* Pulse/breathing animation */
+    /* Pulse/breathing glow */
     @keyframes pulse {
         0%, 100% { filter: brightness(1); }
         50% { filter: brightness(1.3); }
     }
 
-    /* Wave animation */
+    /* Continuous horizontal scroll */
     @keyframes wave {
         0% { background-position: 0% 0%; }
         100% { background-position: 200% 0%; }
     }
 
+    /* Diagonal sweep */
+    @keyframes diagonalSweep {
+        0% { background-position: 0% 0%; }
+        50% { background-position: 100% 100%; }
+        100% { background-position: 0% 0%; }
+    }
+
+    /* Rotating hue shift */
+    @keyframes hueRotate {
+        0% { filter: hue-rotate(0deg); }
+        100% { filter: hue-rotate(360deg); }
+    }
+
+    /* Shimmer / sparkle effect */
+    @keyframes shimmer {
+        0% { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
+    }
+
+    /* Breathing scale pulse */
+    @keyframes breathe {
+        0%, 100% { background-size: 100% 100%; filter: brightness(1); }
+        50% { background-size: 150% 150%; filter: brightness(1.2); }
+    }
+
+    /* Spiral rotation */
+    @keyframes spiralFlow {
+        0% { background-position: 0% 0%; }
+        25% { background-position: 100% 0%; }
+        50% { background-position: 100% 100%; }
+        75% { background-position: 0% 100%; }
+        100% { background-position: 0% 0%; }
+    }
+
+    /* Strobe flash */
+    @keyframes strobe {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; filter: brightness(1.5); }
+    }
+
+    /* ===== ORIGINAL 10 ===== */
     .live-color-water {
         background: linear-gradient(90deg, #0077be, #00a8e8, #00d4ff, #00a8e8, #0077be);
         background-size: 200% 100%;
@@ -351,6 +392,189 @@ active_tab: profile
         background: linear-gradient(90deg, #0f0c29, #302b63, #24243e, #302b63, #0f0c29);
         background-size: 200% 100%;
         animation: waterFlow 5s ease-in-out infinite;
+    }
+
+    /* ===== NEW LIVE COLORS ===== */
+
+    /* Diagonal sweep animations */
+    .live-color-plasma {
+        background: linear-gradient(45deg, #ee00ff, #00aaff, #ee00ff, #00aaff);
+        background-size: 300% 300%;
+        animation: diagonalSweep 3s ease-in-out infinite;
+    }
+
+    .live-color-toxic {
+        background: linear-gradient(45deg, #00ff00, #ccff00, #00ff66, #ccff00, #00ff00);
+        background-size: 300% 300%;
+        animation: diagonalSweep 2.5s ease-in-out infinite;
+    }
+
+    .live-color-volcano {
+        background: linear-gradient(45deg, #1a0000, #ff2200, #ff8800, #ff2200, #1a0000);
+        background-size: 300% 300%;
+        animation: diagonalSweep 2s ease-in-out infinite;
+    }
+
+    .live-color-nebula {
+        background: linear-gradient(45deg, #1b0033, #6600cc, #cc00ff, #ff66cc, #1b0033);
+        background-size: 300% 300%;
+        animation: diagonalSweep 5s ease-in-out infinite;
+    }
+
+    /* Shimmer animations */
+    .live-color-gold {
+        background: linear-gradient(90deg, #b8860b, #ffd700, #fff8dc, #ffd700, #b8860b);
+        background-size: 200% 100%;
+        animation: shimmer 2s linear infinite;
+    }
+
+    .live-color-silver {
+        background: linear-gradient(90deg, #6b6b6b, #c0c0c0, #f0f0f0, #c0c0c0, #6b6b6b);
+        background-size: 200% 100%;
+        animation: shimmer 2.5s linear infinite;
+    }
+
+    .live-color-diamond {
+        background: linear-gradient(90deg, #b9f2ff, #e0ffff, #ffffff, #e0ffff, #b9f2ff);
+        background-size: 200% 100%;
+        animation: shimmer 1.5s linear infinite;
+    }
+
+    .live-color-rose-gold {
+        background: linear-gradient(90deg, #b76e79, #e8c4c8, #f5e1e4, #e8c4c8, #b76e79);
+        background-size: 200% 100%;
+        animation: shimmer 2s linear infinite;
+    }
+
+    /* Hue rotate animations */
+    .live-color-rainbow {
+        background: linear-gradient(90deg, #ff0000, #ff8800, #ffff00, #00ff00, #0088ff, #8800ff);
+        animation: hueRotate 4s linear infinite;
+    }
+
+    .live-color-prism {
+        background: linear-gradient(135deg, #ff0044, #ff7700, #ffdd00, #00ff88, #0066ff, #aa00ff);
+        animation: hueRotate 6s linear infinite;
+    }
+
+    .live-color-holographic {
+        background: linear-gradient(90deg, #ff69b4, #00ffff, #ff69b4, #7b68ee, #00ffff);
+        background-size: 200% 100%;
+        animation: waterFlow 2s ease-in-out infinite, hueRotate 8s linear infinite;
+    }
+
+    /* Breathing animations */
+    .live-color-heartbeat {
+        background: linear-gradient(135deg, #ff1744, #d50000, #ff1744);
+        animation: breathe 1.5s ease-in-out infinite;
+    }
+
+    .live-color-ember {
+        background: linear-gradient(135deg, #ff6600, #cc3300, #ff9900);
+        animation: breathe 2s ease-in-out infinite;
+    }
+
+    .live-color-deep-breath {
+        background: linear-gradient(135deg, #004d7a, #008793, #00bf72);
+        animation: breathe 3s ease-in-out infinite;
+    }
+
+    /* Spiral flow animations */
+    .live-color-vortex {
+        background: linear-gradient(135deg, #0000ff, #8000ff, #ff00ff, #ff0080, #0000ff);
+        background-size: 200% 200%;
+        animation: spiralFlow 4s linear infinite;
+    }
+
+    .live-color-cyclone {
+        background: linear-gradient(135deg, #003366, #006699, #0099cc, #00ccff, #003366);
+        background-size: 200% 200%;
+        animation: spiralFlow 3s linear infinite;
+    }
+
+    .live-color-whirlpool {
+        background: linear-gradient(135deg, #004d00, #00b300, #66ff66, #00b300, #004d00);
+        background-size: 200% 200%;
+        animation: spiralFlow 3.5s linear infinite;
+    }
+
+    /* Fast flowing wave animations */
+    .live-color-electric {
+        background: linear-gradient(90deg, #000000, #1100ff, #00eeff, #1100ff, #000000);
+        background-size: 200% 100%;
+        animation: wave 1.5s linear infinite;
+    }
+
+    .live-color-synthwave {
+        background: linear-gradient(90deg, #0a001a, #ff00ff, #00ffff, #ff00ff, #0a001a);
+        background-size: 200% 100%;
+        animation: wave 2s linear infinite;
+    }
+
+    .live-color-candy {
+        background: linear-gradient(90deg, #ff6ec7, #ffd700, #7fff00, #00bfff, #ff6ec7);
+        background-size: 200% 100%;
+        animation: wave 2.5s linear infinite;
+    }
+
+    .live-color-blood-moon {
+        background: linear-gradient(90deg, #1a0000, #8b0000, #cc0000, #8b0000, #1a0000);
+        background-size: 200% 100%;
+        animation: waterFlow 3s ease-in-out infinite, pulse 4s ease-in-out infinite;
+    }
+
+    .live-color-arctic {
+        background: linear-gradient(90deg, #001a33, #0077b6, #90e0ef, #caf0f8, #90e0ef, #0077b6, #001a33);
+        background-size: 200% 100%;
+        animation: waterFlow 4s ease-in-out infinite;
+    }
+
+    .live-color-bubblegum {
+        background: linear-gradient(90deg, #ff6fff, #ff85c8, #ffb3d9, #ff85c8, #ff6fff);
+        background-size: 200% 100%;
+        animation: waterFlow 2.5s ease-in-out infinite;
+    }
+
+    .live-color-midnight {
+        background: linear-gradient(90deg, #020024, #090979, #00d4ff, #090979, #020024);
+        background-size: 200% 100%;
+        animation: waterFlow 4s ease-in-out infinite;
+    }
+
+    .live-color-copper {
+        background: linear-gradient(90deg, #6b3a2a, #b87333, #da8a67, #b87333, #6b3a2a);
+        background-size: 200% 100%;
+        animation: shimmer 3s linear infinite;
+    }
+
+    .live-color-matrix {
+        background: linear-gradient(180deg, #000000, #003300, #00ff00, #003300, #000000);
+        background-size: 100% 200%;
+        animation: waterFlow 2s linear infinite;
+    }
+
+    .live-color-lightning {
+        background: linear-gradient(90deg, #0d0d2b, #4400ff, #ffffff, #4400ff, #0d0d2b);
+        background-size: 200% 100%;
+        animation: wave 1s linear infinite, strobe 0.5s ease-in-out infinite;
+    }
+
+    .live-color-cotton-candy {
+        background: linear-gradient(90deg, #fbc2eb, #a6c1ee, #fbc2eb);
+        background-size: 200% 100%;
+        animation: waterFlow 3s ease-in-out infinite;
+    }
+
+    .live-color-tropical {
+        background: linear-gradient(90deg, #00b4db, #0083b0, #00b4db, #00d2ff);
+        background-size: 200% 100%;
+        animation: waterFlow 3s ease-in-out infinite;
+    }
+
+    .live-color-inferno {
+        background: linear-gradient(45deg, #000000, #ff0000, #ff6600, #ffcc00, #ff6600, #ff0000, #000000);
+        background-size: 300% 300%;
+        animation: diagonalSweep 2s ease-in-out infinite, pulse 3s ease-in-out infinite;
     }
 </style>
 
@@ -1188,7 +1412,37 @@ active_tab: profile
         { id: 'live-7', name: 'Neon', cssClass: 'live-color-neon', selected: false },
         { id: 'live-8', name: 'Lava', cssClass: 'live-color-lava', selected: false },
         { id: 'live-9', name: 'Ice', cssClass: 'live-color-ice', selected: false },
-        { id: 'live-10', name: 'Galaxy', cssClass: 'live-color-galaxy', selected: false }
+        { id: 'live-10', name: 'Galaxy', cssClass: 'live-color-galaxy', selected: false },
+        { id: 'live-11', name: 'Plasma', cssClass: 'live-color-plasma', selected: false },
+        { id: 'live-12', name: 'Toxic', cssClass: 'live-color-toxic', selected: false },
+        { id: 'live-13', name: 'Volcano', cssClass: 'live-color-volcano', selected: false },
+        { id: 'live-14', name: 'Nebula', cssClass: 'live-color-nebula', selected: false },
+        { id: 'live-15', name: 'Gold', cssClass: 'live-color-gold', selected: false },
+        { id: 'live-16', name: 'Silver', cssClass: 'live-color-silver', selected: false },
+        { id: 'live-17', name: 'Diamond', cssClass: 'live-color-diamond', selected: false },
+        { id: 'live-18', name: 'Rose Gold', cssClass: 'live-color-rose-gold', selected: false },
+        { id: 'live-19', name: 'Rainbow', cssClass: 'live-color-rainbow', selected: false },
+        { id: 'live-20', name: 'Prism', cssClass: 'live-color-prism', selected: false },
+        { id: 'live-21', name: 'Holographic', cssClass: 'live-color-holographic', selected: false },
+        { id: 'live-22', name: 'Heartbeat', cssClass: 'live-color-heartbeat', selected: false },
+        { id: 'live-23', name: 'Ember', cssClass: 'live-color-ember', selected: false },
+        { id: 'live-24', name: 'Deep Breath', cssClass: 'live-color-deep-breath', selected: false },
+        { id: 'live-25', name: 'Vortex', cssClass: 'live-color-vortex', selected: false },
+        { id: 'live-26', name: 'Cyclone', cssClass: 'live-color-cyclone', selected: false },
+        { id: 'live-27', name: 'Whirlpool', cssClass: 'live-color-whirlpool', selected: false },
+        { id: 'live-28', name: 'Electric', cssClass: 'live-color-electric', selected: false },
+        { id: 'live-29', name: 'Synthwave', cssClass: 'live-color-synthwave', selected: false },
+        { id: 'live-30', name: 'Candy', cssClass: 'live-color-candy', selected: false },
+        { id: 'live-31', name: 'Blood Moon', cssClass: 'live-color-blood-moon', selected: false },
+        { id: 'live-32', name: 'Arctic', cssClass: 'live-color-arctic', selected: false },
+        { id: 'live-33', name: 'Bubblegum', cssClass: 'live-color-bubblegum', selected: false },
+        { id: 'live-34', name: 'Midnight', cssClass: 'live-color-midnight', selected: false },
+        { id: 'live-35', name: 'Copper', cssClass: 'live-color-copper', selected: false },
+        { id: 'live-36', name: 'Matrix', cssClass: 'live-color-matrix', selected: false },
+        { id: 'live-37', name: 'Lightning', cssClass: 'live-color-lightning', selected: false },
+        { id: 'live-38', name: 'Cotton Candy', cssClass: 'live-color-cotton-candy', selected: false },
+        { id: 'live-39', name: 'Tropical', cssClass: 'live-color-tropical', selected: false },
+        { id: 'live-40', name: 'Inferno', cssClass: 'live-color-inferno', selected: false }
     ];
 
     // =========================================================================
@@ -1204,7 +1458,37 @@ active_tab: profile
         { id: 'grad-7', name: 'Berry', gradient: 'linear-gradient(135deg, #8e2de2, #4a00e0)', selected: false },
         { id: 'grad-8', name: 'Flame', gradient: 'linear-gradient(135deg, #ff416c, #ff4b2b)', selected: false },
         { id: 'grad-9', name: 'Sky', gradient: 'linear-gradient(135deg, #a1c4fd, #c2e9fb)', selected: false },
-        { id: 'grad-10', name: 'Mint', gradient: 'linear-gradient(135deg, #d4fc79, #96e6a1)', selected: false }
+        { id: 'grad-10', name: 'Mint', gradient: 'linear-gradient(135deg, #d4fc79, #96e6a1)', selected: false },
+        { id: 'grad-11', name: 'Mango', gradient: 'linear-gradient(135deg, #f7971e, #ffd200)', selected: false },
+        { id: 'grad-12', name: 'Lavender', gradient: 'linear-gradient(135deg, #c471f5, #fa71cd)', selected: false },
+        { id: 'grad-13', name: 'Emerald', gradient: 'linear-gradient(135deg, #00b09b, #96c93d)', selected: false },
+        { id: 'grad-14', name: 'Cherry', gradient: 'linear-gradient(135deg, #eb3349, #f45c43)', selected: false },
+        { id: 'grad-15', name: 'Glacier', gradient: 'linear-gradient(135deg, #e0eafc, #cfdef3)', selected: false },
+        { id: 'grad-16', name: 'Dusk', gradient: 'linear-gradient(135deg, #2c3e50, #fd746c)', selected: false },
+        { id: 'grad-17', name: 'Coral', gradient: 'linear-gradient(135deg, #ff9a9e, #fecfef)', selected: false },
+        { id: 'grad-18', name: 'Sapphire', gradient: 'linear-gradient(135deg, #0f0c29, #302b63, #24243e)', selected: false },
+        { id: 'grad-19', name: 'Rose', gradient: 'linear-gradient(135deg, #ee9ca7, #ffdde1)', selected: false },
+        { id: 'grad-20', name: 'Titanium', gradient: 'linear-gradient(135deg, #283048, #859398)', selected: false },
+        { id: 'grad-21', name: 'Mojito', gradient: 'linear-gradient(135deg, #1d976c, #93f9b9)', selected: false },
+        { id: 'grad-22', name: 'Cosmic', gradient: 'linear-gradient(135deg, #ff00cc, #333399)', selected: false },
+        { id: 'grad-23', name: 'Honey', gradient: 'linear-gradient(135deg, #f7b733, #fc4a1a)', selected: false },
+        { id: 'grad-24', name: 'Arctic', gradient: 'linear-gradient(135deg, #43cea2, #185a9d)', selected: false },
+        { id: 'grad-25', name: 'Plum', gradient: 'linear-gradient(135deg, #4e2a84, #c31432)', selected: false },
+        { id: 'grad-26', name: 'Candy', gradient: 'linear-gradient(135deg, #d53369, #daae51)', selected: false },
+        { id: 'grad-27', name: 'Aqua', gradient: 'linear-gradient(135deg, #13547a, #80d0c7)', selected: false },
+        { id: 'grad-28', name: 'Wine', gradient: 'linear-gradient(135deg, #59001a, #b30000)', selected: false },
+        { id: 'grad-29', name: 'Bubblegum', gradient: 'linear-gradient(135deg, #ff61d2, #fe9090)', selected: false },
+        { id: 'grad-30', name: 'Teal', gradient: 'linear-gradient(135deg, #0083b0, #00b4db)', selected: false },
+        { id: 'grad-31', name: 'Crimson', gradient: 'linear-gradient(to right, #870000, #190a05)', selected: false },
+        { id: 'grad-32', name: 'Electric', gradient: 'linear-gradient(to right, #4776e6, #8e54e9)', selected: false },
+        { id: 'grad-33', name: 'Sunrise', gradient: 'linear-gradient(to right, #ff512f, #f09819)', selected: false },
+        { id: 'grad-34', name: 'Moonlight', gradient: 'linear-gradient(to right, #0f2027, #203a43, #2c5364)', selected: false },
+        { id: 'grad-35', name: 'Passion', gradient: 'linear-gradient(to right, #e53935, #e35d5b)', selected: false },
+        { id: 'grad-36', name: 'Neon', gradient: 'linear-gradient(to right, #00f260, #0575e6)', selected: false },
+        { id: 'grad-37', name: 'Velvet', gradient: 'linear-gradient(to right, #200122, #6f0000)', selected: false },
+        { id: 'grad-38', name: 'Frost', gradient: 'linear-gradient(to right, #000428, #004e92)', selected: false },
+        { id: 'grad-39', name: 'Peony', gradient: 'linear-gradient(to right, #fbc2eb, #a6c1ee)', selected: false },
+        { id: 'grad-40', name: 'Inferno', gradient: 'linear-gradient(to right, #f12711, #f5af19)', selected: false }
     ];
 
     // Track which type of color is currently selected
