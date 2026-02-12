@@ -10,11 +10,11 @@ show_reading_time: false
 <div class="login-container">
     <!-- Python Login Form -->
     <div class="login-card">
-        <h1 id="pythonTitle">User Login</h1>
+        <h1 id="pythonTitle">Guest Login</h1>
         <hr>
         <form id="pythonForm" onsubmit="loginBoth(); return false;">
             <div class="form-group">
-                <input type="text" id="uid" placeholder="Username" required>
+                <input type="text" id="uid" placeholder="Name or GitHub ID" required>
             </div>
             <div class="form-group">
                 <input type="password" id="password" placeholder="Password" required>
@@ -26,13 +26,19 @@ show_reading_time: false
         </form>
     </div>
     <div class="signup-card">
-        <h1 id="signupTitle">Sign Up</h1>
+        <h1 id="signupTitle">Guest Sign Up</h1>
         <hr>
-        <!-- Signup Form (simplified: username + password) -->
+        <!-- Guest Signup Form -->
         <form id="signupForm" onsubmit="handleSignupSubmit(event);">
-            <!-- name removed to keep signup minimal: only username + password -->
             <div class="form-group">
-                <input type="text" id="signupUsername" placeholder="Username" required>
+                <input type="text" id="signupName" placeholder="Full Name" required>
+            </div>
+            <div class="form-group">
+                <input type="email" id="signupEmail" placeholder="Email" required>
+            </div>
+            <div class="form-group">
+                <input type="text" id="signupGithubId" placeholder="GitHub ID (Optional)">
+                <small style="color: #666; font-size: 0.85em;">Leave blank to auto-generate username from name</small>
             </div>
             <div class="form-group">
                 <input type="password" id="signupPassword" placeholder="Password" required>
@@ -42,7 +48,6 @@ show_reading_time: false
                 <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
                 <div id="password-validation-message" class="validation-message"></div>
             </div>
-            <!-- Kasm option removed: not required for simplified signup -->
             <p>
                 <button type="submit" class="large primary submit-button">Sign Up</button>
             </p>
@@ -225,11 +230,18 @@ show_reading_time: false
             return;
         }
 
-        // Store form data (only username and password)
+        // Store form data (name, email, password, optional github_id)
+        const githubId = document.getElementById("signupGithubId").value.trim();
         signupFormData = {
-            uid: document.getElementById("signupUsername").value,
+            name: document.getElementById("signupName").value,
+            email: document.getElementById("signupEmail").value,
             password: document.getElementById("signupPassword").value,
         };
+
+        // Add github_id only if provided
+        if (githubId) {
+            signupFormData.github_id = githubId;
+        }
 
         // Call signup flow
         signup();
@@ -385,8 +397,10 @@ show_reading_time: false
         document.getElementById('overallStatus').classList.add('hidden');
 
         const data = signupFormData && Object.keys(signupFormData).length > 0 ? signupFormData : {
-            uid: document.getElementById("signupUsername").value,
+            name: document.getElementById("signupName").value,
+            email: document.getElementById("signupEmail").value,
             password: document.getElementById("signupPassword").value,
+            github_id: document.getElementById("signupGithubId").value.trim() || undefined
         };
 
         console.log("Sending this data to Flask (Guest):", JSON.stringify(data, null, 2));
