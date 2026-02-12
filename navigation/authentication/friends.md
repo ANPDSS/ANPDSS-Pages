@@ -1004,8 +1004,13 @@ search_exclude: true
 
             <!-- Scrollable body: video / preview / mood / caption -->
             <div class="camera-body">
-                <video id="cameraVideo" autoplay playsinline></video>
-                <canvas id="cameraCanvas"></canvas>
+                <!-- Video + canvas stacked so the detection box overlays the feed -->
+                <div style="position:relative; line-height:0;">
+                    <video id="cameraVideo" autoplay playsinline
+                           style="width:100%; max-height:46vh; object-fit:cover; border-radius:10px; background:#000; display:block;"></video>
+                    <canvas id="cameraCanvas"
+                            style="position:absolute; top:0; left:0; width:100%; height:100%; border-radius:10px; pointer-events:none;"></canvas>
+                </div>
                 <img id="cameraPreview" alt="Photo preview">
 
                 <div id="cameraMoodBadge" style="display:none;">
@@ -1044,6 +1049,9 @@ search_exclude: true
         </div>
     </div>
 
+    <!-- face-api.js must be loaded as a regular script (not a module) so it creates the global faceapi variable -->
+    <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js"></script>
+
     <script type="module">
         import {
             getFriendRecommendations,
@@ -1074,6 +1082,8 @@ search_exclude: true
         } from '{{ site.baseurl }}/assets/js/api/groups.js';
 
         import { pythonURI, fetchOptions } from '{{ site.baseurl }}/assets/js/api/config.js';
+        import { FaceMoodDetector } from '{{ site.baseurl }}/assets/js/face-detection/face-mood-detector.js';
+        import { calculateMoodScore } from '{{ site.baseurl }}/assets/js/face-detection/expression-mapper.js';
 
         // Global state
         window.currentTab = 'recommendations';
@@ -1550,126 +1560,164 @@ search_exclude: true
         }
 
         // =============================================
-        // CAMERA FEATURE
+        // CAMERA FEATURE — powered by face-api.js via FaceMoodDetector + calculateMoodScore
         // =============================================
 
-        let _cameraStream = null;
+        let _detector = null;             // FaceMoodDetector instance
+        let _liveDetectInterval = null;   // setInterval handle for live mood scanning
         let _capturedImageData = null;
         let _capturedMoodSnapshot = null;
+
+        // Helper: update the mood badge text in the camera modal
+        function _setCameraMood(text) {
+            document.getElementById('cameraMoodBadge').style.display = 'block';
+            document.getElementById('cameraMoodText').textContent = text;
+        }
+
+        // Helper: run one detection pass and update the live badge
+        async function _runLiveDetection() {
+            if (!_detector) return;
+            const result = await _detector.detectExpression();
+            if (result.success) {
+                const mood = calculateMoodScore(result.expressions);
+                const emoji = mood.score >= 81 ? '😄' : mood.score >= 61 ? '😊' : mood.score >= 41 ? '😴' : '😰';
+                _setCameraMood(`${emoji} ${mood.category} · ${mood.score}/100`);
+            }
+            // Silently ignore detection failures during live scan (face not visible yet etc.)
+        }
 
         window.openCameraModal = async function() {
             if (!window.activeGroupId) return;
 
-            // Reset state
+            // Reset UI
             _capturedImageData = null;
             _capturedMoodSnapshot = null;
             document.getElementById('cameraCaption').value = '';
             document.getElementById('cameraPreview').style.display = 'none';
             document.getElementById('cameraVideo').style.display = 'block';
+            document.getElementById('cameraCanvas').style.display = 'block';
             document.getElementById('cameraMoodBadge').style.display = 'none';
-            document.getElementById('snapBtn').style.display = 'inline-block';
+
+            const snapBtn = document.getElementById('snapBtn');
+            snapBtn.style.display = 'inline-block';
+            snapBtn.disabled = true;
+            snapBtn.textContent = '⏳ Loading AI...';
             document.getElementById('retakeBtn').style.display = 'none';
             document.getElementById('sendPhotoBtn').style.display = 'none';
 
             document.getElementById('cameraOverlay').classList.add('active');
 
-            // Start webcam
-            try {
-                _cameraStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-                document.getElementById('cameraVideo').srcObject = _cameraStream;
-            } catch (err) {
-                alert('Could not access camera: ' + err.message);
+            // Build detector using the video + canvas elements in the modal
+            const video  = document.getElementById('cameraVideo');
+            const canvas = document.getElementById('cameraCanvas');
+            _detector = new FaceMoodDetector(video, canvas);
+
+            // Load face-api.js models (tinyFaceDetector + faceExpressionNet)
+            const initResult = await _detector.initialize((msg) => {
+                snapBtn.textContent = `⏳ ${msg}`;
+            });
+            if (!initResult.success) {
+                alert('Face AI failed to load: ' + initResult.message);
                 closeCameraModal();
+                return;
             }
+
+            // Start webcam
+            const camResult = await _detector.startCamera();
+            if (!camResult.success) {
+                alert(camResult.message);
+                closeCameraModal();
+                return;
+            }
+
+            snapBtn.disabled = false;
+            snapBtn.textContent = '📸 Snap Photo';
+
+            // Run live mood detection every 1.5 s so the badge updates in real-time
+            _liveDetectInterval = setInterval(_runLiveDetection, 1500);
         };
 
         window.closeCameraModal = function() {
             document.getElementById('cameraOverlay').classList.remove('active');
-            if (_cameraStream) {
-                _cameraStream.getTracks().forEach(t => t.stop());
-                _cameraStream = null;
-            }
+            if (_liveDetectInterval) { clearInterval(_liveDetectInterval); _liveDetectInterval = null; }
+            if (_detector) { _detector.cleanup(); _detector = null; }
             _capturedImageData = null;
             _capturedMoodSnapshot = null;
         };
 
         window.snapPhoto = async function() {
-            const video = document.getElementById('cameraVideo');
-            const canvas = document.getElementById('cameraCanvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            canvas.getContext('2d').drawImage(video, 0, 0);
+            if (!_detector) return;
 
-            _capturedImageData = canvas.toDataURL('image/jpeg', 0.85);
+            // Stop live scan
+            if (_liveDetectInterval) { clearInterval(_liveDetectInterval); _liveDetectInterval = null; }
+
+            // Run a final expression detection on the live frame
+            _setCameraMood('🔍 Analyzing your expression...');
+            const result = await _detector.detectExpression();
+
+            if (result.success) {
+                const mood = calculateMoodScore(result.expressions);
+                _capturedMoodSnapshot = JSON.stringify({
+                    score: mood.score,
+                    category: mood.category,
+                    tags: mood.tags,
+                    expression: mood.primaryExpression
+                });
+                const emoji = mood.score >= 81 ? '😄' : mood.score >= 61 ? '😊' : mood.score >= 41 ? '😴' : '😰';
+                _setCameraMood(`${emoji} ${mood.category} · ${mood.score}/100`);
+            } else {
+                // Detection failed (e.g. no face visible) — store null mood, still allow send
+                _capturedMoodSnapshot = null;
+                _setCameraMood(`⚠️ ${result.message} — photo will send without mood`);
+            }
+
+            // Capture the frame using the detector's built-in method
+            _capturedImageData = _detector.captureFrame();
+
+            // Stop the webcam
+            _detector.stopCamera();
 
             // Show preview, hide live feed
             const preview = document.getElementById('cameraPreview');
             preview.src = _capturedImageData;
             preview.style.display = 'block';
-            video.style.display = 'none';
+            document.getElementById('cameraVideo').style.display = 'none';
+            document.getElementById('cameraCanvas').style.display = 'none';
 
-            // Stop the camera stream to free the webcam
-            if (_cameraStream) {
-                _cameraStream.getTracks().forEach(t => t.stop());
-                _cameraStream = null;
-            }
-
-            // Fetch current user mood
-            const moodBadgeDiv = document.getElementById('cameraMoodBadge');
-            const moodText = document.getElementById('cameraMoodText');
-            moodBadgeDiv.style.display = 'block';
-            moodText.textContent = 'Fetching your mood...';
-
-            try {
-                const moodResp = await fetch(`${pythonURI}/api/moodmeal/mood?limit=1`, {
-                    ...fetchOptions, method: 'GET'
-                });
-                if (moodResp.ok) {
-                    const moodData = await moodResp.json();
-                    if (moodData.length > 0) {
-                        const m = moodData[0];
-                        _capturedMoodSnapshot = JSON.stringify({
-                            score: m.mood_score,
-                            category: m.mood_category,
-                            tags: m.mood_tags || []
-                        });
-                        const emoji = m.mood_score >= 81 ? '😄'
-                                    : m.mood_score >= 61 ? '😊'
-                                    : m.mood_score >= 41 ? '😴' : '😰';
-                        moodText.textContent = `${emoji} ${m.mood_category} · ${m.mood_score}/100`;
-                    } else {
-                        moodText.textContent = '😊 No mood logged yet';
-                        _capturedMoodSnapshot = null;
-                    }
-                } else {
-                    moodText.textContent = '😊 Mood unavailable';
-                }
-            } catch (e) {
-                moodText.textContent = '😊 Mood unavailable';
-            }
-
+            // Update buttons
             document.getElementById('snapBtn').style.display = 'none';
             document.getElementById('retakeBtn').style.display = 'inline-block';
             document.getElementById('sendPhotoBtn').style.display = 'inline-block';
         };
 
         window.retakePhoto = async function() {
+            if (!_detector) return;
             _capturedImageData = null;
+            _capturedMoodSnapshot = null;
+
+            // Reset UI to live feed
             document.getElementById('cameraPreview').style.display = 'none';
             document.getElementById('cameraMoodBadge').style.display = 'none';
             document.getElementById('cameraVideo').style.display = 'block';
-            document.getElementById('snapBtn').style.display = 'inline-block';
+            document.getElementById('cameraCanvas').style.display = 'block';
+
+            const snapBtn = document.getElementById('snapBtn');
+            snapBtn.style.display = 'inline-block';
+            snapBtn.disabled = false;
+            snapBtn.textContent = '📸 Snap Photo';
             document.getElementById('retakeBtn').style.display = 'none';
             document.getElementById('sendPhotoBtn').style.display = 'none';
 
-            // Restart camera
-            try {
-                _cameraStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-                document.getElementById('cameraVideo').srcObject = _cameraStream;
-            } catch (err) {
-                alert('Could not access camera: ' + err.message);
+            // Restart webcam (models are already loaded, just need camera stream)
+            const camResult = await _detector.startCamera();
+            if (!camResult.success) {
+                alert(camResult.message);
                 closeCameraModal();
+                return;
             }
+
+            // Resume live detection
+            _liveDetectInterval = setInterval(_runLiveDetection, 1500);
         };
 
         window.sendCameraPhoto = async function() {
