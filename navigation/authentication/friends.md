@@ -474,6 +474,29 @@ search_exclude: true
             text-align: right;
         }
 
+        .group-message .msg-delete-btn {
+            background: transparent;
+            color: #ff4444;
+            border: none;
+            font-size: 0.72em;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s;
+            padding: 2px 6px;
+            margin-top: 2px;
+            display: block;
+            text-align: right;
+        }
+
+        .group-message.own:hover .msg-delete-btn {
+            opacity: 0.7;
+        }
+
+        .group-message.own .msg-delete-btn:hover {
+            opacity: 1 !important;
+            text-decoration: underline;
+        }
+
         .group-chat-input {
             padding: 15px;
             border-top: 1px solid #2a2a2a;
@@ -1078,7 +1101,8 @@ search_exclude: true
             removeGroupMember,
             sendGroupMessage,
             sendGroupPhotoMessage,
-            getGroupMessages
+            getGroupMessages,
+            deleteGroupMessage
         } from '{{ site.baseurl }}/assets/js/api/groups.js';
 
         import { pythonURI, fetchOptions } from '{{ site.baseurl }}/assets/js/api/config.js';
@@ -1329,7 +1353,10 @@ search_exclude: true
                             <a href="{{ site.baseurl }}/messages?friend=${friend.id}" class="message-button">
                                 Send Message
                             </a>
-                            <button class="btn btn-danger" onclick="removeFriend(${friend.id}, '${friend.name}')">
+                            <button class="btn btn-danger"
+                                data-friend-id="${friend.id}"
+                                data-friend-name="${friend.name.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;')}"
+                                onclick="removeFriend(parseInt(this.dataset.friendId), this.dataset.friendName)">
                                 Unfriend
                             </button>
                         </div>
@@ -1923,7 +1950,7 @@ search_exclude: true
                 }
 
                 container.innerHTML = data.messages.map(msg => {
-                    const isOwn = window._currentUserId && msg.sender_id === window._currentUserId;
+                    const isOwn = window._currentUserId && Number(msg.sender_id) === window._currentUserId;
 
                     // Build mood badge HTML if this message has a mood snapshot
                     let moodBadgeHtml = '';
@@ -1953,6 +1980,10 @@ search_exclude: true
                         ? `<div class="msg-content">${escapeHtml(msg.content)}</div>`
                         : '';
 
+                    const deleteBtn = isOwn
+                        ? `<button class="msg-delete-btn" onclick="deleteGroupMsg(${window.activeGroupId}, ${msg.id})">Delete</button>`
+                        : '';
+
                     return `
                         <div class="group-message ${isOwn ? 'own' : ''}">
                             <div class="msg-sender">${msg.sender_name} (@${msg.sender_uid})</div>
@@ -1960,6 +1991,7 @@ search_exclude: true
                             ${moodBadgeHtml}
                             ${textHtml}
                             <div class="msg-time">${msg.created_at}</div>
+                            ${deleteBtn}
                         </div>
                     `;
                 }).join('');
@@ -1991,6 +2023,18 @@ search_exclude: true
                 container.scrollTop = container.scrollHeight;
             } catch (error) {
                 alert('Error sending message: ' + error.message);
+            }
+        };
+
+        // Delete group message
+        window.deleteGroupMsg = async function(groupId, messageId) {
+            if (!confirm('Delete this message?')) return;
+
+            try {
+                await deleteGroupMessage(groupId, messageId);
+                await refreshGroupMessages(false);
+            } catch (error) {
+                alert('Error deleting message: ' + error.message);
             }
         };
 
@@ -2200,7 +2244,7 @@ search_exclude: true
                 });
                 if (response.ok) {
                     const data = await response.json();
-                    window._currentUserId = data.id || null;
+                    window._currentUserId = data.id ? Number(data.id) : null;
                 }
             } catch (e) {
                 // Non-critical — own message highlight won't work if this fails

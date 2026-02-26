@@ -312,7 +312,7 @@ search_exclude: true
                     credentials: 'include'
                 });
                 const userData = await userResponse.json();
-                currentUserId = userData.id;
+                currentUserId = Number(userData.id);
 
                 // Sequencing: Step 3 - Update header with friend info
                 friendName = data.conversation_with.name;
@@ -331,7 +331,7 @@ search_exclude: true
                 } else {
                     // Iteration: Loop through messages array using .map()
                     container.innerHTML = data.messages.map(msg => {
-                        const isSent = msg.sender_id === currentUserId;
+                        const isSent = Number(msg.sender_id) === currentUserId;
                         const deleteBtn = isSent ? `<button class="delete-button" onclick="deleteMessage(${msg.id})">Delete</button>` : '';
                         return `
                             <div class="message ${isSent ? 'sent' : 'received'}">

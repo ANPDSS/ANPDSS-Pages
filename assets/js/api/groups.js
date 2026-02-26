@@ -258,6 +258,28 @@ export async function sendGroupMessage(groupId, content) {
 }
 
 /**
+ * Delete a group message (sender only)
+ */
+export async function deleteGroupMessage(groupId, messageId) {
+    try {
+        const response = await fetch(`${groupAPI}/${groupId}/messages/${messageId}`, {
+            ...fetchOptions,
+            method: 'DELETE'
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || `Failed to delete message: ${response.status}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error deleting group message:', error);
+        throw error;
+    }
+}
+
+/**
  * Get messages from a group
  */
 export async function getGroupMessages(groupId, limit = 50) {
