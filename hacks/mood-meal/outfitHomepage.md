@@ -371,7 +371,7 @@ tags: [outfit, weather, recommendations, daily-planning]
         <p style="color: #bbb; margin-bottom: 1rem;">We couldn't detect your location automatically. Please enter your ZIP code:</p>
         <div style="display: flex; gap: 1rem;">
           <input type="text" id="zip-input" placeholder="Enter ZIP code (e.g., 92067)" maxlength="5">
-          <button class="btn btn-primary" onclick="getWeatherByZip()">Get Weather</button>
+          <button class="btn btn-primary" onclick="initiateGetWeatherByZip()">Get Weather</button>
         </div>
       </div>
 
@@ -456,6 +456,28 @@ tags: [outfit, weather, recommendations, daily-planning]
   </div>
 
   <script>
+    // ============================================
+    // ERROR CONFIGURATION
+    // ============================================
+    const ERROR_TYPES = {
+      WEATHER_FETCH_FAILED: 'WEATHER_FETCH_FAILED',
+      FORECAST_FETCH_FAILED: 'FORECAST_FETCH_FAILED',
+      INVALID_ZIP: 'INVALID_ZIP',
+      HTTP_ERROR: 'HTTP_ERROR',
+      NO_WEATHER_DATA: 'NO_WEATHER_DATA'
+    };
+
+    const ERROR_MESSAGES = {
+      [ERROR_TYPES.WEATHER_FETCH_FAILED]: 'Could not get weather data. Please try again.',
+      [ERROR_TYPES.FORECAST_FETCH_FAILED]: 'Could not load forecast data.',
+      [ERROR_TYPES.INVALID_ZIP]: 'Please enter a valid 5-digit ZIP code.',
+      [ERROR_TYPES.NO_WEATHER_DATA]: 'No weather data available. Please refresh.',
+      DEFAULT: 'An unexpected error occurred.'
+    };
+
+    // ============================================
+    // STATE & CONFIGURATION
+    // ============================================
     const state = {
       weather: null,
       forecast: null,
@@ -466,166 +488,57 @@ tags: [outfit, weather, recommendations, daily-planning]
     const API_CONFIG = {
       baseURL: (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
         ? 'http://localhost:7'
-        : 'https://moodlife.opencodingsociety.com'
+        : 'https://moodlife.opencodingsociety.com',
+      defaultHeaders: {
+        'Content-Type': 'application/json',
+        'X-Origin': 'client'
+      }
     };
 
-    function init() {
-      console.log('🚀 Outfit Generator initialized');
-      state.weather = null;
-      state.forecast = null;
-      state.location = null;
-      state.timeOfDay = null;
-      console.log('🔄 State reset - ready for new weather data');
+    // ============================================
+    // VALIDATION
+    // ============================================
+
+    /** Single responsibility: validate ZIP code format */
+    function validateZipCode(zip) {
+      return zip && zip.length === 5 && /^\d{5}$/.test(zip);
     }
 
-    function getLocation() {
-      console.log('📍 Attempting to get user location...');
-      document.getElementById('location-status').innerHTML = `
-        <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
-          <div class="loading"></div>
-          <span>Detecting your location...</span>
-        </div>
-      `;
-      
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          handleLocationSuccess,
-          handleLocationError,
-          { timeout: 10000, enableHighAccuracy: true }
-        );
-      } else {
-        console.error('❌ Geolocation not supported by browser');
-        showManualInput('Geolocation is not supported by your browser');
-      }
+    // ============================================
+    // API FETCH FUNCTIONS (each fetches ONE endpoint)
+    // ============================================
+
+    /** Single responsibility: fetch current weather by coordinates */
+    async function fetchWeatherByCoords(lat, lon) {
+      const url = `${API_CONFIG.baseURL}/api/outfit/weather/current?lat=${lat}&lon=${lon}`;
+      const response = await fetch(url, { method: 'GET', credentials: 'include', headers: API_CONFIG.defaultHeaders });
+      if (!response.ok) throw new Error(`${ERROR_TYPES.HTTP_ERROR}_${response.status}`);
+      return response.json();
     }
 
-    function handleLocationSuccess(position) {
-      console.log('✅ Location Found!');
-      console.log('📍 Coordinates:', {
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude
-      });
-      
-      state.location = {
-        lat: position.coords.latitude,
-        lon: position.coords.longitude
-      };
-
-      getWeatherByCoords(state.location.lat, state.location.lon);
+    /** Single responsibility: fetch current weather by ZIP code */
+    async function fetchWeatherByZip(zip) {
+      const url = `${API_CONFIG.baseURL}/api/outfit/weather/current?zip=${zip}`;
+      const response = await fetch(url, { method: 'GET', credentials: 'include', headers: API_CONFIG.defaultHeaders });
+      if (!response.ok) throw new Error(`${ERROR_TYPES.HTTP_ERROR}_${response.status}`);
+      return response.json();
     }
 
-    function handleLocationError(error) {
-      console.warn('⚠️ Location detection failed:', error.message);
-      let message = 'Could not detect your location. ';
-      switch(error.code) {
-        case error.PERMISSION_DENIED:
-          message += 'Permission denied.';
-          console.log('❌ User denied location permission');
-          break;
-        case error.POSITION_UNAVAILABLE:
-          message += 'Location information unavailable.';
-          console.log('❌ Location information unavailable');
-          break;
-        case error.TIMEOUT:
-          message += 'Location request timed out.';
-          console.log('⏱️ Location request timeout');
-          break;
-        default:
-          message += 'Unknown error occurred.';
-          console.log('❌ Unknown location error');
-      }
-      showManualInput(message);
+    /** Single responsibility: fetch forecast by coordinates */
+    async function fetchForecastByCoords(lat, lon) {
+      const url = `${API_CONFIG.baseURL}/api/outfit/weather/forecast?lat=${lat}&lon=${lon}`;
+      const response = await fetch(url, { method: 'GET', credentials: 'include', headers: API_CONFIG.defaultHeaders });
+      if (!response.ok) throw new Error(`${ERROR_TYPES.HTTP_ERROR}_${response.status}`);
+      return response.json();
     }
 
-    function showManualInput(message) {
-      console.log('📝 Showing manual ZIP code input');
-      document.getElementById('location-status').innerHTML = `<div class="error-message">${message}</div>`;
-      document.getElementById('manual-location').classList.remove('hidden');
-    }
+    // ============================================
+    // DATA PARSING (pure transformations, no DOM)
+    // ============================================
 
-    async function getWeatherByZip() {
-      const zipInput = document.getElementById('zip-input');
-      const zip = zipInput.value.trim();
-
-      if (!zip || zip.length !== 5 || !/^\d{5}$/.test(zip)) {
-        console.error('❌ Invalid ZIP code entered:', zip);
-        showToast('❌ Please enter a valid 5-digit ZIP code');
-        return;
-      }
-
-      console.log('🔍 Looking up weather for ZIP code:', zip);
-      showToast('🔍 Looking up weather...');
-
-      try {
-        const url = `${API_CONFIG.baseURL}/api/outfit/weather/current?zip=${zip}`;
-        console.log('🌐 Making API request to backend:', url);
-        
-        const response = await fetch(url, {
-          method: 'GET',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Origin': 'client'
-          }
-        });
-        
-        if (!response.ok) {
-          throw new Error(`Weather API returned ${response.status}`);
-        }
-
-        const data = await response.json();
-        console.log('✅ Weather data received for ZIP:', zip);
-        console.log('🌤️ Weather Data:', data);
-
-        state.location = {
-          lat: data.coord.lat,
-          lon: data.coord.lon,
-          name: data.name
-        };
-
-        displayWeather(data);
-      } catch (error) {
-        console.error('❌ Error fetching weather by ZIP:', error);
-        showToast('❌ Could not get weather data. Please check your ZIP code.');
-      }
-    }
-
-    async function getWeatherByCoords(lat, lon) {
-      console.log('🌐 Fetching weather data for coordinates:', { lat, lon });
-      
-      try {
-        const url = `${API_CONFIG.baseURL}/api/outfit/weather/current?lat=${lat}&lon=${lon}`;
-        console.log('🌐 Making API request to backend:', url);
-        
-        const response = await fetch(url, {
-          method: 'GET',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Origin': 'client'
-          }
-        });
-        
-        if (!response.ok) {
-          throw new Error(`Weather API returned ${response.status}`);
-        }
-
-        const data = await response.json();
-        console.log('✅ Weather data successfully retrieved!');
-        console.log('🌤️ Weather Data:', data);
-
-        state.location.name = data.name;
-        displayWeather(data);
-      } catch (error) {
-        console.error('❌ Error fetching weather:', error);
-        showManualInput('Failed to get weather data. Please try entering your ZIP code.');
-      }
-    }
-
-    function displayWeather(data) {
-      console.log('📊 Displaying weather data...');
-      
-      state.weather = {
+    /** Single responsibility: transform raw weather API response into app state shape */
+    function parseWeatherData(data) {
+      return {
         temp: Math.round(data.main.temp),
         feelsLike: Math.round(data.main.feels_like),
         condition: data.weather[0].main,
@@ -634,204 +547,100 @@ tags: [outfit, weather, recommendations, daily-planning]
         windSpeed: Math.round(data.wind.speed),
         icon: data.weather[0].icon
       };
+    }
 
-      document.getElementById('location-status').classList.add('hidden');
-      document.getElementById('manual-location').classList.add('hidden');
-      document.getElementById('weather-container').classList.remove('hidden');
-      document.getElementById('location-name').textContent = state.location.name || 'Your Location';
-      document.getElementById('weather-condition').textContent = state.weather.condition;
-      document.getElementById('temperature').textContent = `${state.weather.temp}°F`;
-      document.getElementById('humidity').textContent = `${state.weather.humidity}%`;
-      document.getElementById('wind-speed').textContent = `${state.weather.windSpeed} mph`;
+    /** Single responsibility: transform raw forecast API response into app state shape */
+    function parseForecastData(data) {
+      return data.list.slice(0, 8).map(item => ({
+        time: new Date(item.dt * 1000),
+        temp: Math.round(item.main.temp),
+        feelsLike: Math.round(item.main.feels_like),
+        condition: item.weather[0].main,
+        description: item.weather[0].description,
+        icon: item.weather[0].icon,
+        humidity: item.main.humidity,
+        windSpeed: Math.round(item.wind.speed),
+        pop: Math.round(item.pop * 100)
+      }));
+    }
 
-      const weatherIcon = getWeatherEmoji(state.weather.condition.toLowerCase());
-      document.getElementById('weather-icon').textContent = weatherIcon;
-
+    /** Single responsibility: determine time of day label from the current hour */
+    function getCurrentTimeOfDay() {
       const hour = new Date().getHours();
-      let timeOfDay;
-      if (hour >= 6 && hour < 12) {
-        timeOfDay = 'Morning';
-      } else if (hour >= 12 && hour < 17) {
-        timeOfDay = 'Afternoon';
-      } else if (hour >= 17 && hour < 21) {
-        timeOfDay = 'Evening';
-      } else {
-        timeOfDay = 'Night';
-      }
-      state.timeOfDay = timeOfDay;
-      document.getElementById('time-of-day').textContent = timeOfDay;
-
-      console.log('✅ Weather display complete!');
-      console.log('🕐 Current time of day:', timeOfDay);
-      getForecast(state.location.lat, state.location.lon);
-      showToast('✅ Weather data loaded!');
+      if (hour >= 6 && hour < 12) return 'Morning';
+      if (hour >= 12 && hour < 17) return 'Afternoon';
+      if (hour >= 17 && hour < 21) return 'Evening';
+      return 'Night';
     }
 
-    async function getForecast(lat, lon) {
-      console.log('🔮 Fetching forecast data...');
-      
-      try {
-        const url = `${API_CONFIG.baseURL}/api/outfit/weather/forecast?lat=${lat}&lon=${lon}`;
-        console.log('🌐 Forecast API request to backend:', url);
-        
-        const response = await fetch(url, {
-          method: 'GET',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Origin': 'client'
-          }
-        });
-        
-        if (!response.ok) {
-          throw new Error(`Forecast API returned ${response.status}`);
-        }
-
-        const data = await response.json();
-        console.log('✅ Forecast data received!');
-        console.log('🔮 Forecast Data:', data);
-
-        const todayForecasts = data.list.slice(0, 8);
-        state.forecast = todayForecasts.map(item => ({
-          time: new Date(item.dt * 1000),
-          temp: Math.round(item.main.temp),
-          feelsLike: Math.round(item.main.feels_like),
-          condition: item.weather[0].main,
-          description: item.weather[0].description,
-          icon: item.weather[0].icon,
-          humidity: item.main.humidity,
-          windSpeed: Math.round(item.wind.speed),
-          pop: Math.round(item.pop * 100)
-        }));
-
-        console.log('📊 Processed forecast for today:', state.forecast.length, 'time slots');
-        displayForecast();
-        
-      } catch (error) {
-        console.error('❌ Error fetching forecast:', error);
-        document.getElementById('forecast-container').innerHTML = '<div style="color: #ff4a4a;">Could not load forecast data</div>';
-      }
-    }
-
-    function displayForecast() {
-      console.log('📊 Displaying forecast cards...');
-      const container = document.getElementById('forecast-container');
-      
-      if (!state.forecast || state.forecast.length === 0) {
-        container.innerHTML = '<div style="color: #bbb;">No forecast data available</div>';
-        return;
-      }
-
-      const forecastHTML = state.forecast.map(f => {
-        const timeStr = f.time.toLocaleTimeString('en-US', { 
-          hour: 'numeric', 
-          minute: '2-digit',
-          hour12: true 
-        });
-        const weatherIcon = getWeatherEmoji(f.condition.toLowerCase());
-        
-        return `
-          <div class="forecast-card">
-            <div class="time">${timeStr}</div>
-            <div class="icon">${weatherIcon}</div>
-            <div class="temp">${f.temp}°F</div>
-            <div class="desc">${f.description}</div>
-            ${f.pop > 20 ? `<div style="color: #4a9eff; font-size: 0.8rem; margin-top: 0.3rem;">💧 ${f.pop}%</div>` : ''}
-          </div>
-        `;
-      }).join('');
-
-      container.innerHTML = `<div class="forecast-grid">${forecastHTML}</div>`;
-      console.log('✅ Forecast display complete!');
-    }
-
+    /** Single responsibility: map a weather condition string to its display emoji */
     function getWeatherEmoji(condition) {
       const emojiMap = {
-        'clear': '☀️',
-        'clouds': '☁️',
-        'rain': '🌧️',
-        'drizzle': '🌦️',
-        'thunderstorm': '⛈️',
-        'snow': '❄️',
-        'mist': '🌫️',
-        'fog': '🌫️'
+        'clear': '☀️', 'clouds': '☁️', 'rain': '🌧️', 'drizzle': '🌦️',
+        'thunderstorm': '⛈️', 'snow': '❄️', 'mist': '🌫️', 'fog': '🌫️'
       };
-
       for (let key in emojiMap) {
-        if (condition.includes(key)) {
-          return emojiMap[key];
-        }
+        if (condition.includes(key)) return emojiMap[key];
       }
       return '🌤️';
     }
 
-    function generateOutfit() {
-      console.log('👔 Generating outfit recommendations...');
-      console.log('📊 Based on temperature:', state.weather.temp + '°F');
-      console.log('🌤️ Weather condition:', state.weather.condition);
-      console.log('🕐 Time of day:', state.timeOfDay);
+    // ============================================
+    // OUTFIT LOGIC (pure computation, no DOM)
+    // ============================================
 
-      const temp = state.weather.temp;
-      const condition = state.weather.condition.toLowerCase();
-      const timeOfDay = state.timeOfDay.toLowerCase();
-
-      let advice = '';
-      let clothing = [];
-      let accessories = [];
-      let footwear = [];
-
-      let willRainLater = false;
-      let willGetColder = false;
-      let willGetWarmer = false;
-      let maxTemp = temp;
-      let minTemp = temp;
-
-      if (state.forecast && state.forecast.length > 0) {
-        console.log('🔮 Analyzing forecast for day planning...');
-        
-        state.forecast.forEach(f => {
-          if (f.condition.toLowerCase().includes('rain')) willRainLater = true;
-          if (f.temp > maxTemp) maxTemp = f.temp;
-          if (f.temp < minTemp) minTemp = f.temp;
-        });
-
-        willGetColder = (minTemp < temp - 5);
-        willGetWarmer = (maxTemp > temp + 5);
-
-        console.log('📊 Forecast analysis:', {
-          willRainLater,
-          willGetColder,
-          willGetWarmer,
-          tempRange: `${minTemp}°F - ${maxTemp}°F`
-        });
+    /** Single responsibility: analyze forecast array for day-ahead weather trends */
+    function analyzeForecast(forecast, currentTemp) {
+      if (!forecast || forecast.length === 0) {
+        return { willRainLater: false, willGetColder: false, willGetWarmer: false, minTemp: currentTemp, maxTemp: currentTemp };
       }
+      let willRainLater = false;
+      let maxTemp = currentTemp;
+      let minTemp = currentTemp;
+      forecast.forEach(f => {
+        if (f.condition.toLowerCase().includes('rain')) willRainLater = true;
+        if (f.temp > maxTemp) maxTemp = f.temp;
+        if (f.temp < minTemp) minTemp = f.temp;
+      });
+      return {
+        willRainLater,
+        willGetColder: minTemp < currentTemp - 5,
+        willGetWarmer: maxTemp > currentTemp + 5,
+        minTemp,
+        maxTemp
+      };
+    }
+
+    /** Single responsibility: compute outfit recommendations from weather + forecast analysis */
+    function generateOutfitRecommendations(weather, timeOfDay, forecastAnalysis) {
+      const temp = weather.temp;
+      const condition = weather.condition.toLowerCase();
+      const tod = timeOfDay.toLowerCase();
+      const { willRainLater, willGetColder, willGetWarmer, minTemp, maxTemp } = forecastAnalysis;
+
+      let advice, clothing, accessories, footwear;
 
       if (temp <= 40) {
-        console.log('🥶 Very cold weather detected');
         advice = "It's very cold outside! Layer up with warm clothing to stay comfortable. Make sure to cover exposed skin and wear insulated items.";
         clothing = ['Heavy winter coat', 'Thermal underwear', 'Thick sweater', 'Long pants', 'Warm socks'];
         accessories = ['Winter hat', 'Scarf', 'Insulated gloves', 'Hand warmers'];
         footwear = ['Insulated boots', 'Winter boots'];
       } else if (temp <= 55) {
-        console.log('🍂 Cool weather detected');
         advice = "It's cool outside. Wear layers so you can adjust if you warm up. A light jacket or sweater should keep you comfortable.";
         clothing = ['Light jacket', 'Long-sleeve shirt', 'Jeans or long pants', 'Sweater or hoodie'];
         accessories = ['Light scarf', 'Baseball cap'];
         footwear = ['Sneakers', 'Casual shoes', 'Boots'];
       } else if (temp <= 70) {
-        console.log('😊 Mild weather detected');
         advice = "The weather is pleasant! Dress comfortably with light layers. You might want something you can take off if it gets warmer.";
         clothing = ['T-shirt', 'Light cardigan', 'Jeans or casual pants', 'Long-sleeve shirt (optional)'];
         accessories = ['Sunglasses'];
         footwear = ['Sneakers', 'Loafers', 'Casual shoes'];
       } else if (temp <= 85) {
-        console.log('☀️ Warm weather detected');
         advice = "It's warm out! Dress in light, breathable fabrics to stay cool. Don't forget sun protection!";
         clothing = ['T-shirt', 'Shorts or light pants', 'Tank top', 'Light dress', 'Breathable fabrics'];
         accessories = ['Sunglasses', 'Sunscreen (SPF 30+)', 'Hat or cap'];
         footwear = ['Sandals', 'Sneakers', 'Flip-flops'];
       } else {
-        console.log('🔥 Hot weather detected');
         advice = "It's hot outside! Wear minimal, light clothing and stay hydrated. Protect yourself from the sun with sunscreen and shade.";
         clothing = ['Tank top', 'Shorts', 'Light dress', 'Moisture-wicking fabrics'];
         accessories = ['Sunglasses', 'Sunscreen (SPF 50+)', 'Wide-brimmed hat', 'Water bottle'];
@@ -839,77 +648,238 @@ tags: [outfit, weather, recommendations, daily-planning]
       }
 
       if (condition.includes('rain') || condition.includes('drizzle')) {
-        console.log('🌧️ Rain detected - adding rain gear');
         advice += " It's rainy, so bring rain gear and wear waterproof items.";
         accessories.push('Umbrella', 'Rain jacket', 'Waterproof bag');
         footwear = ['Waterproof boots', 'Rain boots'];
       }
-
       if (condition.includes('snow')) {
-        console.log('❄️ Snow detected - adding winter gear');
         advice += " There's snow! Make sure everything is waterproof and insulated.";
         accessories.push('Waterproof gloves', 'Snow boots');
         footwear = ['Snow boots', 'Insulated boots'];
       }
-
-      if (condition.includes('clear') && temp > 70) {
-        console.log('☀️ Sunny conditions detected');
+      if (condition.includes('clear') && temp > 70 && !accessories.includes('Sunscreen (SPF 30+)') && !accessories.includes('Sunscreen (SPF 50+)')) {
         advice += " It's sunny! Don't forget your sunscreen to protect your skin.";
-        if (!accessories.includes('Sunscreen (SPF 30+)') && !accessories.includes('Sunscreen (SPF 50+)')) {
-          accessories.push('Sunscreen');
-        }
+        accessories.push('Sunscreen');
       }
-
-      if (state.weather.windSpeed > 15) {
-        console.log('💨 Windy conditions detected');
+      if (weather.windSpeed > 15 && temp > 60) {
         advice += " It's windy today, so secure loose items and consider a windbreaker.";
-        if (temp > 60) {
-          clothing.push('Light windbreaker');
-        }
+        clothing.push('Light windbreaker');
       }
-
       if (willRainLater && !condition.includes('rain')) {
-        console.log('🌧️ Rain expected later in the day');
         advice += " Rain is expected later today - bring an umbrella or rain jacket just in case.";
         if (!accessories.includes('Umbrella')) accessories.push('Umbrella (for later)');
         if (!accessories.includes('Rain jacket')) accessories.push('Rain jacket (for later)');
       }
-
-      if (willGetColder) {
-        console.log('🌡️ Temperature will drop later');
+      if (willGetColder && temp > 60) {
         advice += ` It will get colder later (down to ${minTemp}°F), so bring an extra layer to stay warm.`;
-        if (temp > 60) {
-          clothing.push('Extra layer for later');
-          accessories.push('Light jacket (for evening)');
-        }
+        clothing.push('Extra layer for later');
+        accessories.push('Light jacket (for evening)');
       }
-
       if (willGetWarmer && temp < 70) {
-        console.log('🌡️ Temperature will rise later');
         advice += ` It will warm up later (up to ${maxTemp}°F), so dress in layers you can remove.`;
       }
-
-      if (timeOfDay === 'evening' || timeOfDay === 'night') {
-        console.log('🌙 Evening/Night time detected');
-        advice += " Since it's " + timeOfDay + ", consider bringing a light jacket as temperatures may drop.";
-        if (temp > 60 && !clothing.includes('Light jacket')) {
-          clothing.push('Light jacket (for later)');
-        }
+      if (tod === 'evening' || tod === 'night') {
+        advice += ` Since it's ${timeOfDay}, consider bringing a light jacket as temperatures may drop.`;
+        if (temp > 60 && !clothing.includes('Light jacket')) clothing.push('Light jacket (for later)');
       }
 
+      return { advice, clothing, accessories, footwear };
+    }
+
+    // ============================================
+    // UI RENDER FUNCTIONS (DOM only, no logic)
+    // ============================================
+
+    /** Single responsibility: show loading spinner in location status area */
+    function showLoadingState() {
+      document.getElementById('location-status').innerHTML = `
+        <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+          <div class="loading"></div>
+          <span>Detecting your location...</span>
+        </div>
+      `;
+    }
+
+    /** Single responsibility: show manual ZIP input with an error message */
+    function showManualInput(message) {
+      document.getElementById('location-status').innerHTML = `<div class="error-message">${message}</div>`;
+      document.getElementById('manual-location').classList.remove('hidden');
+    }
+
+    /** Single responsibility: show a toast notification */
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    /** Single responsibility: render current weather values into weather panel DOM elements */
+    function renderWeatherUI(weather, locationName) {
+      document.getElementById('location-status').classList.add('hidden');
+      document.getElementById('manual-location').classList.add('hidden');
+      document.getElementById('weather-container').classList.remove('hidden');
+      document.getElementById('location-name').textContent = locationName || 'Your Location';
+      document.getElementById('weather-condition').textContent = weather.condition;
+      document.getElementById('temperature').textContent = `${weather.temp}°F`;
+      document.getElementById('humidity').textContent = `${weather.humidity}%`;
+      document.getElementById('wind-speed').textContent = `${weather.windSpeed} mph`;
+      document.getElementById('weather-icon').textContent = getWeatherEmoji(weather.condition.toLowerCase());
+      document.getElementById('time-of-day').textContent = state.timeOfDay;
+    }
+
+    /** Single responsibility: render forecast cards into the forecast container */
+    function renderForecastUI(forecast) {
+      const container = document.getElementById('forecast-container');
+      if (!forecast || forecast.length === 0) {
+        container.innerHTML = '<div style="color: #bbb;">No forecast data available</div>';
+        return;
+      }
+      const cardsHTML = forecast.map(f => {
+        const timeStr = f.time.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+        return `
+          <div class="forecast-card">
+            <div class="time">${timeStr}</div>
+            <div class="icon">${getWeatherEmoji(f.condition.toLowerCase())}</div>
+            <div class="temp">${f.temp}°F</div>
+            <div class="desc">${f.description}</div>
+            ${f.pop > 20 ? `<div style="color: #4a9eff; font-size: 0.8rem; margin-top: 0.3rem;">💧 ${f.pop}%</div>` : ''}
+          </div>
+        `;
+      }).join('');
+      container.innerHTML = `<div class="forecast-grid">${cardsHTML}</div>`;
+    }
+
+    /** Single responsibility: render outfit recommendation panels into DOM */
+    function renderOutfitUI(recommendations) {
+      const { advice, clothing, accessories, footwear } = recommendations;
       document.getElementById('general-advice').textContent = advice;
       document.getElementById('clothing-items').innerHTML = clothing.map(item => `<span class="outfit-item">${item}</span>`).join('');
       document.getElementById('accessories-items').innerHTML = accessories.map(item => `<span class="outfit-item">${item}</span>`).join('');
       document.getElementById('footwear-items').innerHTML = footwear.map(item => `<span class="outfit-item">${item}</span>`).join('');
       document.getElementById('outfit-recommendations').classList.remove('hidden');
-      
-      console.log('✅ Outfit recommendations generated!');
-      showToast('✨ Outfit generated!');
       document.getElementById('outfit-recommendations').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
+    /** Single responsibility: map an error object to a user-friendly message string */
+    function getErrorMessage(error) {
+      if (error.message.startsWith(ERROR_TYPES.HTTP_ERROR)) {
+        const code = error.message.split('_')[2];
+        return `Server error (${code}). Please try again.`;
+      }
+      return ERROR_MESSAGES[error.message] || ERROR_MESSAGES.DEFAULT;
+    }
+
+    // ============================================
+    // ORCHESTRATORS (coordinate the workflow)
+    // ============================================
+
+    /** Orchestrator: fetch weather by coords → parse → update state → render → chain to forecast */
+    async function loadWeatherByCoords(lat, lon) {
+      try {
+        const data = await fetchWeatherByCoords(lat, lon);
+        state.weather = parseWeatherData(data);
+        state.location = { lat, lon, name: data.name };
+        state.timeOfDay = getCurrentTimeOfDay();
+        renderWeatherUI(state.weather, state.location.name);
+        showToast('✅ Weather data loaded!');
+        // API chain: weather success → fetch forecast
+        await loadForecast(lat, lon);
+      } catch (error) {
+        console.error('❌ Error fetching weather by coords:', error);
+        showManualInput('Failed to get weather data. Please try entering your ZIP code.');
+      }
+    }
+
+    /** Orchestrator: fetch weather by ZIP → parse → update state → render → chain to forecast */
+    async function loadWeatherByZip(zip) {
+      try {
+        showToast('🔍 Looking up weather...');
+        const data = await fetchWeatherByZip(zip);
+        state.weather = parseWeatherData(data);
+        state.location = { lat: data.coord.lat, lon: data.coord.lon, name: data.name };
+        state.timeOfDay = getCurrentTimeOfDay();
+        renderWeatherUI(state.weather, state.location.name);
+        showToast('✅ Weather data loaded!');
+        // API chain: weather success → fetch forecast
+        await loadForecast(state.location.lat, state.location.lon);
+      } catch (error) {
+        console.error('❌ Error fetching weather by ZIP:', error);
+        showToast(`❌ ${getErrorMessage(error)}`);
+      }
+    }
+
+    /** Orchestrator: fetch forecast → parse → update state → render */
+    async function loadForecast(lat, lon) {
+      try {
+        const data = await fetchForecastByCoords(lat, lon);
+        state.forecast = parseForecastData(data);
+        renderForecastUI(state.forecast);
+      } catch (error) {
+        console.error('❌ Error fetching forecast:', error);
+        document.getElementById('forecast-container').innerHTML = '<div style="color: #ff4a4a;">Could not load forecast data</div>';
+      }
+    }
+
+    // ============================================
+    // UI EVENT HANDLERS (orchestrate user interactions)
+    // ============================================
+
+    /** Orchestrator: initiate geolocation → delegate to loadWeatherByCoords via chain */
+    function getLocation() {
+      showLoadingState();
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          handleLocationSuccess,
+          handleLocationError,
+          { timeout: 10000, enableHighAccuracy: true }
+        );
+      } else {
+        showManualInput('Geolocation is not supported by your browser');
+      }
+    }
+
+    /** Single responsibility: extract coordinates from geolocation result and start weather chain */
+    function handleLocationSuccess(position) {
+      const { latitude: lat, longitude: lon } = position.coords;
+      loadWeatherByCoords(lat, lon);
+    }
+
+    /** Single responsibility: map geolocation error to user message and show manual input */
+    function handleLocationError(error) {
+      const messages = {
+        [error.PERMISSION_DENIED]: 'Permission denied.',
+        [error.POSITION_UNAVAILABLE]: 'Location information unavailable.',
+        [error.TIMEOUT]: 'Location request timed out.'
+      };
+      const detail = messages[error.code] || 'Unknown error occurred.';
+      showManualInput(`Could not detect your location. ${detail}`);
+    }
+
+    /** Orchestrator: validate ZIP input → delegate to loadWeatherByZip */
+    function initiateGetWeatherByZip() {
+      const zip = document.getElementById('zip-input').value.trim();
+      if (!validateZipCode(zip)) {
+        showToast(`❌ ${ERROR_MESSAGES[ERROR_TYPES.INVALID_ZIP]}`);
+        return;
+      }
+      loadWeatherByZip(zip);
+    }
+
+    /** Orchestrator: read state → analyze forecast → compute recommendations → render */
+    function generateOutfit() {
+      if (!state.weather) {
+        showToast(`❌ ${ERROR_MESSAGES[ERROR_TYPES.NO_WEATHER_DATA]}`);
+        return;
+      }
+      const forecastAnalysis = analyzeForecast(state.forecast, state.weather.temp);
+      const recommendations = generateOutfitRecommendations(state.weather, state.timeOfDay, forecastAnalysis);
+      renderOutfitUI(recommendations);
+      showToast('✨ Outfit generated!');
+    }
+
+    /** Orchestrator: reset state and UI for a fresh weather lookup */
     function refreshWeather() {
-      console.log('🔄 Refreshing weather data...');
       document.getElementById('outfit-recommendations').classList.add('hidden');
       document.getElementById('weather-container').classList.add('hidden');
       document.getElementById('location-status').innerHTML = `
@@ -922,16 +892,15 @@ tags: [outfit, weather, recommendations, daily-planning]
       state.weather = null;
       state.forecast = null;
       state.location = null;
-      console.log('✅ Ready for new weather data');
+      state.timeOfDay = null;
     }
 
-    function showToast(message) {
-      const toast = document.getElementById('toast');
-      toast.textContent = message;
-      toast.classList.add('show');
-      setTimeout(() => {
-        toast.classList.remove('show');
-      }, 3000);
+    /** Single responsibility: initialize application state on page load */
+    function init() {
+      state.weather = null;
+      state.forecast = null;
+      state.location = null;
+      state.timeOfDay = null;
     }
 
     window.addEventListener('load', init);
