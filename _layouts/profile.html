@@ -620,8 +620,36 @@ active_tab: profile
     window.setUserData = setUserData;
 
     // =========================================================================
+    // SRP REFACTORED: Profile Picture Upload System
+    //
+    // Pattern: Orchestrator + Workers (from Mr. Mortensen's SRP lesson)
+    // - changeProfilePicture() is the ORCHESTRATOR (coordinates workflow)
+    // - Each helper function is a WORKER (does ONE thing)
+    // - Typed error constants for centralized error handling
+    // =========================================================================
+
+    // =========================================================================
+    // ERROR CONFIGURATION: Typed error constants (like teacher's ERROR_TYPES)
+    // SRP: One place defines all error types. Error display logic reads from here.
+    // =========================================================================
+    const PFP_ERROR_TYPES = {
+        NO_FILE_SELECTED: 'NO_FILE_SELECTED',
+        INVALID_FILE: 'INVALID_FILE',
+        FILE_TOO_LARGE: 'FILE_TOO_LARGE',
+        UPLOAD_FAILED: 'UPLOAD_FAILED',
+        COMPRESSION_FAILED: 'COMPRESSION_FAILED'
+    };
+
+    const PFP_ERROR_MESSAGES = {
+        [PFP_ERROR_TYPES.NO_FILE_SELECTED]: 'Please select an image file first.',
+        [PFP_ERROR_TYPES.FILE_TOO_LARGE]: 'Image is too large even after compression. Please try a smaller image.',
+        [PFP_ERROR_TYPES.UPLOAD_FAILED]: 'Failed to upload profile picture. Please try again.',
+        [PFP_ERROR_TYPES.COMPRESSION_FAILED]: 'Failed to compress image. Please try a different file.',
+        DEFAULT: 'An unexpected error occurred.'
+    };
+
+    // =========================================================================
     // LIST: Allowed image MIME types for profile picture validation
-    // This is a list (array) of strings used to check uploaded file types
     // =========================================================================
     const ALLOWED_IMAGE_TYPES = [
         'image/png',
@@ -632,8 +660,7 @@ active_tab: profile
     ];
 
     // =========================================================================
-    // LIST: Image size limit tiers for validation and user feedback
-    // Each object has a max size in bytes and a descriptive label
+    // LIST: Image size limit tiers for validation and compression quality
     // =========================================================================
     const IMAGE_SIZE_LIMITS = [
         { maxBytes: 100000, label: 'Tiny (under 100KB)', quality: 0.9 },
@@ -644,7 +671,6 @@ active_tab: profile
 
     // =========================================================================
     // LIST: Profile form field configurations for loading user data
-    // Each object maps a field ID to the property name from the API response
     // =========================================================================
     const PROFILE_FIELDS = [
         { id: 'nameChangeInput', key: 'name', fallback: 'Failed to load name. Are you logged in?' },
@@ -654,42 +680,34 @@ active_tab: profile
     ];
 
     // =========================================================================
-    // FUNCTION: validateImageFile(file)
-    // Demonstrates ITERATION + SELECTION + LISTS
-    //
-    // Takes an uploaded file and validates it against our allowed types
-    // and size limits by iterating through the lists defined above.
+    // WORKER: validateImageFile(file)
+    // SRP: Only job is to check file type and size against the lists above.
+    // Does NOT compress, upload, or touch the DOM.
     // =========================================================================
     function validateImageFile(file) {
         const result = { valid: false, errors: [], sizeCategory: 'Unknown' };
 
-        // --- ITERATION: Loop through each allowed type in the list ---
         let typeAllowed = false;
         for (let i = 0; i < ALLOWED_IMAGE_TYPES.length; i++) {
-            // --- SELECTION: Check if the file's type matches this allowed type ---
             if (file.type === ALLOWED_IMAGE_TYPES[i]) {
                 typeAllowed = true;
                 break;
             }
         }
 
-        // --- SELECTION: If file type is not in the allowed list, add error ---
         if (!typeAllowed) {
             result.errors.push('File type "' + file.type + '" is not allowed. Use PNG, JPEG, GIF, or WebP.');
             return result;
         }
 
-        // --- ITERATION: Loop through size limits to find the file's category ---
         for (let i = 0; i < IMAGE_SIZE_LIMITS.length; i++) {
             const limit = IMAGE_SIZE_LIMITS[i];
-            // --- SELECTION: Check if file size fits within this tier ---
             if (file.size <= limit.maxBytes) {
                 result.sizeCategory = limit.label;
                 break;
             }
         }
 
-        // --- SELECTION: Reject files over the maximum allowed size ---
         if (file.size > 2000000) {
             result.errors.push('File is too large (' + Math.round(file.size / 1024) + 'KB). Maximum is 2MB.');
             return result;
@@ -700,40 +718,28 @@ active_tab: profile
     }
 
     // =========================================================================
-    // FUNCTION: getCompressionQuality(fileSize)
-    // Demonstrates ITERATION + SELECTION through the IMAGE_SIZE_LIMITS list
-    //
-    // Determines the best compression quality based on file size.
+    // WORKER: getCompressionQuality(fileSize)
+    // SRP: Only job is to look up the right quality setting from the list.
     // =========================================================================
     function getCompressionQuality(fileSize) {
-        let quality = 0.5; // default for very large files
-
-        // --- ITERATION: Loop through size limits list ---
+        let quality = 0.5;
         for (let i = 0; i < IMAGE_SIZE_LIMITS.length; i++) {
-            // --- SELECTION: Find the matching size tier ---
             if (fileSize <= IMAGE_SIZE_LIMITS[i].maxBytes) {
                 quality = IMAGE_SIZE_LIMITS[i].quality;
                 break;
             }
         }
-
         return quality;
     }
 
     // =========================================================================
-    // FUNCTION: loadProfileFields(userData)
-    // Demonstrates ITERATION + SELECTION + LISTS
-    //
-    // Loops through the PROFILE_FIELDS list and sets each form input value
-    // from the API response data.
+    // WORKER: loadProfileFields(userData)
+    // SRP: Only job is to populate form inputs from API data.
     // =========================================================================
     function loadProfileFields(userData) {
-        // --- ITERATION: Loop through each field configuration in the list ---
         for (let i = 0; i < PROFILE_FIELDS.length; i++) {
             const field = PROFILE_FIELDS[i];
             const inputElement = document.getElementById(field.id);
-
-            // --- SELECTION: Check if the element exists and set value ---
             if (inputElement) {
                 if (userData[field.key]) {
                     inputElement.value = userData[field.key];
@@ -745,44 +751,159 @@ active_tab: profile
     }
 
     // =========================================================================
-    // SEQUENCING: Page initialization runs these steps in order:
-    // Step 1: Load user profile data from backend
-    // Step 2: Populate form fields by iterating through PROFILE_FIELDS
-    // Step 3: Load current profile picture from backend
-    // Step 4: Set up event listeners for file upload and form submission
+    // WORKER: getSelectedFile()
+    // SRP: Only job is to get the file from the input. Throws typed error if none.
+    // =========================================================================
+    function getSelectedFile() {
+        const fileInput = document.getElementById('profilePictureInput');
+        const file = fileInput.files[0];
+        if (!file) {
+            throw new Error(PFP_ERROR_TYPES.NO_FILE_SELECTED);
+        }
+        return file;
+    }
+
+    // =========================================================================
+    // WORKER: compressForUpload(file)
+    // SRP: Only job is compression pipeline. Takes a file, returns a base64 string.
+    // Does NOT touch the DOM or call the API.
+    // =========================================================================
+    async function compressForUpload(file) {
+        const quality = getCompressionQuality(file.size);
+        let compressedBlob = await compressImage(file, 400, 400, quality);
+
+        // if still too large, try harder with lower quality
+        if (compressedBlob.size > 500000) {
+            compressedBlob = await compressImage(file, 300, 300, 0.5);
+        }
+
+        // if still too large after second pass, give up
+        if (compressedBlob.size > 750000) {
+            throw new Error(PFP_ERROR_TYPES.FILE_TOO_LARGE);
+        }
+
+        return await convertToBase64(compressedBlob);
+    }
+
+    // =========================================================================
+    // WORKER: uploadProfilePicture(base64String)
+    // SRP: Only job is the API call. Returns response data or throws typed error.
+    // Does NOT show alerts or update the DOM. (Before refactor, sendProfilePicture
+    // was calling alert() and hiding the modal - mixing API with UI.)
+    // =========================================================================
+    async function uploadProfilePicture(base64String) {
+        const URL = pythonURI + "/api/id/pfp";
+        const response = await fetch(URL, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ pfp: base64String })
+        });
+
+        if (!response.ok) {
+            const data = await response.json();
+            throw new Error(PFP_ERROR_TYPES.UPLOAD_FAILED + ': ' + data.message);
+        }
+
+        return await response.json();
+    }
+
+    // =========================================================================
+    // WORKER: updatePfpDisplay(base64String)
+    // SRP: Only job is DOM updates. Sets image src, hides placeholder, closes modal.
+    // Does NOT call the API or do validation.
+    // =========================================================================
+    function updatePfpDisplay(base64String) {
+        const pfpImage = document.getElementById('currentPfpImage');
+        const pfpPlaceholder = document.getElementById('currentPfpPlaceholder');
+        if (pfpImage) {
+            pfpImage.src = 'data:image/png;base64,' + base64String;
+            pfpImage.style.display = 'block';
+            if (pfpPlaceholder) pfpPlaceholder.style.display = 'none';
+        }
+        document.getElementById('change-pfp').style.visibility = 'hidden';
+    }
+
+    // =========================================================================
+    // WORKER: showPfpError(error)
+    // SRP: Only job is mapping error types to user-friendly messages.
+    // Uses PFP_ERROR_MESSAGES config (like teacher's getErrorMessage pattern).
+    // =========================================================================
+    function showPfpError(error) {
+        console.error('Profile picture error:', error);
+        const message = PFP_ERROR_MESSAGES[error.message] || PFP_ERROR_MESSAGES.DEFAULT;
+        alert(message);
+    }
+
+    // =========================================================================
+    // WORKER: fetchCurrentPfp()
+    // SRP: Only job is the GET API call. Returns base64 string or null.
+    // Does NOT touch the DOM.
+    // =========================================================================
+    async function fetchCurrentPfp() {
+        const URL = pythonURI + "/api/id/pfp";
+        const response = await fetch(URL, { method: 'GET', credentials: 'include' });
+        if (response.ok) {
+            const data = await response.json();
+            return data.pfp || null;
+        }
+        return null;
+    }
+
+    // =========================================================================
+    // WORKER: displayPfp(base64String)
+    // SRP: Only job is showing a pfp in the DOM. Handles null (shows placeholder).
+    // =========================================================================
+    function displayPfp(base64String) {
+        const pfpImage = document.getElementById('currentPfpImage');
+        const pfpPlaceholder = document.getElementById('currentPfpPlaceholder');
+        if (base64String) {
+            pfpImage.src = 'data:image/png;base64,' + base64String;
+            pfpImage.style.display = 'block';
+            pfpPlaceholder.style.display = 'none';
+        }
+    }
+
+    // =========================================================================
+    // ORCHESTRATOR: loadCurrentPfp()
+    // SRP: Coordinates fetch + display. Does not implement either.
+    // (Before refactor, this was one function doing both API call and DOM update.)
+    // =========================================================================
+    async function loadCurrentPfp() {
+        try {
+            const base64String = await fetchCurrentPfp();
+            displayPfp(base64String);
+        } catch (error) {
+            console.log('Could not load profile picture:', error.message);
+        }
+    }
+
+    // =========================================================================
+    // SEQUENCING: Page initialization
     // =========================================================================
     document.addEventListener("DOMContentLoaded", async function() {
         console.log('Profile page loaded - initializing...');
 
-        // --- STEP 1: Load user data from backend ---
         try {
             await window.setUserData();
         } catch (error) {
             console.error("Error loading user data:", error.message);
         }
 
-        // --- STEP 2: Load current profile picture ---
         await loadCurrentPfp();
 
-        // --- STEP 3: Set up file input with validation ---
         const fileInput = document.getElementById('profilePictureInput');
         if (fileInput) {
             fileInput.addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 if (file) {
-                    // Use our validation function (ITERATION + SELECTION through LISTS)
                     const validation = validateImageFile(file);
-
                     if (!validation.valid) {
-                        // --- SELECTION: Show error if validation failed ---
                         alert(validation.errors.join('\n'));
                         fileInput.value = '';
                         return;
                     }
-
                     console.log('Image validated - Size category:', validation.sizeCategory);
-
-                    // Show preview
                     const reader = new FileReader();
                     reader.onload = function() {
                         const preview = document.getElementById('pfpPreview');
@@ -793,7 +914,6 @@ active_tab: profile
             });
         }
 
-        // --- STEP 4: Set up form submit handler ---
         const pfpForm = document.getElementById('pfpChangeForm');
         if (pfpForm) {
             pfpForm.addEventListener('submit', function(e) {
@@ -801,11 +921,8 @@ active_tab: profile
                 window.changeProfilePicture(e);
             });
         }
-
-        // Cancel button now uses onclick="closePfpModal()" directly in HTML
     });
 
-    // Close modal on Escape key
     document.addEventListener('keydown', function(event) {
         if (event.key === 'Escape') {
             const modal = document.getElementById('change-pfp');
@@ -813,7 +930,6 @@ active_tab: profile
         }
     });
 
-    // Open the change PFP modal
     window.openChangePfpModal = function() {
         const changePfpBox = document.getElementById('change-pfp');
         if (changePfpBox) {
@@ -822,75 +938,36 @@ active_tab: profile
     };
 
     // =========================================================================
-    // SEQUENCING: changeProfilePicture - executes steps in order:
-    // 1. Get file from input
-    // 2. Validate file type against ALLOWED_IMAGE_TYPES list (ITERATION)
-    // 3. Determine compression quality from IMAGE_SIZE_LIMITS list (ITERATION)
-    // 4. Compress the image on a canvas
-    // 5. Convert compressed image to base64 string
-    // 6. Send base64 string to Flask backend API
-    // 7. Update the displayed profile picture
+    // ORCHESTRATOR: changeProfilePicture()
+    //
+    // SRP: This is the orchestrator. It coordinates the workflow by calling
+    // worker functions, but does NOT implement any of the work itself.
+    // Compare to the teacher's loadUserGroups() example.
+    //
+    // Before refactor: this function was 55+ lines doing 7 different things.
+    // After refactor: ~10 lines that just delegate to workers.
     // =========================================================================
     window.changeProfilePicture = async function(event) {
         event.preventDefault();
-
-        const fileInput = document.getElementById('profilePictureInput');
-        const file = fileInput.files[0];
-
-        // --- SELECTION: Check if file was selected ---
-        if (!file) {
-            alert('Please select an image file first');
-            return;
-        }
-
-        // --- ITERATION + SELECTION: Validate file against allowed types list ---
-        const validation = validateImageFile(file);
-        if (!validation.valid) {
-            alert(validation.errors.join('\n'));
-            return;
-        }
-
         try {
-            // --- ITERATION + SELECTION: Get compression quality from size limits list ---
-            const quality = getCompressionQuality(file.size);
-            console.log('Using compression quality:', quality, 'for size category:', validation.sizeCategory);
-
-            // --- SEQUENCING: Compress → Convert → Upload → Display ---
-            let compressedBlob = await compressImage(file, 400, 400, quality);
-
-            // --- SELECTION: If still too large after first compression, try harder ---
-            if (compressedBlob.size > 500000) {
-                compressedBlob = await compressImage(file, 300, 300, 0.5);
+            const file = getSelectedFile();                    // Worker: get input
+            const validation = validateImageFile(file);        // Worker: validate
+            if (!validation.valid) {
+                throw new Error(PFP_ERROR_TYPES.INVALID_FILE);
             }
-
-            // --- SELECTION: Final size check ---
-            if (compressedBlob.size > 750000) {
-                alert('Image is too large even after compression. Please try a smaller image.');
-                return;
-            }
-
-            const base64String = await convertToBase64(compressedBlob);
-            await sendProfilePicture(base64String);
-
-            // Update display
-            const pfpImage = document.getElementById('currentPfpImage');
-            const pfpPlaceholder = document.getElementById('currentPfpPlaceholder');
-            if (pfpImage) {
-                pfpImage.src = 'data:image/png;base64,' + base64String;
-                pfpImage.style.display = 'block';
-                if (pfpPlaceholder) pfpPlaceholder.style.display = 'none';
-            }
-
-            document.getElementById('change-pfp').style.visibility = 'hidden';
-            await new Promise(resolve => setTimeout(resolve, 500));
+            const base64String = await compressForUpload(file); // Worker: compress
+            await uploadProfilePicture(base64String);           // Worker: API call
+            updatePfpDisplay(base64String);                     // Worker: DOM update
             window.location.reload();
         } catch (error) {
-            console.error('Error uploading profile picture:', error);
-            alert('Error uploading profile picture: ' + error.message);
+            showPfpError(error);                               // Worker: error display
         }
     };
 
-    // Convert a file/blob to a base64 string
+    // =========================================================================
+    // WORKER: convertToBase64(fileOrBlob)
+    // SRP: Only job is file-to-base64 conversion. No DOM, no API.
+    // =========================================================================
     async function convertToBase64(fileOrBlob) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -900,7 +977,10 @@ active_tab: profile
         });
     }
 
-    // Compress and resize an image using a canvas
+    // =========================================================================
+    // WORKER: compressImage(file, maxWidth, maxHeight, quality)
+    // SRP: Only job is canvas-based image compression. No DOM updates, no API.
+    // =========================================================================
     async function compressImage(file, maxWidth, maxHeight, quality) {
         return new Promise((resolve, reject) => {
             const img = new Image();
@@ -911,7 +991,6 @@ active_tab: profile
                 let width = img.width;
                 let height = img.height;
 
-                // --- SELECTION: Resize based on which dimension is larger ---
                 if (width > height) {
                     if (width > maxWidth) {
                         height = Math.round((height * maxWidth) / width);
@@ -931,64 +1010,19 @@ active_tab: profile
                 canvas.toBlob(
                     (blob) => {
                         if (blob) resolve(blob);
-                        else reject(new Error('Failed to compress image'));
+                        else reject(new Error(PFP_ERROR_TYPES.COMPRESSION_FAILED));
                     },
                     'image/jpeg',
                     quality
                 );
             };
 
-            img.onerror = () => reject(new Error('Failed to load image'));
+            img.onerror = () => reject(new Error(PFP_ERROR_TYPES.COMPRESSION_FAILED));
             const reader = new FileReader();
             reader.onload = (e) => { img.src = e.target.result; };
-            reader.onerror = () => reject(new Error('Failed to read file'));
+            reader.onerror = () => reject(new Error(PFP_ERROR_TYPES.COMPRESSION_FAILED));
             reader.readAsDataURL(file);
         });
-    }
-
-    // Send base64 profile picture to Flask backend
-    async function sendProfilePicture(base64String) {
-        const URL = pythonURI + "/api/id/pfp";
-        try {
-            const response = await fetch(URL, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({ pfp: base64String })
-            });
-
-            // --- SELECTION: Check if upload was successful ---
-            if (response.ok) {
-                console.log('Profile picture uploaded successfully!');
-                document.getElementById('change-pfp').style.visibility = 'hidden';
-            } else {
-                const data = await response.json();
-                alert('Error uploading profile picture: ' + data.message);
-            }
-        } catch (error) {
-            alert('Error uploading profile picture: ' + error.message);
-        }
-    }
-
-    // Load and display the current profile picture from backend
-    async function loadCurrentPfp() {
-        const URL = pythonURI + "/api/id/pfp";
-        try {
-            const response = await fetch(URL, { method: 'GET', credentials: 'include' });
-            // --- SELECTION: Only update display if we got a valid response ---
-            if (response.ok) {
-                const data = await response.json();
-                if (data.pfp) {
-                    const pfpImage = document.getElementById('currentPfpImage');
-                    const pfpPlaceholder = document.getElementById('currentPfpPlaceholder');
-                    pfpImage.src = 'data:image/png;base64,' + data.pfp;
-                    pfpImage.style.display = 'block';
-                    pfpPlaceholder.style.display = 'none';
-                }
-            }
-        } catch (error) {
-            console.log('Could not load profile picture:', error.message);
-        }
     }
 </script>
 
