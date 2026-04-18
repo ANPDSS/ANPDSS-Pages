@@ -1,81 +1,76 @@
-# Introduction
+# Moodlife – Frontend (GitHub Pages)
 
-Open Coding Society `Pages` is a project designed to support students in their Computer Science and Software Engineering education. It offers a wide range of resources including tech talks, code examples, and educational blogs.
+**Moodlife** is a mood and wellness tracking application built by the ANPDSS team. This GitHub Pages repository serves as the frontend for the Moodlife project, providing the user-facing interface for logging moods, viewing trends, and engaging with the community.
 
-This GitHub Pages repository can be customized by the blogger to support computer science learning as the student works through the pathways of using Javascript, Python/Flask, Java/Spring. It is intended to support course work for Computer Science and Software Engineering (CSSE), AP Computer Science Principles (APCSP or CSP), and AP Computer Science 'A' (APCSA, or CSA).
+The frontend communicates with the [Moodlife Flask backend](https://github.com/ANPDSS/ANPDSS-flask) to authenticate users, store mood entries, and surface personalized insights.
 
-"Open Coding Society's instructional model is grounded in **Connectivism**, recognizing that learning happens through diverse networks of people, platforms, and AI. OCS is refining `pages` using **Merrill's structure**, deepening learning through **Fink**, ensuring access via **UDL**, and supporting our classroom through **Agile and Design Thinking ceremonies**, with a touch of **Gagné** to focus each classroom day. OCS wants to create projects that support learning for today's digital, open, and connected world."
+## Project Overview
 
-## Student Requirements
+Moodlife helps users develop greater emotional self-awareness through daily mood logging, trend visualization, and reflective journaling. Key goals of the project include:
 
-HS students will have the opportunity to create their personal GitHub Pages repository as they progress through their coursework.
-In general, students and instructors are expected to use GitHub Pages to build lessons, complete classroom hacks/challenges and perform exploratory work.
-Exchange of information from this repository to you personal GitHub Pages can be done in many ways...
+- Allow users to log and track their mood over time
+- Display mood trends and patterns through interactive visualizations
+- Support a social/community layer for sharing reflections and reactions
+- Integrate AI-assisted insights via the Gemini API
+- Provide a responsive, accessible interface for desktop and mobile
 
-1. sharing a file, ie: `wget "raw-link.ipynb"`
-2. creating a template from this repository
-3. creating a fork to be shared by you and team members
-4. etc.
+## Team & Contributions
+
+Moodlife is developed by the **ANPDSS** team as part of their CSP/CSA coursework. Team members contribute features, blogs, and project documentation to this repository. Contributor names are listed in the front matter of their respective posts and feature branches.
 
 ---
 
-## History
+## Repository Structure
 
-This project is in its 4th revision (aka 4.0).
+This GitHub Pages site is built with Jekyll. Content is organized as follows:
 
-The project was initially based on a project called Fastpages. But this project has diverged from those roots into an independent entity, in fact most things (like the build system), are completely different.  The decision to separate from Fastpages was influenced by it's deprecation by the authors.  It is believed by our community that the authors of Fastpages turned toward the support of Quatro.  After that change of direction Fastpages did not align with the Instructors's goals. Thus, Open Coding Society 'Pages' has more of a raw development and classroom blogging purpose. But, we are grateful to Fastpages for their inspiration.  But, we are grateful to Fastpages for their inspiration.
-
-### License
-
-The Apache license has its roots in Fastpages.  Thus, it carries that license forward.  However, most of the code is likely unrecognizable from those original roots.
+- `_posts/` – Markdown blog posts (sprint journals, feature write-ups, reflections)
+- `_notebooks/` – Jupyter Notebook-based lessons and coding explorations
+- `pages/` – Individual feature pages and UI components
+- `assets/` – CSS, JavaScript, and image resources
+- `_data/` – Shared data files used across pages
+- `_includes/` / `_layouts/` – Reusable HTML components and page templates
 
 ### Key Features
 
-- **Code Examples**: Provides practical coding examples in JavaScript, including a platformer game, and frontend code for user databases using Python and Java backends.
-- **Educational Blogs**: Offers instructional content on various topics such as developer tools setup, deployment on AWS, SQL databases, machine learning, and data structures. It utilizes Jupyter Notebooks for interactive lessons and coding challenges, often referred to as `hacks`.
-- **Tools and Integrations**: Features GitHub actions for blog publishing, Utterances for blog commenting, local development support via Makefile and scripts, and styling with the Minima Theme and SASS. It also includes an Agile Toolkit to assist in Student Teaching, Assignment Tracking, Live Reviews, and more.
-
-### Contributions
-
-- **Notable Contributions**: Highlights significant contributions to the project, including theme development, search and tagging functionality, GitHub API integration, and the incorporation of GitHub Projects into GitHub pages. Contributors such as Tirth Thakker, Mirza Beg, and Toby Ledder have played crucial roles in these developments.
-
-- **Blog Contributions**:  Often students contribute articles and blogs to this project.  Their names are typically listed in the front matter of their contributing post.
+- **Mood Logging UI**: Frontend forms and visualizations for users to record and review their mood data, backed by the Flask REST API.
+- **User Authentication**: Login and profile management integrated with the backend JWT authentication system.
+- **Community MicroBlog**: Social feed for sharing mood reflections and reactions with other users.
+- **AI Insights**: Interface for querying the Gemini AI assistant for mood-related suggestions and summaries.
+- **Developer Blog**: Sprint journals, feature documentation, and project reflections authored by the team using Markdown and Jupyter Notebooks.
 
 ---
 
-## GitHub Pages setup
+## GitHub Pages Setup
 
-The absolutes in setup up...
+**Activate GitHub Pages Actions**: Enable GitHub Pages Actions so the Moodlife frontend is automatically deployed on every push.
 
-**Activate GitHub Pages Actions**: This step involves enabling GitHub Pages Actions for your project. By doing so, your project will be automatically deployed using GitHub Pages Actions, ensuring that your project is always up to date with the latest changes you push to your repository.
+- On GitHub: Settings → Pages → Build and Deployment
+- Under the Deployment location, select **"GitHub Actions"**.
 
-- On the GitHub website for the repository go to the menu: Settings -> Pages ->Build
-- Under the Deployment location on the page, select "GitHub Actions".
-
-**Update `_config.yml`**: You need to modify the `_config.yml` file to reflect your repository's name. This configuration is crucial because it ensures that your project's styling is correctly applied, making your deployed site look as intended rather than unstyled or broken.
+**Update `_config.yml`**: Set the repository name and base URL so assets and links resolve correctly.
 
 ```text
-github_repo: "pages" 
-baseurl: "/pages"
+github_repo: "ANPDSS-Pages" 
+baseurl: "/ANPDSS-Pages"
 ```
 
-**Set Repository Name in Makefile**: Adjust the `REPO_NAME` variable in your Makefile to match your GitHub repository's name. This action facilitates the automatic updating of posts and notebooks on your local development server, improving the development process.
+**Set Repository Name in Makefile**: Update the `REPO_NAME` variable to match your repository name for correct local development previews.
 
 ```make
 # Configuration, override port with usage: make PORT=4200
 PORT ?= 4500
-REPO_NAME ?= pages
+REPO_NAME ?= ANPDSS-Pages
 LOG_FILE = /tmp/jekyll$(PORT).log
 ```
 
-### Tool requirements
+### Tool Requirements
 
-All `GitHub Pages` websites are managed on GitHub infrastructure and use GitHub version control.  Each time we change files in GitHub it initiates a GitHub Action, a continuous integration and development toolset, that rebuilds and publishes the site with Jekyll.  
+The Moodlife frontend is a GitHub Pages / Jekyll site. Each push to the main branch triggers a GitHub Action that rebuilds and publishes the site automatically.
 
-- GitHub uses `Jekyll` to transform your markdown and HTML content into static websites and blogs. [Jekyll](https://jekyllrb.com/).
-- A Linux shell is required to work with this project integration with GitHub Pages, GitHub and VSCode.  Ubuntu is the preferred shell, though MacOS shell is supported as well.  There will be some key setup scripts that follow in the README.
-- Visual Studio Code is the Pages author's preferred code editor and extensible development environment.  VSCode has a rich ecosystem of developer extensions that ease working with GitHub Pages, GitHub, and many programming languages.  Setting up VSCode and extensions will be elaborated upon in this document.
-- An anatomy section in this README will describe GitHub Pages and conventions that are used to organize content and files.  This includes file names, key coding files, metadata tagging of blogs, styling tooling for blogs, etc.
+- **Jekyll** transforms Markdown and HTML content into static pages. [Jekyll](https://jekyllrb.com/)
+- A **Linux shell** (Ubuntu or macOS) is required for local development.
+- **Visual Studio Code** is the recommended editor. Install the relevant extensions for GitHub Pages and Jupyter Notebooks for the best experience.
 
 ### Development Environment Setup
 
@@ -85,11 +80,11 @@ Quick start.  A quick start below is a reminder, but is dependent on your knowle
 
 #### Clone Repo
 
-Run these commands to obtain the project, then locate into the project directory with the terminal, install an extensive set of tools, and make.
+Run these commands to clone the Moodlife frontend and navigate into the project directory.
 
 ```bash
-git clone <this-repo> # git clone https://github.com/open-coding-society/pages.git 
-cd <repo-dir>/scripts # cd pages 
+git clone https://github.com/ANPDSS/ANPDSS-Pages.git
+cd ANPDSS-Pages/scripts
 ```
 
 #### Windows WSL and/or Ubuntu or Kali Users
@@ -297,133 +292,47 @@ To find a new theme search for "GitHub Pages Themes".
 
 ### Metadata
 
-Metadata, also known as "front matter", is a set of key-value pairs that can provide additional information to GitHub Pages about .md and .ipynb files. This can and probably will be used in other file types (ie doc, pdf) if we add them to the system.
+Metadata, also known as "front matter", is a set of key-value pairs that provide additional information to GitHub Pages about `.md` and `.ipynb` files.
 
-In the front matter, you can also define things like a title and description for the page.  Additional front matter is defined to place content on the "Computer Science Lab Notebook" page.  The `courses:` key will place data on a specific page with the nested `week:` placing data on a specific row on the page.  The `type:` key in "front matter" will place the blog under the plans, hacks(ToDo), and tangibles columns.
-
-- In our files, the front matter is defined at the top of the page or the first markdown cell.
-
-  - First, open one of the .md or .ipynb files already included in either your _posts|_notebooks folder.
-
-  - In the .md file, you should notice something similar to this at the top of the page. To see this in your .ipynb files you will need to double-click the markdown cell at the top of the file.
+In the front matter you can define a title, description, tags, and layout for each page. Example:
 
   ```yaml
   ---
   toc: true
   comments: true
   layout: post
-  title: Jupyter Python Sample
-  description: Example Blog!!!  This shows code and notes from hacks.
+  title: Moodlife Sprint 1 Journal
+  description: Recap of our first sprint — mood logging UI and backend integration.
   type: ccc
-  courses: { csa: {week: 5} }
   ---
   ```
 
-- The front matter will always have '---' at the top and bottom to distinguish it and each key-value pair will be separated by a ':'.
-
-- Here we can modify things like the title and description.
-
-- The type value will tell us which column this is going to appear under the time box supported pages.  The "ccc" stands for Code, Code, Code.
-
-- The courses will tell us which menu item it will be under, in this case, the `csa` menu, and the `week` tells it what row (week) it will appear under that menu.
-
-## Open Coding Society: Instructional Framework
-
-A flexible, inclusive, and modern teaching model grounded in **Connectivism**, with structured learning through **Merrill**, **Fink**, **UDL**, **Agile**, and select **Gagné** elements. This framework prepares learners to thrive in collaborative, networked, AI-augmented environments.
+- The front matter is always delimited by `---` at the top and bottom.
+- The `type` value controls which column the post appears in on the team board.
 
 ---
 
-### Guiding Philosophy: Connectivism
+## Moodlife Development Workflow
 
-> “Learning is a process of connecting specialized nodes or information sources.” – George Siemens
+The ANPDSS team follows an **Agile / Scrum** workflow with two-week sprints.
 
-OCS is grounded in a **Connectivist philosophy**, recognizing that:
+### Sprint Ceremonies
 
-- **Knowledge is distributed** across people, platforms, and digital tools
-- Students learn by **building and navigating networks** — with peers, mentors, experts, and AI
-- **Internet and AI** are not just resources but **learning partners**
-- **Decision-making** (what to learn, when to seek help, what tools to use) is a critical skill
-- **Diverse collaboration** and **community contribution** are essential for relevant, authentic learning
+- **Sprint Planning** – Define user stories and tasks in GitHub Issues / Projects
+- **Daily Standups** – Brief check-ins on progress and blockers
+- **Sprint Review / Demo** – Demonstrate completed features to the Product Owner
+- **Retrospective** – Reflect on what went well and what to improve
 
-#### Connectivist Practices in OCS education
+### Contributing
 
-- Promote **open collaboration** via GitHub, blogs, scrum-team projects and cross-class projects
-- Encourage learners to **curate, remix, and build upon** knowledge from global networks
-- Teach students to **evaluate digital sources**, verify code, and contribute to public knowledge
-- Incorporate **AI tools** for coding, writing, design, reflection, and peer modeling
+1. Branch off `main` using a descriptive branch name (e.g. `feature/mood-chart`, `fix/login-redirect`)
+2. Make your changes and commit with clear messages
+3. Open a Pull Request and request a review from a teammate
+4. After approval and CI checks pass, merge into `main`
 
-✅ **Connectivism provides the underlying philosophy** that unifies Merrill’s structure, Fink’s depth, UDL’s accessibility, and Agile’s team-based iteration — all in a digital, networked world.
+### Related Repositories
 
----
-
-### Instructional Core: Merrill’s First Principles of Instruction
-
-> “Make instruction Effective, Efficient, Engaging.”
-
-- **Problem (Anchor):** Begin with a real-world task or problem that students must solve, `pages` is considered launch point project.
-- **Activation:** Connect to prior knowledge or personal experience, GitHub OCS contains projects from many years of instruction.
-- **Demonstration:** Show examples or models — how it’s done, `pages` has blogs and OCS has many projects to build upon.
-- **Application:** Provide practice — guided then independent, OCS learning uses sprints to practice and iterate.
-- **Integration:** Encourage students to reflect, share, or transfer skills to new contexts, students are encouraged to add to OCS.
-
----
-
-### Learning Depth: Fink’s Significant Learning
-
-> Emphasize holistic, transformative learning.  These words and associated actions help learners become assets to the Connectivist landscape. 
-
-- **Foundational Knowledge** – Core facts, tools, syntax, concepts
-- **Application** – Use of knowledge in projects, analysis, creation
-- **Integration** – Connect coding with design, ethics, community
-- **Human Dimension** – Team roles, collaboration, self-discovery
-- **Caring** – Projects that matter to learners
-- **Metacognition** – Learning how to learn, reflect, self-evaluate
-- **Intersection** – True learning happens when all areas overlap
-
----
-
-### Access & Inclusion: Universal Design for Learning (UDL)
-
-> Proactively reduce barriers and support diverse learners. OCS maintains social and coding platforms that support UDL thinking (GitHub, YouTube, LinkedIn, X)
-
-- **Multiple Means of Engagement** – Interests, choices, autonomy
-- **Multiple Means of Representation** – Videos, code, diagrams, demos
-- **Multiple Means of Action & Expression** – Presentations, repos, recordings, blogs
-
-UDL is not a method but a **design lens** to make learning **accessible and meaningful** for all.
-
----
-
-### Structure & Ceremonies: Agile + Design Thinking + Gagné (selective)
-
-> Use classroom **ceremonies** for rhythm, reflection, and real-world alignment.
-
-#### Gagné Elements (selective use)
-
-- **Gain Attention** – Start with prompts, demos, tech news, or student input
-- **Set Objectives** – Clarify sprint, lesson, or project goals
-- **Reflection** – Use reflections and live reviews at the end of lessons/sprints
-
-#### Agile & Design Thinking Ceremonies
-
-- **Empathy** – Interviews, personas, build "Point of View" and “How Might We…” prompts
-- **Ideation** – Brainstorms, sticky notes, sketches, synthesize
-- **Planning** – User stories, task boards (Kanban, GitHub Issues)
-- **Sprints** – Iterative cycles with visible progress
-- **Standups/PinUps** – Feedback-oriented checkpoints
-- **Burndown Charts** – Track group/team/individual progress
-- **In-Sprint Checkpoints** – Product Owner reviews, Demo products or features, receive feedback, plan iterations
-- **Close-Sprint Assessment** - Rubric close out, learning and competency demonstrations
-- **Retrospectives** – Reflect on process and teamwork, next steps
-
----
-
-## Summary of Learning Philosophies
-
-| Layer | Model | Role |
-|-------|-------|------|
-| **Philosophy** | Connectivism | Foundation – learning is networked, shared, tech-augmented |
-| **Core Instruction** | Merrill | Scaffolded, problem-first instruction |
-| **Depth & Growth** | Fink | Human, affective, reflective development |
-| **Access & Design** | UDL | Inclusive and flexible access to all learners |
-| **Workflow & Rhythm** | Agile + Design Thinking + Gagné | Iteration, planning, feedback, reflection ceremonies |
+| Repository | Purpose |
+|------------|---------|
+| [ANPDSS-Pages](https://github.com/ANPDSS/ANPDSS-Pages) | This repo — Moodlife frontend (GitHub Pages / Jekyll) |
+| [ANPDSS-flask](https://github.com/ANPDSS/ANPDSS-flask) | Moodlife backend — Flask REST API, SQLAlchemy, JWT auth |
